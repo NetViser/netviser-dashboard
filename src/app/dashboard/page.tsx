@@ -17,24 +17,26 @@ export default function DashboardPage() {
   };
 
   const router = useRouter();
-  const { data, isLoading, error } = useSWR(GET_FILE_NAME_URL, getFileName, {
+  const { data, isLoading } = useSWR(GET_FILE_NAME_URL, getFileName, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 0, // Prevents deduping to effectively disable the cache
     shouldRetryOnError: false,
-  });
-
-  if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Session Expired",
-      confirmButtonText: "OK",
-      timer: 3000,
-      timerProgressBar: true,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    }).then(() => {
+    onError: async (error) => {
+      await Swal.fire({
+        icon: "error",
+        title: "Session Expired",
+        confirmButtonText: "OK",
+        timer: 3000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      })
+      console.error("Failed to get file name:", error);
       router.push("/");
-    });
-    return null; // Prevent further rendering if there's an error
-  }
+    }
+  });
 
   return (
     <Container className="h-screen flex flex-col pt-24 mx-auto">
