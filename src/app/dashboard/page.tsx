@@ -6,6 +6,8 @@ import { Container, Flex, Text, Title } from "@mantine/core";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { useSessionStore } from "@/store/session";
+import { useEffect, useMemo } from "react";
 
 const GET_FILE_NAME_URL = "http://localhost:8000/api/get-file-name";
 
@@ -17,12 +19,16 @@ export default function DashboardPage() {
   };
 
   const router = useRouter();
-  const { data, isLoading } = useSWR(GET_FILE_NAME_URL, getFileName, {
+
+  const { setActiveSession, isActiveSession } = useSessionStore();
+
+  const { data, isLoading } = useSWR(isActiveSession && GET_FILE_NAME_URL, getFileName, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     dedupingInterval: 0, // Prevents deduping to effectively disable the cache
     shouldRetryOnError: false,
+    
     onError: async (error) => {
       await Swal.fire({
         icon: "error",
@@ -34,10 +40,11 @@ export default function DashboardPage() {
         allowEscapeKey: false,
       })
       console.error("Failed to get file name:", error);
+      setActiveSession(false);
       router.push("/");
     }
   });
-
+  
   return (
     <Container className="h-screen flex flex-col pt-24 mx-auto">
       {isLoading ? (

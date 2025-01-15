@@ -20,7 +20,8 @@
     "react-loader-spinner": "^6.1.6",
     "sweetalert2": "^11.15.10",
     "swr": "^2.3.0",
-    "tailwind-preset-mantine": "^1.2.1"
+    "tailwind-preset-mantine": "^1.2.1",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "^22.7.9",

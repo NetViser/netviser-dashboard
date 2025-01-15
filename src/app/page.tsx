@@ -7,11 +7,13 @@ import useSWRMutation from "swr/mutation";
 import { uploadFile } from "@/utils/client/uploadFIle";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation"
+import { useSessionStore } from "@/store/session";
 
 const UPLOAD_URL = 'http://localhost:8000/api/raw-file-upload';
 
 export default function Home() {
   const router = useRouter();
+  const { setActiveSession } = useSessionStore();
 
   const { trigger, isMutating } = useSWRMutation(UPLOAD_URL, uploadFile, {
     onSuccess: async (_data) => {
@@ -23,6 +25,8 @@ export default function Home() {
         timerProgressBar: true,
       });
 
+      // Set the active session
+      setActiveSession(true);
       // Redirect to the next page
       router.push('/dashboard');
     },
