@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation"
 import { useSessionStore } from "@/store/session";
 
-const UPLOAD_URL = 'http://localhost:8000/api/raw-file-upload';
+const UPLOAD_URL = 'http://localhost:8000/api/upload';
 
 export default function Home() {
   const router = useRouter();
