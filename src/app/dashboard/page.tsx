@@ -115,7 +115,7 @@ export default function DashboardPage() {
               />
 
               <BarChart
-                title="Src IP Distribution"
+                title="Source IP Distribution"
                 data={Object.values(
                   data?.src_ip_address_distribution as Record<string, number>,
                 )}
@@ -125,7 +125,7 @@ export default function DashboardPage() {
               />
 
               <PieChart
-                title="Dst IP Distribution"
+                title="Destination Port Distribution"
                 data={getDstPortPieChartData}
               />
             </div>
