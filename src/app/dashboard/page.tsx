@@ -12,9 +12,11 @@ import { FcAbout } from "react-icons/fc";
 import { use, useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import PieChart from "highcharts-react-official";
+import pieoptions from "@/components/dashboard/PieChartOption";
 import HorizontalBarChart from "@/components/dashboard/HorizontalBarChart";
 import BarChart from "@/components/dashboard/BarChart";
-import PieChart from "@/components/dashboard/PieChart";
+import CustomPieChart from "@/components/dashboard/PieChart";
 
 export default function DashboardPage() {
   const extractFileName = (name: string) => {
@@ -25,6 +27,7 @@ export default function DashboardPage() {
 
   const router = useRouter();
   const { setActiveSession, isActiveSession } = useSessionStore();
+
 
   const { data, isLoading } = useSWR("/api/dashboard", fetchDashboard, {
     shouldRetryOnError: false,
@@ -124,10 +127,12 @@ export default function DashboardPage() {
                 ).map((key) => String(key))}
               />
 
-              <PieChart
+              <CustomPieChart
                 title="Destination Port Distribution"
                 data={getDstPortPieChartData}
               />
+
+              <PieChart highcharts={Highcharts} options={pieoptions} />
             </div>
           </div>
         </div>

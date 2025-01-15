@@ -8,7 +8,7 @@ type PieChartProps = {
     data: { value: number, name: string }[]
 }
 
-export default function PieChart({
+export default function CustomPieChart({
     title,
     data,
 }: PieChartProps) {
