@@ -1,101 +1,160 @@
+"use client";
+
+import { useState } from "react";
+import { TbUpload } from "react-icons/tb";
+import { useDropzone } from "react-dropzone";
+import useSWRMutation from "swr/mutation";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { useSessionStore } from "@/store/session";
+import { uploadFile } from "@/utils/client/uploadFIle";
 import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+const UPLOAD_URL = "http://localhost:8000/api/upload";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+export default function Home() {
+  const router = useRouter();
+  const { setActiveSession } = useSessionStore();
+  const [isMutating, setIsMutating] = useState(false);
+
+  const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
+    onSuccess: async () => {
+      await Swal.fire({
+        title: "File Uploaded Successfully",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+
+      setActiveSession(true);
+      router.push("/dashboard");
+    },
+    onError: (error: Error) => {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#f44336",
+      });
+      console.error("Upload failed:", error);
+    },
+  });
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        setIsMutating(true);
+        trigger(file).finally(() => setIsMutating(false));
+      }
+    },
+    multiple: false,
+  });
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+      {/* Header Section */}
+      <div className="bg-orange-600 flex px-4 relative h-[58vh]">
+        {/* Overlapping Card */}
+        <div className="absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2">
+          <div className="bg-white rounded-lg border border-2 shadow-sm p-6 md:p-10">
+            <div className="text-center mb-6">
+              <h1 className="text-4xl font-extrabold text-gray-900">
+                NetViser
+              </h1>
+              <h2 className="text-xl font-semibold text-gray-700 mt-2">
+                Network Traffic Visualization Platform
+              </h2>
+            </div>
+
+            {/* Drag & Drop Box */}
+            <div
+              {...getRootProps()}
+              className={`group border-[0.20rem] border-dashed rounded-xl bg-gray-100 transition-colors duration-200 ease-in-out p-8 ${
+                isDragActive ? "border-orange-500" : "border-gray-300"
+              } hover:border-orange-400 cursor-pointer`}
+            >
+              <input {...getInputProps()} />
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <TbUpload className="w-12 h-12 text-orange-500 group-hover:text-orange-600 transition-colors" />
+                <div className="text-center space-y-1">
+                  <p className="text-gray-700 font-medium">
+                    {isDragActive
+                      ? "Drop network data file..."
+                      : "Drag PCAP/CSV file here"}
+                  </p>
+                  <p className="text-gray-500 text-sm">or</p>
+                </div>
+                <label
+                  className={`inline-flex items-center px-6 py-2 rounded-lg font-medium cursor-pointer ${
+                    isMutating
+                      ? "bg-orange-400"
+                      : "bg-orange-500 hover:bg-orange-600"
+                  } text-white transition-colors`}
+                >
+                  <TbUpload className="w-5 h-5 mr-2" />
+                  {isMutating ? "Analyzing..." : "Browse Files"}
+                </label>
+                {isMutating && (
+                  <p className="text-gray-500 text-sm mt-2">
+                    Processing network data...
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Supported Formats */}
+            <p className="text-sm text-gray-600 text-center mt-6">
+              Supported formats: PCAP, CSV, NETFLOW | Max size: 2GB
+            </p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+      {/* Instructions Section */}
+      <div className="bg-gray-100 px-4 py-20">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 items-start">
+          {/* Left Content */}
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Getting Started with NetViser
+            </h3>
+            <p className="text-gray-700 mb-6">
+              Follow these steps to convert a file to PDF or export a PDF to
+              another format using the Acrobat PDF converter:
+            </p>
+            {[
+              "Upload network capture files or synthetic attack datasets",
+              "Explore automatic attack classification results",
+              "Interact with temporal traffic visualizations",
+              "Investigate feature contributions using XAI tools",
+            ].map((step, index) => (
+              <div className="mb-6" key={index}>
+                <div className="flex items-baseline space-x-3 mb-2">
+                  <span className="text-lg font-bold text-orange-500">
+                    {index + 1}
+                  </span>
+                  <p className="text-gray-700">{step}</p>
+                </div>
+                <hr className="border-gray-300" />
+              </div>
+            ))}
+          </div>
+
+          {/* Right Illustration */}
+          <div className="flex items-center justify-center mt-4 md:mt-0">
+            <Image
+              src="network.svg"
+              alt="NetViser dashboard preview"
+              width={400}
+              height={300}
+              className="max-w-full h-auto rounded-lg border border-gray-200"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
