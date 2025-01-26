@@ -58,7 +58,7 @@ export default function Home() {
       {/* Header Section */}
       <div className="bg-orange-600 flex px-4 relative h-[58vh]">
         {/* Overlapping Card */}
-        <div className="absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2">
+        <div className={`absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2`}>
           <div className="bg-white rounded-lg border border-2 shadow-sm p-6 md:p-10">
             <div className="text-center mb-6">
               <h1 className="text-4xl font-extrabold text-gray-900">
@@ -97,11 +97,6 @@ export default function Home() {
                   <TbUpload className="w-5 h-5 mr-2" />
                   {isMutating ? "Analyzing..." : "Browse Files"}
                 </label>
-                {isMutating && (
-                  <p className="text-gray-500 text-sm mt-2">
-                    Processing network data...
-                  </p>
-                )}
               </div>
             </div>
 
