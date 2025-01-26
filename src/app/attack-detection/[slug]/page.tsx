@@ -7,12 +7,19 @@ import Swal from "sweetalert2";
 import useSWR from "swr";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   API_URL,
   AttackRecord,
   fetchAttackDetectionRecord,
 } from "@/utils/client/fetchAttackDetectionRecord";
+import {
+  SPECIFIC_ATTACK_API_URL,
+  SpecificAttackRecord,
+  fetchSpecificAttackDetection,
+} from "@/utils/client/fetchAttackDetectionVis";
+import FTPBoxPlot from "@/components/chart/ftp/boxplot";
+import FTPSankey from "@/components/chart/ftp/sankey";
 
 export default function Page() {
   const router = useRouter();
@@ -25,8 +32,7 @@ export default function Page() {
 
   const { data: attackRecords, isLoading: isLoadingAttackRecords } = useSWR(
     `${API_URL}?attack_type=${attackType}&page=${page}&page_size=${pageSize}`,
-    () =>
-      fetchAttackDetectionRecord(attackType, page, pageSize),
+    () => fetchAttackDetectionRecord(attackType, page, pageSize),
     {
       shouldRetryOnError: false,
       keepPreviousData: true,
@@ -47,7 +53,67 @@ export default function Page() {
     }
   );
 
-  console.log("records", attackRecords);
+  const { data: attackVisualizations, isLoading: isLoadingVisualizations } =
+    useSWR(
+      `${SPECIFIC_ATTACK_API_URL}?attack_type=${attackType}`,
+      () => fetchSpecificAttackDetection(attackType),
+      {
+        shouldRetryOnError: false,
+        keepPreviousData: true,
+        onError: async (error) => {
+          await Swal.fire({
+            icon: "error",
+            title: "Session Expired",
+            confirmButtonText: "OK",
+            timer: 3000,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          });
+          console.error("Failed to get file name:", error);
+          setActiveSession(false);
+          router.push("/");
+        },
+      }
+    );
+
+  const ftpBoxPlotFlowBytesPerSecondData = useMemo(() => {
+    const normalData = attackVisualizations?.normalData || [];
+    const attackData = attackVisualizations?.attackData || [];
+
+    const normalFlowBytesPerSecond = normalData.map(
+      (record) => record.flowBytesPerSecond
+    );
+    const attackFlowBytesPerSecond = attackData.map(
+      (record) => record.flowBytesPerSecond
+    );
+
+    console.log("FUCCKK", [
+      {
+        name: "Normal",
+        data: normalFlowBytesPerSecond,
+      },
+      {
+        name: "Attack",
+        data: attackFlowBytesPerSecond,
+      },
+    ]);
+
+    return [
+      {
+        name: "Normal",
+        data: normalFlowBytesPerSecond,
+        color: "#4CAF50", // Green
+      },
+      {
+        name: "Attack",
+        data: attackFlowBytesPerSecond,
+        color: "#F44336", // Red
+      },
+    ];
+  }, [attackVisualizations]);
+
+  console.log(attackVisualizations);
 
   const { data, isLoading: isLoadingDashboard } = useSWR(
     "/api/dashboard",
@@ -77,8 +143,7 @@ export default function Page() {
   };
   // Get the slug name from params
 
-
-  if (isLoadingAttackRecords || isLoadingDashboard) {
+  if (isLoadingAttackRecords || isLoadingDashboard || isLoadingVisualizations) {
     return (
       <div className="h-screen bg-transparent flex flex-col items-center justify-center">
         <Spinner />
@@ -93,7 +158,7 @@ export default function Page() {
   const handlePageSizeChange = (newPageSize: number) => {
     setPage(1);
     setPageSize(newPageSize);
-  }
+  };
 
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
@@ -116,6 +181,48 @@ export default function Page() {
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
+      </div>
+
+      {/* Attack Specific Visualization Section */}
+      <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
+        <h2 className="text-xl font-bold mb-4">
+          Attack Specific Visualizations
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Visualization Row 1 */}
+          <div className="p-6 rounded-lg border-2 flex flex-col">
+            <FTPBoxPlot
+              chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
+              yAxisName="Flow Bytes Per Second"
+              groups={ftpBoxPlotFlowBytesPerSecondData}
+            />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <FTPSankey />
+          </div>
+
+          {/* Visualization Row 2 */}
+          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <h3 className="font-semibold mb-2">Source IP Analysis</h3>
+            <div className="flex-1">
+              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
+                <span className="text-stone-400">IP Distribution Chart</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <h3 className="font-semibold mb-2">Attack Pattern Types</h3>
+            <div className="flex-1">
+              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
+                <span className="text-stone-400">
+                  Pattern Distribution Chart
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
