@@ -112,7 +112,6 @@ export default function AttackDetectionPage() {
         />
 
         {/* Attack Scatter Plot */}
-
         {selectedAttackType ? (
           <AttacksScatter
             title="Network Traffic Scatter Plot"

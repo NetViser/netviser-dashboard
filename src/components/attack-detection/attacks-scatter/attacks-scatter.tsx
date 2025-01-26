@@ -108,11 +108,16 @@ export default function AttacksScatter({
     ],
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-[500px] flex flex-col items-center justify-center bg-white rounded-lg shadow-md">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white py-4 pt-6 rounded-lg shadow-md h-[560px]">
-      {isLoading ? (
-        <Spinner />
-      ) : (
         <ReactECharts
           option={option}
           opts={{
@@ -120,7 +125,6 @@ export default function AttacksScatter({
             height: 510,
           }}
         />
-      )}
     </div>
   );
 }
