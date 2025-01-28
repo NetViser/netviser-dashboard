@@ -23,29 +23,12 @@ interface SankeyData {
 }
 
 interface FTPSankeyProps {
-  // Define any props if needed in the future
+  apidata: SankeyData;
 }
 
-const FTPSankey: React.FC<FTPSankeyProps> = () => {
+const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
   // Mock data for the Sankey diagram
-  const data: SankeyData = {
-    nodes: [
-      { name: "Start" },
-      { name: "Process A" },
-      { name: "Process B" },
-      { name: "Decision" },
-      { name: "End 1" },
-      { name: "End 2" },
-    ],
-    links: [
-      { source: "Start", target: "Process A", value: 10 },
-      { source: "Start", target: "Process B", value: 5 },
-      { source: "Process A", target: "Decision", value: 7 },
-      { source: "Process B", target: "Decision", value: 5 },
-      { source: "Decision", target: "End 1", value: 8 },
-      { source: "Decision", target: "End 2", value: 4 },
-    ],
-  };
+  const data = apidata
 
   // Define the chart options
   const options = {

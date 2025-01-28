@@ -13,6 +13,7 @@ export type SpecificAttackRecord = {
   dstIp: string;
   srcPort: number;
   dstPort: number;
+  portPairCount: number;
 };
 
 type FetchSpecificAttackResponse = {
