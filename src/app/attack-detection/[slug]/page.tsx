@@ -115,6 +115,33 @@ export default function Page() {
 
   console.log(attackVisualizations);
 
+  const ftpSankeyData = useMemo(() => {
+    const attackData = attackVisualizations?.attackData || [];
+  
+    const nodes = Array.from(
+      new Set(
+        attackData.flatMap((record) => [String(record.srcPort), String(record.dstPort)])
+      )
+    ).map((name) => ({ name }));
+    
+    // Ensure srcPort and dstPort are strings
+    const links = attackData.map((record) => ({
+      source: String(record.srcPort),
+      target: String(record.dstPort),
+      value: record.portPairCount,
+    }));
+
+    console.log("Sankey Data", links);
+  
+    return {
+      nodes,
+      links, // Use the properly mapped links
+    };
+  }, [attackVisualizations]);
+
+  console.log("Sankey Data", ftpSankeyData);
+  
+
   const { data, isLoading: isLoadingDashboard } = useSWR(
     "/api/dashboard",
     fetchDashboard,
@@ -199,7 +226,9 @@ export default function Page() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <FTPSankey />
+            <FTPSankey 
+              apidata={ftpSankeyData}
+            />
           </div>
 
           {/* Visualization Row 2 */}
