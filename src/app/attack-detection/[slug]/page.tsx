@@ -121,16 +121,26 @@ export default function Page() {
   
     const nodes = Array.from(
       new Set(
-        attackData.flatMap((record) => [String(record.srcPort), String(record.dstPort)])
+        attackData.flatMap((record) => [String(record.srcPort), String(record.dstPort), String(record.srcIp)])
       )
     ).map((name) => ({ name }));
-    
-    // Ensure srcPort and dstPort are strings
-    const links = attackData.map((record) => ({
+
+    // Create links from srcIp to srcPort
+    const srcIpLinks = attackData.map((record) => ({
+      source: String(record.srcIp),
+      target: String(record.srcPort),
+      value: record.srcIpPortPairCount,
+    }));
+
+    // Create links from srcPort to dstPort
+    const portLinks = attackData.map((record) => ({
       source: String(record.srcPort),
       target: String(record.dstPort),
       value: record.portPairCount,
     }));
+
+    // combine the links
+    const links = [...srcIpLinks, ...portLinks];
 
     console.log("Sankey Data", links);
   
@@ -270,7 +280,7 @@ export default function Page() {
 
           <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
             <FTPSankey 
-              apidata={ftpSankeyData}
+              data={ftpSankeyData}
             />
           </div>
 

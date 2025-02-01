@@ -6,31 +6,31 @@ import ReactECharts from "echarts-for-react";
 // Define the structure of each node
 interface SankeyNode {
   name: string;
-  // Additional properties can be added as needed
 }
 
-// Define the structure of each link
 interface SankeyLink {
   source: string;
   target: string;
   value: number;
 }
 
-// Define the overall data structure
 interface SankeyData {
   nodes: SankeyNode[];
   links: SankeyLink[];
 }
 
 interface FTPSankeyProps {
-  apidata: SankeyData;
+  data: SankeyData;
 }
 
-const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
-  // Mock data for the Sankey diagram
-  const data = apidata
+const labelMap: Record<string, string> = {
+  "172.16.0.1": "Source IP",
+  "21": "Dest Port",
+  // Everything else we'll consider "Source Port"
+  // but you could expand this map or compute logic as needed.
+};
 
-  // Define the chart options
+const FTPSankey: React.FC<FTPSankeyProps> = ({ data }) => {
   const options = {
     title: {
       text: "Sankey Diagram",
@@ -39,6 +39,25 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
     tooltip: {
       trigger: "item",
       triggerOn: "mousemove",
+      // Custom formatter for nodes and edges
+      formatter: (params: any) => {
+        if (params.dataType === "node") {
+          // Node tooltip
+          const nodeName = params.name;
+          const role = labelMap[nodeName] || "Source Port";
+          return `${nodeName} (${role})`;
+        } else if (params.dataType === "edge") {
+          // Edge tooltip
+          const sourceName = params.data.source;
+          const targetName = params.data.target;
+          const value = params.data.value;
+
+          const sourceRole = labelMap[sourceName] || "Source Port";
+          const targetRole = labelMap[targetName] || "Source Port";
+
+          return `(${sourceRole}) ${sourceName} → (${targetRole}) ${targetName}<br/>Value: ${value}`;
+        }
+      },
     },
     series: [
       {
@@ -58,6 +77,11 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
               color: "source",
               opacity: 0.6,
             },
+            label: {
+              show: true,
+              formatter: (params: any) =>
+                `${params.name} (${labelMap[params.name] || "Source Port"})`,
+            },
           },
           {
             depth: 1,
@@ -67,6 +91,11 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
             lineStyle: {
               color: "source",
               opacity: 0.6,
+            },
+            label: {
+              show: true,
+              formatter: (params: any) =>
+                `${params.name} (${labelMap[params.name] || "Source Port"})`,
             },
           },
           {
@@ -78,15 +107,10 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
               color: "source",
               opacity: 0.6,
             },
-          },
-          {
-            depth: 3,
-            itemStyle: {
-              color: "#decbe4",
-            },
-            lineStyle: {
-              color: "source",
-              opacity: 0.6,
+            label: {
+              show: true,
+              formatter: (params: any) =>
+                `${params.name} (${labelMap[params.name] || "Source Port"})`,
             },
           },
         ],
@@ -95,18 +119,6 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ apidata }) => {
         },
       },
     ],
-    // // Optional: Configure the layout to make it more visually appealing
-    // tooltip: {
-    //   trigger: "item",
-    //   triggerOn: "mousemove",
-    //   formatter: (params: any) => {
-    //     if (params.dataType === "node") {
-    //       return `${params.name}`;
-    //     } else if (params.dataType === "edge") {
-    //       return `${params.source} → ${params.target}: ${params.value}`;
-    //     }
-    //   },
-    // },
   };
 
   return (
