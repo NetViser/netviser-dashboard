@@ -20,6 +20,7 @@ import {
 } from "@/utils/client/fetchAttackDetectionVis";
 import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import FTPSankey from "@/components/chart/ftp/sankey";
+import FTPScatterChart from "@/components/chart/ftp/scatter";
 
 export default function Page() {
   const router = useRouter();
@@ -140,6 +141,48 @@ export default function Page() {
   }, [attackVisualizations]);
 
   console.log("Sankey Data", ftpSankeyData);
+
+  const ftpScatterData = useMemo(() => {
+    const normalData = attackVisualizations?.normalData || [];
+    const attackData = attackVisualizations?.attackData || [];
+
+    const normalFlowBytesPerSecond = normalData.map(
+      (record) => record.averagePacketSize
+    );
+    const attackFlowBytesPerSecond = attackData.map(
+      (record) => record.averagePacketSize
+    );
+
+    return {
+      normalData: normalFlowBytesPerSecond,
+      attackData: attackFlowBytesPerSecond,
+    };
+  }, [attackVisualizations]);
+
+  const ftpBoxplotFlowDuration = useMemo(() => {
+    const normalData = attackVisualizations?.normalData || [];
+    const attackData = attackVisualizations?.attackData || [];
+
+    const normalFlowDuration = normalData.map(
+      (record) => record.flowDuration
+    );
+    const attackFlowDuration = attackData.map(
+      (record) => record.flowDuration
+    );
+
+    return [
+      {
+        name: "Normal",
+        data: normalFlowDuration,
+        color: "#4CAF50", // Green
+      },
+      {
+        name: "Attack",
+        data: attackFlowDuration,
+        color: "#F44336", // Red
+      },
+    ];
+  }, [attackVisualizations]);
   
 
   const { data, isLoading: isLoadingDashboard } = useSWR(
@@ -225,31 +268,28 @@ export default function Page() {
             />
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+          <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
             <FTPSankey 
               apidata={ftpSankeyData}
             />
           </div>
 
           {/* Visualization Row 2 */}
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <h3 className="font-semibold mb-2">Source IP Analysis</h3>
-            <div className="flex-1">
-              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
-                <span className="text-stone-400">IP Distribution Chart</span>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+            <h3 className="font-semibold mb-2">Average Packet Size</h3>
+            <FTPScatterChart 
+              normalData={ftpScatterData.normalData}
+              attackData={ftpScatterData.attackData}
+            />
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <h3 className="font-semibold mb-2">Attack Pattern Types</h3>
-            <div className="flex-1">
-              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
-                <span className="text-stone-400">
-                  Pattern Distribution Chart
-                </span>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+            <h3 className="font-semibold mb-2">Flow Duration</h3>
+            <FTPBoxPlot
+              chartTitle="Distribution of Flow Duration (Normal vs Attack)"
+              yAxisName="Flow Duration"
+              groups={ftpBoxplotFlowDuration}
+            />
           </div>
         </div>
       </div>
