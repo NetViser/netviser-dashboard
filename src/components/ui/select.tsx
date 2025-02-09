@@ -145,6 +145,24 @@ const SelectSeparator = React.forwardRef<
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
+function ExplainabilitySelector({ onSelect }: { onSelect: (value: string) => void }) {
+  return (
+    <div className="flex justify-end items-center w-fit min-w-[18rem] py-4 pr-6">
+      <label className="text-md font-semibold text-gray-700 w-full">Explain Mode:</label>
+      <Select onValueChange={onSelect}>
+        <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
+          <SelectPrimitive.Value placeholder="Visualization" />
+        </SelectTrigger>
+        <SelectContent className="bg-orange-500 text-white">
+          <SelectItem value="Visualization" className="text-md hover:bg-orange-600">Visualization</SelectItem>
+          <SelectItem value="XAI" className="text-md hover:bg-orange-600">XAI</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+
 export {
   Select,
   SelectGroup,
@@ -156,4 +174,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  ExplainabilitySelector,
 }

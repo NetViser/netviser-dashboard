@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./column-header";
 import { AttackRecord } from "@/utils/client/fetchAttackDetectionRecord";
+import { Button } from "@/components/ui/button";
 
 // Function to format ISO 8601 timestamps to millisecond-level precision
 function formatTimestamp(isoString: string): string {
@@ -35,8 +36,12 @@ const protocolMapping: Record<number, string> = {
   // Add more mappings as needed
 };
 
+export type AttackRecordWithXAI = AttackRecord & {
+  onShowXAI?: (record: AttackRecord) => void;
+};
+
 // Usage in the column definition
-export const columns: ColumnDef<AttackRecord>[] = [
+export const columns: ColumnDef<AttackRecordWithXAI>[] = [
   {
     accessorKey: "timestamp",
     header: ({ column }) => (
@@ -70,7 +75,8 @@ export const columns: ColumnDef<AttackRecord>[] = [
     header: "Protocol",
     cell: ({ row }) => {
       const protocolNumber = row.getValue<number>("protocol");
-      const protocolName = protocolMapping[protocolNumber] || `Unknown (${protocolNumber})`;
+      const protocolName =
+        protocolMapping[protocolNumber] || `Unknown (${protocolNumber})`;
       return <div>{protocolName}</div>;
     },
   },
@@ -90,6 +96,26 @@ export const columns: ColumnDef<AttackRecord>[] = [
       return <div className="text-right">{value.toFixed(2)}</div>;
     },
   },
+  {
+    id: "actions",
+    header: "Explainability",
+    cell: ({ row }) => {
+      const rowData = row.original;
+
+      return (
+        <div className="w-full flex justify-end">
+          <Button
+            variant="outline" // Or any other variant you prefer as a base
+            className="bg-orange-500 text-white hover:text-gray-100 hover:bg-orange-600"
+            onClick={() => rowData.onShowXAI?.(rowData)}
+          >
+            Show XAI
+          </Button>
+        </div>
+      );
+    },
+  },
+
   // {
   //   accessorKey: "avgPacketSize",
   //   header: "Avg Packet Size",
