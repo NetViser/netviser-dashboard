@@ -19,7 +19,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ icon, title, value }) => {
       {/* Text Section */}
       <div>
         <h4 className="text-md font-medium text-gray-500">{title}</h4>
-        <p className="text-xl font-semibold text-gray-800">{value}</p>
+        <p className="text-xl font-semibold text-stone-800">{value}</p>
       </div>
     </div>
   );

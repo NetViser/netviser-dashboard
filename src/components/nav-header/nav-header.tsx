@@ -32,7 +32,7 @@ export function NavHeader() {
   ));
 
   return (
-    <header className="bg-gray-900 text-gray-100 shadow-md sticky top-0 z-50">
+    <header className="bg-stone-900 text-gray-100 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         {/* Logo Section */}
         <Link href="/" className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export function NavHeader() {
 
       {/* Mobile Navigation */}
       {menuOpen && (
-        <nav className="sm:hidden bg-gray-800">
+        <nav className="sm:hidden bg-stone-800">
           <ul className="flex flex-col space-y-2 p-4">{items}</ul>
         </nav>
       )}

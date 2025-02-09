@@ -54,17 +54,17 @@ export default function Home() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+    <div className="min-h-screen flex flex-col bg-white text-stone-900">
       {/* Header Section */}
       <div className="bg-orange-600 flex px-4 relative h-[58vh]">
         {/* Overlapping Card */}
         <div className={`absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2`}>
           <div className="bg-white rounded-lg border border-2 shadow-sm p-6 md:p-10">
             <div className="text-center mb-6">
-              <h1 className="text-4xl font-extrabold text-gray-900">
+              <h1 className="text-4xl font-extrabold text-stone-900">
                 NetViser
               </h1>
-              <h2 className="text-xl font-semibold text-gray-700 mt-2">
+              <h2 className="text-xl font-semibold text-stone-700 mt-2">
                 Network Traffic Visualization Platform
               </h2>
             </div>
@@ -80,7 +80,7 @@ export default function Home() {
               <div className="flex flex-col items-center justify-center space-y-4">
                 <TbUpload className="w-12 h-12 text-orange-500 group-hover:text-orange-600 transition-colors" />
                 <div className="text-center space-y-1">
-                  <p className="text-gray-700 font-medium">
+                  <p className="text-stone-700 font-medium">
                     {isDragActive
                       ? "Drop network data file..."
                       : "Drag PCAP/CSV file here"}
@@ -113,10 +113,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 items-start">
           {/* Left Content */}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold text-stone-900 mb-4">
               Getting Started with NetViser
             </h3>
-            <p className="text-gray-700 mb-6">
+            <p className="text-stone-700 mb-6">
               Follow these steps to convert a file to PDF or export a PDF to
               another format using the Acrobat PDF converter:
             </p>
@@ -131,7 +131,7 @@ export default function Home() {
                   <span className="text-lg font-bold text-orange-500">
                     {index + 1}
                   </span>
-                  <p className="text-gray-700">{step}</p>
+                  <p className="text-stone-700">{step}</p>
                 </div>
                 <hr className="border-gray-300" />
               </div>
