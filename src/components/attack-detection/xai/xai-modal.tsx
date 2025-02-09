@@ -62,13 +62,17 @@ export function XAIModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex flex-col justify-center min-w-[95vw]">
+      <DialogContent className="flex flex-col justify-center min-w-[100vw]">
         <DialogHeader>
           <DialogTitle>XAI - Individual Network Instance</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col h-full items-center space-y-4">
-          {isLoading && <Spinner />}
+        <div className="flex flex-col h-full w-full items-center space-y-4">
+          {isLoading && (
+            <div className="h-[40vh] flex items-center justify-center">
+              <Spinner />
+            </div>
+          )}
           {data && (
             <>
               <img
