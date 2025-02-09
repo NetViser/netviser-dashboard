@@ -23,30 +23,30 @@ export interface DashboardResponse {
   }>;
 }
 
-// export const fetchDashboard = async (): Promise<DashboardResponse> => {
-//   // wait 3 seconds
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-//   const response = await fetch("http://localhost:8000/api/dashboard", {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     credentials: "include",
-//   });
-
-//   if (!response.ok) {
-//     const errorMessage = await response.json();
-//     throw new Error(errorMessage || "Failed to get file name");
-//   }
-
-//   return response.json();
-// };
-
-// Simulating a delayed response from the mock JSON file
 export const fetchDashboard = async (): Promise<DashboardResponse> => {
-    // Simulate a network delay of 1 second
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+  // wait 3 seconds
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await fetch("http://localhost:8000/api/dashboard", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
 
-    // Returning the imported mock data instead of making an API call
-    return Promise.resolve(dashboardMockData as DashboardResponse);
+  if (!response.ok) {
+    const errorMessage = await response.json();
+    throw new Error(errorMessage || "Failed to get file name");
+  }
+
+  return response.json();
 };
+
+// // Simulating a delayed response from the mock JSON file
+// export const fetchDashboard = async (): Promise<DashboardResponse> => {
+//     // Simulate a network delay of 1 second
+//     await new Promise((resolve) => setTimeout(resolve, 1000));
+
+//     // Returning the imported mock data instead of making an API call
+//     return Promise.resolve(dashboardMockData as DashboardResponse);
+// };

@@ -298,6 +298,7 @@ export default function Page() {
       {showXaiModal && selectedRow !== null && (
         <XAIModal
           open={showXaiModal}
+          attackType={attackType}
           onOpenChange={setShowXaiModal}
           selectedRow={selectedRow}
         />
