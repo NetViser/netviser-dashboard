@@ -111,7 +111,7 @@ export function XAIModal({
             />
           )}
 
-          <div className="w-full border-t-2 border-stone-900 border-dashed p-4 relative">
+          <div className="w-full p-4 relative">
             <div className="mb-2 text-lg font-semibold text-orange-500">
               Need help understanding the force plot?
             </div>
