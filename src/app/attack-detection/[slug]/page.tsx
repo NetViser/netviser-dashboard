@@ -23,6 +23,7 @@ import FTPSankey from "@/components/chart/ftp/sankey";
 import FTPScatterChart from "@/components/chart/ftp/scatter";
 import { ExplainabilitySelector } from "@/components/ui/select";
 import { XAIModal } from "@/components/attack-detection/xai/xai-modal";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function Page() {
   const router = useRouter();
@@ -273,11 +274,20 @@ export default function Page() {
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
       {/* Header Section */}
-      <div className="flex justify-between items-center w-full mb-4">
-        <div>
-          <h1 className="text-2xl font-bold">Attack Detection</h1>
-          <p className="text-xl font-medium text-gray-500">File: Sample Data</p>
+      <div className="flex justify-between items-center w-full mb-2">
+        <div className="flex items-center transition-all duration-200 ease-in-out">
+          {/* Add transition to the container */}
+          <IoMdArrowRoundBack
+            className="text-stone-400 hover:text-stone-500 mr-2 cursor-pointer transition-transform duration-200 ease-in-out hover:-translate-x-0.5" // Style the icon with hover transform
+            onClick={() => router.back()}
+            size={30}
+          />
+          <h1 className="text-2xl font-bold">
+            Attack Detection /{" "}
+            <span className="text-orange-500">{attackType}</span>
+          </h1>
         </div>
+
         {/* Explainability Selector */}
         <ExplainabilitySelector onSelect={handleExplainabilityModeChange} />
       </div>
