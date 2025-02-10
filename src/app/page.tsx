@@ -22,7 +22,7 @@ export default function Home() {
       await Swal.fire({
         title: "File Uploaded Successfully",
         icon: "success",
-        timer: 1500,
+        timer: 1000,
         showConfirmButton: false,
         timerProgressBar: true,
       });
