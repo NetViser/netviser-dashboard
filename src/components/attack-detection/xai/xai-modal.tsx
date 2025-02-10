@@ -111,8 +111,8 @@ export function XAIModal({
             />
           )}
 
-          <div className="w-full bg-stone-900 p-4 rounded-lg shadow-md relative">
-            <div className="mb-2 text-lg font-semibold text-[#d4647c]">
+          <div className="w-full border-t-2 border-stone-900 border-dashed p-4 relative">
+            <div className="mb-2 text-lg font-semibold text-orange-500">
               Need help understanding the force plot?
             </div>
 
@@ -132,7 +132,8 @@ export function XAIModal({
             )}
 
             {explanationRequested && (
-              <div className="mt-4 relative">
+              <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+              <div className="relative">
                 <img
                   src="/gemini-icon.svg"
                   alt="Gemini Icon"
@@ -142,7 +143,6 @@ export function XAIModal({
                   {explanationLoading ? (
                     <Skeleton
                       style={{
-                        backgroundColor: "#1f2937",
                         borderRadius: "8px",
                         height: "1.5rem",
                       }}
@@ -157,7 +157,7 @@ export function XAIModal({
                         waitUntilVisible: true,
                         cursor: false,
                       }}
-                      className="text-white text-base"
+                      className="text-stone-800 text-base"
                     >
                       {explanationData.explanation}
                     </TypeIt>
@@ -166,6 +166,7 @@ export function XAIModal({
                   )}
                 </div>
               </div>
+            </div>
             )}
           </div>
         </div>
