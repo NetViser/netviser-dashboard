@@ -20,7 +20,7 @@ interface AttacksTableProps {
 const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
   return (
     <div className="py-6 bg-white rounded-lg px-6 shadow-md">
-      <div className="pb-4 text-xl font-semibold text-left text-gray-900">
+      <div className="pb-4 text-xl font-semibold text-left text-stone-900">
         Detected Attack Types
         <p className="mt-1 text-md font-normal text-gray-500">
           Browse the detected attack types, their frequency, and descriptions to
@@ -29,7 +29,7 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
       </div>
       <div className="relative overflow-x-auto border bg-white rounded-lg">
         <table className="w-full text-md text-left text-gray-500">
-          <thead className="text-white uppercase bg-gray-900 rounded-lg">
+          <thead className="text-white uppercase bg-stone-900 rounded-lg">
             <tr>
               <th scope="col" className="px-6 py-3">Attack Type</th>
               <th scope="col" className="px-6 py-3">Number of Attacks</th>
@@ -60,7 +60,7 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
                 >
                   <th
                     scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    className="px-6 py-4 font-medium text-stone-900 whitespace-nowrap"
                   >
                     {rowData.attackType}
                   </th>

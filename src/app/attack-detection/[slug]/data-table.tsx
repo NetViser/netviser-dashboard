@@ -42,7 +42,7 @@ export function DataTable<TData, TValue>({
       <Table className="rounded-lg overflow-hidden">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="uppercase bg-gray-900 text-gray-100">
+            <TableRow key={headerGroup.id} className="uppercase bg-stone-900 text-gray-100">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
@@ -90,10 +90,10 @@ export function DataTable<TData, TValue>({
             onValueChange={(value) => onPageSizeChange(Number(value))}
             defaultValue={String(pageSize)}
           >
-            <SelectTrigger className="w-32 bg-gray-900 text-gray-100">
+            <SelectTrigger className="w-32 bg-stone-900 text-gray-100">
               <SelectValue placeholder="Rows per page" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-900 text-gray-100">
+            <SelectContent className="bg-stone-900 text-gray-100">
               {pageSizes.map((size) => (
                 <SelectItem key={size} value={String(size)}>
                   {size} rows
@@ -104,14 +104,14 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="flex items-center gap-x-2">
           <Button
-            className="bg-gray-900 text-white hover:bg-gray-700"
+            className="bg-stone-900 text-white hover:bg-gray-700"
             onClick={() => onPageChange(1)} // Go to first page
             disabled={currentPage === 1}
           >
             <FaAngleDoubleLeft /> {/* Icon for skip to first page */}
           </Button>
           <Button
-            className="bg-gray-900 text-white hover:bg-gray-700"
+            className="bg-stone-900 text-white hover:bg-gray-700"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -121,14 +121,14 @@ export function DataTable<TData, TValue>({
             Page {currentPage} of {totalPages}
           </span>
           <Button
-            className="bg-gray-900 text-white hover:bg-gray-700"
+            className="bg-stone-900 text-white hover:bg-gray-700"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
             Next
           </Button>
           <Button
-            className="bg-gray-900 text-white hover:bg-gray-700"
+            className="bg-stone-900 text-white hover:bg-gray-700"
             onClick={() => onPageChange(totalPages)} // Go to last page
             disabled={currentPage === totalPages}
           >

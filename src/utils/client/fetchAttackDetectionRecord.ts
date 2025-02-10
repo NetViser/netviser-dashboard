@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export type AttackRecord = {
+  id: number;
   timestamp: string;
   flowBytesPerSecond: number;
   flowDuration: number;
@@ -39,7 +40,7 @@ export async function fetchAttackDetectionRecord(
       // TODO: REMOVE FORCING ATTACK TYPE to BENIGN
       const response = await axios.get<FetchAttackRecordsResponse>(API_URL, {
         params: {
-          attack_type: "BENIGN",
+          attack_type: attackType,
           page,
           page_size: pageSize,
         },

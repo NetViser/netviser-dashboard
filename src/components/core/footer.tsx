@@ -23,7 +23,7 @@ export default function Footer() {
   ));
 
   return (
-    <div className="mt-30 border-t border-gray-700 bg-black text-white">
+    <div className="mt-30 border-t border-stone-900 bg-black text-white">
       <div className="container mx-auto flex justify-between items-center px-4 py-6 flex-col sm:flex-row">
         {/* Logo */}
         <div className="flex justify-center sm:justify-start">

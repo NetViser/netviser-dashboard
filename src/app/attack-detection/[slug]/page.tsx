@@ -6,8 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useSWR from "swr";
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
 import { useMemo, useState } from "react";
+import { columns as baseColumns } from "./columns";
 import {
   API_URL,
   AttackRecord,
@@ -20,6 +20,9 @@ import {
 } from "@/utils/client/fetchAttackDetectionVis";
 import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import FTPSankey from "@/components/chart/ftp/sankey";
+import FTPScatterChart from "@/components/chart/ftp/scatter";
+import { ExplainabilitySelector } from "@/components/ui/select";
+import { XAIModal } from "@/components/attack-detection/xai/xai-modal";
 
 export default function Page() {
   const router = useRouter();
@@ -29,6 +32,11 @@ export default function Page() {
   const slugName = params?.slug || "";
   const attackType = decodeURIComponent(slugName as string);
   const { setActiveSession, isActiveSession } = useSessionStore();
+  const [explainabilityMode, setExplainabilityMode] = useState<
+    "Visualization" | "XAI"
+  >("Visualization");
+  const [showXaiModal, setShowXaiModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
 
   const { data: attackRecords, isLoading: isLoadingAttackRecords } = useSWR(
     `${API_URL}?attack_type=${attackType}&page=${page}&page_size=${pageSize}`,
@@ -117,10 +125,14 @@ export default function Page() {
 
   const ftpSankeyData = useMemo(() => {
     const attackData = attackVisualizations?.attackData || [];
-  
+
     const nodes = Array.from(
       new Set(
-        attackData.flatMap((record) => [String(record.srcPort), String(record.dstPort), String(record.srcIp)])
+        attackData.flatMap((record) => [
+          String(record.srcPort),
+          String(record.dstPort),
+          String(record.srcIp),
+        ])
       )
     ).map((name) => ({ name }));
 
@@ -142,7 +154,7 @@ export default function Page() {
     const links = [...srcIpLinks, ...portLinks];
 
     console.log("Sankey Data", links);
-  
+
     return {
       nodes,
       links, // Use the properly mapped links
@@ -150,7 +162,44 @@ export default function Page() {
   }, [attackVisualizations]);
 
   console.log("Sankey Data", ftpSankeyData);
-  
+
+  const ftpScatterData = useMemo(() => {
+    const normalData = attackVisualizations?.normalData || [];
+    const attackData = attackVisualizations?.attackData || [];
+
+    const normalFlowBytesPerSecond = normalData.map(
+      (record) => record.averagePacketSize
+    );
+    const attackFlowBytesPerSecond = attackData.map(
+      (record) => record.averagePacketSize
+    );
+
+    return {
+      normalData: normalFlowBytesPerSecond,
+      attackData: attackFlowBytesPerSecond,
+    };
+  }, [attackVisualizations]);
+
+  const ftpBoxplotFlowDuration = useMemo(() => {
+    const normalData = attackVisualizations?.normalData || [];
+    const attackData = attackVisualizations?.attackData || [];
+
+    const normalFlowDuration = normalData.map((record) => record.flowDuration);
+    const attackFlowDuration = attackData.map((record) => record.flowDuration);
+
+    return [
+      {
+        name: "Normal",
+        data: normalFlowDuration,
+        color: "#4CAF50", // Green
+      },
+      {
+        name: "Attack",
+        data: attackFlowDuration,
+        color: "#F44336", // Red
+      },
+    ];
+  }, [attackVisualizations]);
 
   const { data, isLoading: isLoadingDashboard } = useSWR(
     "/api/dashboard",
@@ -180,6 +229,16 @@ export default function Page() {
   };
   // Get the slug name from params
 
+  const columnsToRender = useMemo(() => {
+    if (explainabilityMode === "XAI") {
+      // Keep all columns including "actions"
+      return baseColumns;
+    } else {
+      // Filter out the "actions" column
+      return baseColumns.filter((col) => col.id !== "actions");
+    }
+  }, [explainabilityMode]);
+
   if (isLoadingAttackRecords || isLoadingDashboard || isLoadingVisualizations) {
     return (
       <div className="h-screen bg-transparent flex flex-col items-center justify-center">
@@ -197,21 +256,37 @@ export default function Page() {
     setPageSize(newPageSize);
   };
 
+  const handleExplainabilityModeChange = (value: string) => {
+    setExplainabilityMode(value as "Visualization" | "XAI");
+  };
+
+  const handleShowXAI = (rowData: AttackRecord) => {
+    setSelectedRow(rowData.id);
+    setShowXaiModal(true);
+  };
+
+  const recordsWithCallback = (attackRecords?.attack_data || []).map((row) => ({
+    ...row,
+    onShowXAI: handleShowXAI,
+  }));
+
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
       {/* Header Section */}
-      <div className="flex flex-col items-start w-full">
-        <div className="text-2xl font-bold">{`Attack Detection / ${attackType}`}</div>
-        <div className="text-xl font-medium mb-6 text-gray-500">
-          {data ? extractFileName(data?.file_name) : "Unknown"}
+      <div className="flex justify-between items-center w-full mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">Attack Detection</h1>
+          <p className="text-xl font-medium text-gray-500">File: Sample Data</p>
         </div>
+        {/* Explainability Selector */}
+        <ExplainabilitySelector onSelect={handleExplainabilityModeChange} />
       </div>
       {/* Table Section */}
       <div className="w-full rounded-lg shadow-sm bg-white p-6">
         <h2 className="text-xl font-bold mb-4">Detected Attacks Records</h2>
         <DataTable
-          columns={columns}
-          data={(attackRecords?.attack_data as AttackRecord[]) || []}
+          columns={columnsToRender} // <--- use the filtered or full set
+          data={recordsWithCallback}
           totalPages={attackRecords?.total_pages || 0}
           pageSize={pageSize}
           currentPage={page}
@@ -219,50 +294,56 @@ export default function Page() {
           onPageSizeChange={handlePageSizeChange}
         />
       </div>
+      {/* Explainability Modal */}
+      {showXaiModal && selectedRow !== null && (
+        <XAIModal
+          open={showXaiModal}
+          attackType={attackType}
+          onOpenChange={setShowXaiModal}
+          selectedRow={selectedRow}
+        />
+      )}
 
       {/* Attack Specific Visualization Section */}
-      <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
-        <h2 className="text-xl font-bold mb-4">
-          Attack Specific Visualizations
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Visualization Row 1 */}
-          <div className="p-6 rounded-lg border-2 flex flex-col">
-            <FTPBoxPlot
-              chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
-              yAxisName="Flow Bytes Per Second"
-              groups={ftpBoxPlotFlowBytesPerSecondData}
-            />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col border-2">
-            <FTPSankey 
-              data={ftpSankeyData}
-            />
-          </div>
-
-          {/* Visualization Row 2 */}
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <h3 className="font-semibold mb-2">Source IP Analysis</h3>
-            <div className="flex-1">
-              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
-                <span className="text-stone-400">IP Distribution Chart</span>
-              </div>
+      {explainabilityMode === "Visualization" && (
+        <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
+          <h2 className="text-xl font-bold mb-4">
+            Attack Specific Visualizations
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Visualization Row 1 */}
+            <div className="p-6 rounded-lg border-2 flex flex-col">
+              <FTPBoxPlot
+                chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
+                yAxisName="Flow Bytes Per Second"
+                groups={ftpBoxPlotFlowBytesPerSecondData}
+              />
             </div>
-          </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col">
-            <h3 className="font-semibold mb-2">Attack Pattern Types</h3>
-            <div className="flex-1">
-              <div className="h-48 bg-stone-50 rounded-md border border-stone-200 flex items-center justify-center">
-                <span className="text-stone-400">
-                  Pattern Distribution Chart
-                </span>
-              </div>
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <FTPSankey data={ftpSankeyData} />
+            </div>
+
+            {/* Visualization Row 2 */}
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <h3 className="font-semibold mb-2">Average Packet Size</h3>
+              <FTPScatterChart
+                normalData={ftpScatterData.normalData}
+                attackData={ftpScatterData.attackData}
+              />
+            </div>
+
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <h3 className="font-semibold mb-2">Flow Duration</h3>
+              <FTPBoxPlot
+                chartTitle="Distribution of Flow Duration (Normal vs Attack)"
+                yAxisName="Flow Duration"
+                groups={ftpBoxplotFlowDuration}
+              />
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
