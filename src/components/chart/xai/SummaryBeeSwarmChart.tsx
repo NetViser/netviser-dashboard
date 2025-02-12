@@ -162,6 +162,7 @@ export default function SummaryBeeSwarmChart({
       left: gridLeft,
       top: "8%",
       right: "10%",
+      bottom: "8%",
     },
   };
 
@@ -228,7 +229,7 @@ export default function SummaryBeeSwarmChart({
           />
         )}
       </div>
-      <ReactECharts option={option} style={{ height: 400, width: "100%" }} />
+      <ReactECharts option={option} style={{ height: withDataZoom ? 320 : 400, width: "100%" }} />
     </div>
   );
 }

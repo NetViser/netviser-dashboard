@@ -35,7 +35,11 @@ export default function SummaryBarChart({
 
   // Calculate initial data zoom range: show only top 5 features
   const totalFeatures = sortedData.length;
-  const endPercentage = minimal ? 100 : totalFeatures > 0 ? (5 / totalFeatures) * 100 : 100;
+  const endPercentage = minimal
+    ? 100
+    : totalFeatures > 0
+    ? (5 / totalFeatures) * 100
+    : 100;
 
   const option = {
     dataset: {
@@ -45,7 +49,9 @@ export default function SummaryBarChart({
       trigger: "item",
       formatter: function (params: any) {
         if (params.value && params.value.length >= 2) {
-          return `Feature: ${params.value[0]}<br/>Mean | SHAP | Value: ${params.value[1].toFixed(4)}`;
+          return `Feature: ${
+            params.value[0]
+          }<br/>Mean | SHAP | Value: ${params.value[1].toFixed(4)}`;
         }
         return `Value: ${params.value}`;
       },
@@ -76,10 +82,10 @@ export default function SummaryBarChart({
       },
     },
     grid: {
-        left: "0%",
-        right: "10%",
-        bottom: "8%",
-        containLabel: true,
+      left: "0%",
+      right: "10%",
+      bottom: "8%",
+      containLabel: true,
     },
     series: [
       {
@@ -97,11 +103,15 @@ export default function SummaryBarChart({
 
   // If minimal is true, return only the chart without header or help icon
   if (minimal) {
-    return <ReactECharts option={option} style={{ height: 400 }} />;
+    return (
+      <div className="w-full h-full p-8 overflow-auto">
+        <ReactECharts option={option} style={{ height: 360 }} />
+      </div>
+    );
   }
 
   return (
-    <div className="p-8 py-4">
+    <div className="p-8 py-4 overflow-auto">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
           {`Feature Important By Mean |SHAP| Value (${attackType})`}

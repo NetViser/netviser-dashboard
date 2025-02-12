@@ -19,6 +19,7 @@ import {
 } from "@/utils/client/fetchAttackSummaryXAI";
 import SummaryBarChart from "@/components/chart/xai/SummaryBarChart";
 import Swal from "sweetalert2";
+import { ReactTyped } from "react-typed";
 
 export type XAIBarSummaryModalProps = {
   open: boolean;
@@ -67,10 +68,10 @@ export function XAIBarSummaryModal({
             {`Feature Importance By Mean |SHAP| Value (${attackType})`}
           </DialogTitle>
         </DialogHeader>
-        <div className="w-full">
+        <div className="w-full -mt-6">
           <SummaryBarChart attackType={attackType} data={data} minimal />
         </div>
-        <div className="w-full p-4 mt-4 border-t border-stone-300">
+        <div className="w-full p-4 mt-4 border-t border-stone-300 -mt-4">
           <div className="mb-2 text-lg font-semibold text-orange-500">
             Need help understanding the force plot?
           </div>
@@ -89,7 +90,7 @@ export function XAIBarSummaryModal({
             </Button>
           )}
           {explanationRequested && (
-            <div className="bg-gray-100 p-4 rounded-lg shadow-md mt-4">
+            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="relative">
                 <img
                   src="/gemini-icon.svg"
@@ -105,18 +106,13 @@ export function XAIBarSummaryModal({
                     />
                   ) : explanationData ? (
                     // The key ensures that TypeIt re-mounts when the text changes.
-                    <TypeIt
-                      key={explanationData.explanation}
-                      as="div"
-                      options={{
-                        speed: 1,
-                        waitUntilVisible: true,
-                        cursor: false,
-                      }}
+                    <ReactTyped
+                      strings={[explanationData.explanation]}
+                      typeSpeed={1}
+                      backSpeed={0}
+                      showCursor={false}
                       className="text-stone-800 text-base"
-                    >
-                      {explanationData.explanation}
-                    </TypeIt>
+                    />
                   ) : (
                     <div className="text-red-500">
                       Failed to load explanation.
