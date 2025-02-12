@@ -153,7 +153,7 @@ export default function SummaryBeeSwarmChart({
           text: "Feature Value",
           textAlign: "center",
           fill: "#000",
-          fontSize: 10,
+          fontSize: 12,
         },
       },
     ],

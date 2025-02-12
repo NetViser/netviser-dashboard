@@ -22,8 +22,22 @@ export type FetchAttackSummaryXAIPayload = {
   attack_type: string;
 };
 
+export type FetchAttackBarSummaryXAIExplanationPayload = {
+  attack_type: string;
+};
+
+export type FetchAttackBarSummaryXAIExplanationResponse = {
+  explanation: string;
+};
+
 export const FETCH_ATTACK_SUMMARY_XAI_API_URL =
   "http://localhost:8000/api/attack-detection/xai/summary";
+
+export const FETCH_ATTACK_BAR_SUMMARY_XAI_EXPLANATION_API_URL =
+  "http://localhost:8000/api/attack-detection/xai/summary/bar/explanation";
+
+export const FETCH_ATTACK_BEESWARM_SUMMARY_XAI_EXPLANATION_API_URL =
+    "http://localhost:8000/api/attack-detection/xai/summary/beeswarm/explanation";
 
 export async function fetchAttackSummaryXAI(
   payload: FetchAttackSummaryXAIPayload
@@ -39,6 +53,29 @@ export async function fetchAttackSummaryXAI(
     const response = await axios.get<FetchAttackSummaryXAIResponse>(url, {
       withCredentials: true, // Ensure session cookies are sent
     });
+
+    return response.data; // Return the API response data
+  } catch (error) {
+    console.error("Error fetching individual XAI data:", error);
+    throw new Error("Failed to fetch individual XAI data.");
+  }
+}
+
+export async function fetchAttackBarSummaryXAIExplanation(
+  payload: FetchAttackBarSummaryXAIExplanationPayload
+): Promise<FetchAttackBarSummaryXAIExplanationResponse> {
+  try {
+    // Construct the search parameters explicitly.
+    const searchParams = new URLSearchParams({
+      attack_type: payload.attack_type,
+    });
+
+    const url = `${FETCH_ATTACK_BAR_SUMMARY_XAI_EXPLANATION_API_URL}?${searchParams.toString()}`;
+
+    const response =
+      await axios.get<FetchAttackBarSummaryXAIExplanationResponse>(url, {
+        withCredentials: true, // Ensure session cookies are sent
+      });
 
     return response.data; // Return the API response data
   } catch (error) {

@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import {
   fetchIndividualXAI,
-  fetchIndividualXAIExplaination,
-  FetchIndividualXAIExplainationResponse,
+  fetchIndividualXAIExplanation,
   FetchIndividualXAIResponse,
+  FetchIndividualXAIExplanationResponse,
 } from "@/utils/client/fetchIndividualXAI";
 import {
   Dialog,
@@ -62,12 +62,12 @@ export function XAIModal({
   );
 
   const { data: explanationData, isLoading: explanationLoading } =
-    useSWR<FetchIndividualXAIExplainationResponse>(
+    useSWR<FetchIndividualXAIExplanationResponse>(
       explanationRequested
-        ? ["fetchIndividualXAIExplaination", attackType, selectedRow]
+        ? ["fetchIndividualXAIExplanation", attackType, selectedRow]
         : null,
       () =>
-        fetchIndividualXAIExplaination({
+        fetchIndividualXAIExplanation({
           attack_type: attackType,
           data_point_id: selectedRow,
         }),
@@ -153,7 +153,7 @@ export function XAIModal({
                     <TypeIt
                       as="div"
                       options={{
-                        speed: 5,
+                        speed: 1,
                         waitUntilVisible: true,
                         cursor: false,
                       }}
