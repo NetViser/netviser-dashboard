@@ -1,10 +1,9 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./column-header";
 import { AttackRecord } from "@/utils/client/fetchAttackDetectionRecord";
 import { Button } from "@/components/ui/button";
-import { PiChalkboardTeacherFill } from "react-icons/pi";
+import { FaExpandAlt } from "react-icons/fa";
 
 // Function to format ISO 8601 timestamps to millisecond-level precision
 function formatTimestamp(isoString: string): string {
@@ -107,11 +106,11 @@ export const columns: ColumnDef<AttackRecordWithXAI>[] = [
         <div className="w-full flex justify-end">
           <Button
             variant="outline" // Or any other variant you prefer as a base
-            className="bg-orange-500 font-semibold text-white hover:text-gray-100 hover:bg-orange-600"
+            className="bg-orange-500 font-semibold text-white hover:text-gray-100 hover:bg-orange-600 group"
             onClick={() => rowData.onShowXAI?.(rowData)}
           >
             Show XAI
-            <PiChalkboardTeacherFill className="w-5 h-5" />
+            <FaExpandAlt className="w-5 h-5 text-white ml-1 transition transform group-hover:scale-110" />
           </Button>
         </div>
       );
