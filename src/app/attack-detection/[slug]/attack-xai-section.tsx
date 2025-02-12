@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import SummaryBarChart from "@/components/chart/xai/SummaryBarChart";
 import { Button } from "@/components/ui/button";
 import { XAIBarSummaryModal } from "@/components/attack-detection/xai/xai-bar-summary-modal";
+import SummaryBeeSwarmChart from "@/components/chart/xai/SummaryBeeSwarmChart";
+import { XAIBeeswarmSummaryModal } from "@/components/attack-detection/xai/xai-beeswarm-summary-modal";
 
 type AttackXAISectionProps = {
   attackType: string;
@@ -50,21 +52,28 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
       {/* First Row */}
       <div className="flex flex-col md:flex-row gap-4">
         {/* Left: Bar Summary Chart */}
-        <div className="md:w-1/2 border-2 rounded-lg border-orange-500/50 pr-4">
+        <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
           <SummaryBarChart
             attackType={attackType}
             data={data?.bar_summary!}
             onHelpClick={() => setShowBarChartModal(true)}
           />
         </div>
-        <div className="md:w-1/2"></div>
+        <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
+          <SummaryBeeSwarmChart
+            attackType={attackType}
+            withDataZoom={false}
+            onHelpClick={() => setShowBarChartModal(true)}
+            data={data?.beeswarm_summary!}
+          />
+        </div>
       </div>
       {/* Modal: Full width chart with help section */}
-      <XAIBarSummaryModal
+      <XAIBeeswarmSummaryModal
         open={showBarChartModal}
         onOpenChange={setShowBarChartModal}
         attackType={attackType}
-        data={data?.bar_summary!}
+        data={data?.beeswarm_summary!}
       />
     </div>
   );

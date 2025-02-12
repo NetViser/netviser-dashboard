@@ -41,7 +41,6 @@ export default function SummaryBarChart({
     dataset: {
       source: source,
     },
-    grid: { containLabel: true },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -75,6 +74,12 @@ export default function SummaryBarChart({
         dataView: { readOnly: false },
         saveAsImage: {},
       },
+    },
+    grid: {
+        left: "0%",
+        right: "10%",
+        bottom: "8%",
+        containLabel: true,
     },
     series: [
       {

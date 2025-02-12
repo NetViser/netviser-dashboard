@@ -28,7 +28,7 @@ export default function Page() {
 
   const [explainabilityMode, setExplainabilityMode] = useState<
     "Visualization" | "XAI"
-  >("Visualization");
+  >("XAI");
 
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
