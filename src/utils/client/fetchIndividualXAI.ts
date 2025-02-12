@@ -11,20 +11,20 @@ export type FetchIndividualXAIPayload = {
   data_point_id: number;
 };
 
-export type FetchIndividualXAIExplainationPayload = {
+export type FetchIndividualXAIExplanationPayload = {
   attack_type: string;
   data_point_id: number;
 };
 
-export type FetchIndividualXAIExplainationResponse = {
+export type FetchIndividualXAIExplanationResponse = {
   explanation: string;
 };
 
 export const FETCH_INDIVIDUAL_XAI_API_URL =
   "http://localhost:8000/api/attack-detection/xai/individual";
 
-export const FETCH_INDIVIDUAL_XAI_EXPLAINATION_API_URL =
-  "http://localhost:8000/api/attack-detection/xai/individual/explaination";
+export const FETCH_INDIVIDUAL_XAI_EXPLANATION_API_URL =
+  "http://localhost:8000/api/attack-detection/xai/individual/explanation";
 
 export async function fetchIndividualXAI(
   payload: FetchIndividualXAIPayload
@@ -49,19 +49,18 @@ export async function fetchIndividualXAI(
   }
 }
 
-export async function fetchIndividualXAIExplaination(
-  payload: FetchIndividualXAIExplainationPayload
-): Promise<FetchIndividualXAIExplainationResponse> {
+export async function fetchIndividualXAIExplanation(
+  payload: FetchIndividualXAIExplanationPayload
+): Promise<FetchIndividualXAIExplanationResponse> {
   try {
     // Construct the search parameters explicitly.
     const searchParams = new URLSearchParams({
       attack_type: payload.attack_type,
       data_point_id: payload.data_point_id.toString(),
     });
-    await new Promise((resolve) => setTimeout(resolve, 10000));
-    const url = `${FETCH_INDIVIDUAL_XAI_EXPLAINATION_API_URL}?${searchParams.toString()}`;
+    const url = `${FETCH_INDIVIDUAL_XAI_EXPLANATION_API_URL}?${searchParams.toString()}`;
 
-    const response = await axios.get<FetchIndividualXAIExplainationResponse>(
+    const response = await axios.get<FetchIndividualXAIExplanationResponse>(
       url,
       {
         withCredentials: true, // Ensure session cookies are sent

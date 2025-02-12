@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import {
   fetchIndividualXAI,
-  fetchIndividualXAIExplaination,
-  FetchIndividualXAIExplainationResponse,
+  fetchIndividualXAIExplanation,
   FetchIndividualXAIResponse,
+  FetchIndividualXAIExplanationResponse,
 } from "@/utils/client/fetchIndividualXAI";
 import {
   Dialog,
@@ -20,6 +20,7 @@ import Spinner from "@/components/loader/spinner";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import TypeIt from "typeit-react";
+import { ReactTyped } from "react-typed";
 
 interface XAIModalProps {
   open: boolean;
@@ -62,12 +63,12 @@ export function XAIModal({
   );
 
   const { data: explanationData, isLoading: explanationLoading } =
-    useSWR<FetchIndividualXAIExplainationResponse>(
+    useSWR<FetchIndividualXAIExplanationResponse>(
       explanationRequested
-        ? ["fetchIndividualXAIExplaination", attackType, selectedRow]
+        ? ["fetchIndividualXAIExplanation", attackType, selectedRow]
         : null,
       () =>
-        fetchIndividualXAIExplaination({
+        fetchIndividualXAIExplanation({
           attack_type: attackType,
           data_point_id: selectedRow,
         }),
@@ -150,17 +151,13 @@ export function XAIModal({
                       width="100%"
                     />
                   ) : explanationData ? (
-                    <TypeIt
-                      as="div"
-                      options={{
-                        speed: 5,
-                        waitUntilVisible: true,
-                        cursor: false,
-                      }}
+                    <ReactTyped
+                      strings={[explanationData.explanation]}
+                      typeSpeed={1}
+                      backSpeed={0}
+                      showCursor={false}
                       className="text-stone-800 text-base"
-                    >
-                      {explanationData.explanation}
-                    </TypeIt>
+                    />
                   ) : (
                     <div className="text-red-500">Failed to load explanation.</div>
                   )}
