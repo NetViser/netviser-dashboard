@@ -33,7 +33,7 @@ export default function DashboardPage() {
         icon: "error",
         title: "Session Expired",
         confirmButtonText: "OK",
-        timer: 3000,
+        timer: 1000,
         timerProgressBar: true,
         allowOutsideClick: false,
         allowEscapeKey: false,

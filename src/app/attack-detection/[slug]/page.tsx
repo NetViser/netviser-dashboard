@@ -28,7 +28,7 @@ export default function Page() {
 
   const [explainabilityMode, setExplainabilityMode] = useState<
     "Visualization" | "XAI"
-  >("XAI");
+  >("Visualization");
 
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
@@ -72,7 +72,7 @@ export default function Page() {
       icon: "error",
       title: "Session Expired",
       confirmButtonText: "OK",
-      timer: 3000,
+      timer: 1000,
       timerProgressBar: true,
       allowOutsideClick: false,
       allowEscapeKey: false,
