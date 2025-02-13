@@ -23,14 +23,14 @@ export default function PieChart({
     },
     legend: {
       left: "center",
-      top: "5%",
+      top: "1%",
     },
     series: [
       {
         name: "Protocol Type",
         type: "pie",
-        radius: ["40%", "70%"],
-        center: ["50%", "60%"], // Moves the chart down
+        radius: ["30%", "70%"],
+        center: ["50%", "56%"], // Moves the chart down
         avoidLabelOverlap: false,
         label: {
           show: true,
