@@ -1,19 +1,27 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import FTPSankey from "@/components/chart/ftp/sankey";
 import FTPScatterChart from "@/components/chart/ftp/scatter";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
+import { Tabs, Tab } from "@/components/ui/tabs/tabs";
+import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 
-type Props = {
-  attackVisualizations: {
-    normalData: SpecificAttackRecord[];
-    attackData: SpecificAttackRecord[];
-  } | undefined;
+type AttackVisualizationsSectionProps = {
+  attackVisualizations:
+    | {
+        normalData: SpecificAttackRecord[];
+        attackData: SpecificAttackRecord[];
+      }
+    | undefined;
 };
 
-export function AttackVisualizationsSection({ attackVisualizations }: Props) {
+export function AttackVisualizationsSection({
+  attackVisualizations,
+}: AttackVisualizationsSectionProps) {
+  const [activeTab, setActiveTab] = useState("overall");
+
   // --- Prepare data for FTPBoxPlot - Flow Bytes Per Second
   const ftpBoxPlotFlowBytesPerSecondData = useMemo(() => {
     if (!attackVisualizations) return [];
@@ -111,45 +119,54 @@ export function AttackVisualizationsSection({ attackVisualizations }: Props) {
     ];
   }, [attackVisualizations]);
 
-  if (!attackVisualizations) return null; // or some fallback
+  if (!attackVisualizations) return null;
 
   return (
     <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
       <h2 className="text-xl font-bold mb-4">Attack Specific Visualizations</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {/* BoxPlot - Flow Bytes */}
-        <div className="p-6 rounded-lg border-2 flex flex-col">
-          <FTPBoxPlot
-            chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
-            yAxisName="Flow Bytes Per Second"
-            groups={ftpBoxPlotFlowBytesPerSecondData}
-          />
-        </div>
 
-        {/* Sankey */}
-        <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
-          <FTPSankey data={ftpSankeyData} />
-        </div>
+      {/* Tabs */}
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab}>
+        <Tab tab="overall" label="Overall">
+          <div className="grid grid-cols-2 gap-4">
+            {/* BoxPlot - Flow Bytes */}
+            <div className="p-6 rounded-lg border-2 flex flex-col">
+              <FTPBoxPlot
+                chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
+                yAxisName="Flow Bytes Per Second"
+                groups={ftpBoxPlotFlowBytesPerSecondData}
+              />
+            </div>
 
-        {/* Scatter - Average Packet Size */}
-        <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
-          <h3 className="font-semibold mb-2">Average Packet Size</h3>
-          <FTPScatterChart
-            normalData={ftpScatterData.normalData}
-            attackData={ftpScatterData.attackData}
-          />
-        </div>
+            {/* Sankey */}
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <FTPSankey data={ftpSankeyData} />
+            </div>
 
-        {/* BoxPlot - Flow Duration */}
-        <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
-          <h3 className="font-semibold mb-2">Flow Duration</h3>
-          <FTPBoxPlot
-            chartTitle="Distribution of Flow Duration (Normal vs Attack)"
-            yAxisName="Flow Duration"
-            groups={ftpBoxplotFlowDuration}
-          />
-        </div>
-      </div>
+            {/* Scatter - Average Packet Size */}
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <h3 className="font-semibold mb-2">Average Packet Size</h3>
+              <FTPScatterChart
+                normalData={ftpScatterData.normalData}
+                attackData={ftpScatterData.attackData}
+              />
+            </div>
+
+            {/* BoxPlot - Flow Duration */}
+            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+              <h3 className="font-semibold mb-2">Flow Duration</h3>
+              <FTPBoxPlot
+                chartTitle="Distribution of Flow Duration (Normal vs Attack)"
+                yAxisName="Flow Duration"
+                groups={ftpBoxplotFlowDuration}
+              />
+            </div>
+          </div>
+        </Tab>
+        <Tab tab="timeseries" label="Time Series">
+          <AttackDetectionTimeSeries />
+        </Tab>
+      </Tabs>
     </div>
   );
 }
