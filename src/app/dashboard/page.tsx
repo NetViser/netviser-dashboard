@@ -23,7 +23,7 @@ export default function DashboardPage() {
   };
 
   const router = useRouter();
-  const { setActiveSession, isActiveSession } = useSessionStore();
+  const { setActiveSession } = useSessionStore();
 
   const { data, isLoading } = useSWR("/api/dashboard", fetchDashboard, {
     shouldRetryOnError: false,
@@ -90,6 +90,18 @@ export default function DashboardPage() {
     return formattedData;
   }, [data, isLoading]);
 
+  const getProtocolPieChartData = useMemo(() => {
+    if (!data) return [];
+    // Map 17 to TCP and 6 to UDP
+    const formattedData = Object.entries(
+      data.protocol_distribution as Record<string, number>
+    ).map(([key, value]) => ({
+      name: key === "17" ? "TCP" : key === "6" ? "UDP" : key,
+      value,
+    }));
+    return formattedData;
+  }, [data, isLoading]);
+
   if (isLoading) {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
@@ -122,16 +134,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <HorizontalBarChart
+          <PieChart
             title="Protocol Distribution"
-            data={Object.values(
-              data?.protocol_distribution as Record<string, number>
-            )}
-            categories={Object.keys(
-              data?.protocol_distribution as Record<string, number>
-            ).map((key) => String(key))}
+            data={getProtocolPieChartData}
+            showFrequency
           />
-
           <BarChart
             title="Source IP Distribution"
             data={Object.values(
@@ -141,12 +148,10 @@ export default function DashboardPage() {
               data?.src_ip_address_distribution as Record<string, number>
             ).map((key) => String(key))}
           />
-
           <PieChart
             title="Destination Port Distribution"
             data={getDstPortPieChartData}
           />
-
           <PieChart
             title="Attack Class Distribution"
             data={getAttackClassPieChartData}
