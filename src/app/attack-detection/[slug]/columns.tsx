@@ -1,4 +1,5 @@
 "use client";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./column-header";
 import { AttackRecord } from "@/utils/client/fetchAttackDetectionRecord";

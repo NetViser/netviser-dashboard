@@ -2,7 +2,6 @@
 
 import React from "react";
 import ReactECharts from "echarts-for-react";
-import { colors } from "@/app/theme";
 
 type HorizontalBarChartProps = {
   title: string;

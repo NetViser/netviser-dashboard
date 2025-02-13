@@ -33,7 +33,7 @@ export default function RootLayout({
         <title>{(metadata as any).title}</title>
         <meta name="description" content={(metadata as any).description} />
       </Head>
-      <body className="antialiased bg-stone-100">
+      <body className="antialiased bg-stone-100" suppressHydrationWarning>
         {/* Navigation Header */}
         <NavHeader />
 
