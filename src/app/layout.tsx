@@ -40,11 +40,6 @@ export default function RootLayout({
         {/* Main Content */}
         <main className="flex flex-col min-h-screen">{children}</main>
 
-        {/* Footer */}
-        <Footer />
-
-        {/* Optional Script for Flowbite (if needed) */}
-        <script src="../../node_modules/flowbite"></script>
       </body>
     </html>
   );

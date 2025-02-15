@@ -117,8 +117,7 @@ export default function Home() {
               Getting Started with NetViser
             </h3>
             <p className="text-stone-700 mb-6">
-              Follow these steps to convert a file to PDF or export a PDF to
-              another format using the Acrobat PDF converter:
+              Follow these steps to detect and visualize your network traffic with the benefit of explanable AI
             </p>
             {[
               "Upload network capture files or synthetic attack datasets",
