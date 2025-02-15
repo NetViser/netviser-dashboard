@@ -141,6 +141,8 @@ export default function DashboardPage() {
           />
           <BarChart
             title="Source IP Distribution"
+            xLabelNameLocation="middle"
+            xAxisNameGap={60}
             data={Object.values(
               data?.src_ip_address_distribution as Record<string, number>
             )}

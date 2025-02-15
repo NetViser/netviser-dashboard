@@ -2,15 +2,18 @@
 
 import React from "react";
 import ReactECharts from "echarts-for-react";
-import * as echarts from 'echarts';
+import { name } from "plotly.js/lib/scatter";
 
 type BarChartProps = {
   title: string;
   data: number[];
   categories: string[];
   yAxisName?: string;
-  enableZoom?: boolean; // New prop to control zooming functionality
-  enableSorting?: boolean; // New prop to control sorting functionality
+  xAxisName?: string; // Label for x-axis
+  enableZoom?: boolean; // Enable zooming functionality
+  enableSorting?: boolean; // Enable sorting functionality
+  xLabelNameLocation?: "start" | "middle" | "end"; // Location of x-axis label
+  xAxisNameGap?: number; // Gap between x-axis label and axis line
 };
 
 export default function BarChart({
@@ -18,9 +21,13 @@ export default function BarChart({
   data,
   categories,
   yAxisName: y = "Frequency",
-  enableZoom = true, // Default to true if not provided
-  enableSorting = true, // Default to true if not provided
+  xAxisName: x = "Categories",
+  xLabelNameLocation = "middle",
+  xAxisNameGap = 20,
+  enableZoom = true,
+  enableSorting = true,
 }: BarChartProps) {
+  // Sort the data and categories if sorting is enabled
   const { sortedValues, sortedCategories } = enableSorting
     ? data
         .map((value, index) => ({ value, category: categories[index] }))
@@ -38,16 +45,16 @@ export default function BarChart({
         sortedCategories: categories,
       };
 
-  // Conditional dataZoom based on enableZoom prop
+  // Conditional dataZoom options
   const dataZoomOption = enableZoom
     ? [
         {
-          type: "slider", // Adds a slider at the bottom for horizontal zooming
-          start: 0, // Start percentage of the data visible
-          end: 10, // End percentage of the data visible
+          type: "slider",
+          start: 0,
+          end: 10,
         },
         {
-          type: "inside", // Allows zooming via mouse wheel or touch gestures
+          type: "inside",
           start: 0,
           end: 10,
         },
@@ -56,39 +63,64 @@ export default function BarChart({
 
   const options = {
     tooltip: {
-      trigger: "item",
+      trigger: "axis",
       axisPointer: {
-        type: "shadow", // Highlight the bar when hovering
+        type: "shadow",
+      },
+      formatter: (params: any) => {
+        // params is an array (one item per series), so we take the first item
+        const param = params[0];
+        return `<div style="padding:8px;">
+                  <div style="font-weight:bold;">${param.name}</div>
+                  <div>${y}: ${param.value}</div>
+                </div>`;
+      },
+      backgroundColor: "#fff",
+      borderColor: "#ccc",
+      borderWidth: 1,
+      textStyle: {
+        color: "#333",
       },
     },
     grid: {
-      top: '12%',
-      left: '1%',
-      right: '3%',
+      top: "12%",
+      left: "1%",
+      right: "3%",
       containLabel: true,
     },
     xAxis: {
-      type: "category", // Categories appear on the x-axis for vertical orientation
+      type: "category",
       data: sortedCategories,
+      name: x,
+      nameLocation: xLabelNameLocation,
+      nameGap: xAxisNameGap,
+      axisLabel: {
+        interval: 0,
+        rotate: 30, // Rotate labels to prevent overlap
+      },
     },
     yAxis: {
-      type: "value", // Values appear on the y-axis for vertical orientation
+      type: "value",
       name: y,
+      nameGap: 20,
+      nameTextStyle: {
+        align: "left",
+      },
     },
-    dataZoom: dataZoomOption, // Apply conditional zoom
+    dataZoom: dataZoomOption,
     series: [
       {
         data: sortedValues,
         type: "bar",
         itemStyle: {
-          color: "#f97316", // Set bar color to orange
+          color: "#f97316", // Orange bars
         },
       },
     ],
   };
 
   return (
-    <div className="bg-white p-8 py-4 rounded-lg shadow-md">
+    <div className="bg-white p-8 py-4 rounded-lg shadow-md w-full h-full">
       <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
       <ReactECharts option={options} style={{ height: 400 }} />
     </div>
