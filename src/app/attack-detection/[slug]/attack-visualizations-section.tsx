@@ -132,40 +132,39 @@ export function AttackVisualizationsSection({
         <Tab tab="overall" label="Overall">
           <div className="grid grid-cols-2 gap-4">
             {/* BoxPlot - Flow Bytes */}
-            <div className="p-6 rounded-lg border-2 flex flex-col">
-              <BarChart title = "Average Flow Bytes"
+            <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
+              <BarChart title = "Average Flow Bytes Per Second"
                 data={ftpBarPlotFlowByte.data}
                 categories={ftpBarPlotFlowByte.categories}
-                yAxisName="Mean"
+                yAxisName="Mean Flow Bytes/s"
+
                 enableZoom={false}
                 enableSorting={false}>
               </BarChart>
             </div>
 
             {/* Sankey */}
-            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
+            <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
               <FTPSankey data={ftpSankeyData} />
             </div>
 
             {/* Scatter - Average Packet Size */}
-            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
-              <h3 className="font-semibold mb-2">Average Packet Size</h3>
+            <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
               <BarChart title = "Average Packet Size"
                 data={ftpBarPlotAvgPacketSize.data}
                 categories={ftpBarPlotAvgPacketSize.categories}
-                yAxisName="Mean"
+                yAxisName="Mean Packet Size"
                 enableZoom={false}
                 enableSorting={false}>
               </BarChart>
             </div>
 
             {/* BoxPlot - Flow Duration */}
-            <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
-              <h3 className="font-semibold mb-2">Flow Duration</h3>
+            <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
               <BarChart title = "Average Flow Duration"
                 data={ftpBarplotFlowDuration.data}
                 categories={ftpBarplotFlowDuration.categories}
-                yAxisName="Mean"
+                yAxisName="Mean Flow Duration"
                 enableZoom={false}
                 enableSorting={false}>
               </BarChart>
