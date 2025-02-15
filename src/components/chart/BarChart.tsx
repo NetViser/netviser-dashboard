@@ -8,20 +8,51 @@ type BarChartProps = {
   title: string;
   data: number[];
   categories: string[];
+  yAxisName?: string;
+  enableZoom?: boolean; // New prop to control zooming functionality
+  enableSorting?: boolean; // New prop to control sorting functionality
 };
 
 export default function BarChart({
   title,
   data,
   categories,
+  yAxisName: y = "Frequency",
+  enableZoom = true, // Default to true if not provided
+  enableSorting = true, // Default to true if not provided
 }: BarChartProps) {
-  // Sort data and categories together based on data values
-  const sortedData = [...data]
-    .map((value, index) => ({ value, category: categories[index] }))
-    .sort((a, b) => b.value - a.value);
+  const { sortedValues, sortedCategories } = enableSorting
+    ? data
+        .map((value, index) => ({ value, category: categories[index] }))
+        .sort((a, b) => b.value - a.value)
+        .reduce(
+          (acc, item) => {
+            acc.sortedValues.push(item.value);
+            acc.sortedCategories.push(item.category);
+            return acc;
+          },
+          { sortedValues: [] as number[], sortedCategories: [] as string[] }
+        )
+    : {
+        sortedValues: data,
+        sortedCategories: categories,
+      };
 
-  const sortedValues = sortedData.map((item) => item.value);
-  const sortedCategories = sortedData.map((item) => item.category);
+  // Conditional dataZoom based on enableZoom prop
+  const dataZoomOption = enableZoom
+    ? [
+        {
+          type: "slider", // Adds a slider at the bottom for horizontal zooming
+          start: 0, // Start percentage of the data visible
+          end: 10, // End percentage of the data visible
+        },
+        {
+          type: "inside", // Allows zooming via mouse wheel or touch gestures
+          start: 0,
+          end: 10,
+        },
+      ]
+    : [];
 
   const options = {
     tooltip: {
@@ -30,31 +61,21 @@ export default function BarChart({
         type: "shadow", // Highlight the bar when hovering
       },
     },
-    grid: {      
+    grid: {
       top: '12%',
       left: '1%',
       right: '3%',
-      containLabel: true },
+      containLabel: true,
+    },
     xAxis: {
       type: "category", // Categories appear on the x-axis for vertical orientation
       data: sortedCategories,
     },
     yAxis: {
       type: "value", // Values appear on the y-axis for vertical orientation
-      name: 'Frequency',
+      name: y,
     },
-    dataZoom: [
-      {
-        type: "slider", // Adds a slider at the bottom for horizontal zooming
-        start: 0, // Start percentage of the data visible
-        end: 10, // End percentage of the data visible
-      },
-      {
-        type: "inside", // Allows zooming via mouse wheel or touch gestures
-        start: 0,
-        end: 10,
-      },
-    ],
+    dataZoom: dataZoomOption, // Apply conditional zoom
     series: [
       {
         data: sortedValues,
