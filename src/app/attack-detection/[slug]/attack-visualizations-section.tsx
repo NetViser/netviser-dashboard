@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import FTPSankey from "@/components/chart/ftp/sankey";
-import FTPScatterChart from "@/components/chart/ftp/scatter";
+import BarChart from "@/components/chart/BarChart";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
@@ -23,25 +22,24 @@ export function AttackVisualizationsSection({
   const [activeTab, setActiveTab] = useState("overall");
 
   // --- Prepare data for FTPBoxPlot - Flow Bytes Per Second
-  const ftpBoxPlotFlowBytesPerSecondData = useMemo(() => {
-    if (!attackVisualizations) return [];
-
+  const ftpBarPlotFlowByte = useMemo(() => {
+    if (!attackVisualizations) return { categories: [], data: [] };
+  
     const { normalData, attackData } = attackVisualizations;
-    const normalFlowBytes = normalData.map((r) => r.flowBytesPerSecond);
-    const attackFlowBytes = attackData.map((r) => r.flowBytesPerSecond);
-
-    return [
-      {
-        name: "Normal",
-        data: normalFlowBytes,
-        color: "#4CAF50",
-      },
-      {
-        name: "Attack",
-        data: attackFlowBytes,
-        color: "#F44336",
-      },
-    ];
+  
+    const normalFlowByteValues = normalData.map((r) => r.flowBytesPerSecond);
+    const attackFlowByteValues = attackData.map((r) => r.flowBytesPerSecond);
+  
+    const calculateMean = (values: number[]) =>
+      values.reduce((sum, value) => sum + value, 0) / values.length;
+  
+    const normalMean = parseFloat(calculateMean(normalFlowByteValues).toFixed(2));
+    const attackMean = parseFloat(calculateMean(attackFlowByteValues).toFixed(2));
+  
+    return {
+      categories: ["Normal", "Attack"],
+      data: [normalMean, attackMean],
+    };
   }, [attackVisualizations]);
 
   // --- Sankey Data
@@ -79,11 +77,11 @@ export function AttackVisualizationsSection({
   }, [attackVisualizations]);
 
   // --- Scatter Data
-  const ftpScatterData = useMemo(() => {
+  const ftpBarPlotAvgPacketSize = useMemo(() => {
     if (!attackVisualizations) {
       return {
-        normalData: [],
-        attackData: [],
+        categories: [],
+        data: [],
       };
     }
 
@@ -91,32 +89,36 @@ export function AttackVisualizationsSection({
     const normalAvgPacket = normalData.map((r) => r.averagePacketSize);
     const attackAvgPacket = attackData.map((r) => r.averagePacketSize);
 
+    const calculateMean = (values: number[]) =>
+      values.reduce((sum, value) => sum + value, 0) / values.length;
+  
+    const normalMean = parseFloat(calculateMean(normalAvgPacket).toFixed(2));
+    const attackMean = parseFloat(calculateMean(attackAvgPacket).toFixed(2));
+
     return {
-      normalData: normalAvgPacket,
-      attackData: attackAvgPacket,
+      categories: ["Normal", "Attack"],
+      data: [normalMean, attackMean],
     };
   }, [attackVisualizations]);
 
   // --- Boxplot for Flow Duration
-  const ftpBoxplotFlowDuration = useMemo(() => {
-    if (!attackVisualizations) return [];
+  const ftpBarplotFlowDuration = useMemo(() => {
+    if (!attackVisualizations) return { categories: [], data: [] };
 
     const { normalData, attackData } = attackVisualizations;
     const normalFlowDuration = normalData.map((r) => r.flowDuration);
     const attackFlowDuration = attackData.map((r) => r.flowDuration);
 
-    return [
-      {
-        name: "Normal",
-        data: normalFlowDuration,
-        color: "#4CAF50",
-      },
-      {
-        name: "Attack",
-        data: attackFlowDuration,
-        color: "#F44336",
-      },
-    ];
+    const calculateMean = (values: number[]) =>
+      values.reduce((sum, value) => sum + value, 0) / values.length;
+  
+    const normalMean = parseFloat(calculateMean(normalFlowDuration).toFixed(2));
+    const attackMean = parseFloat(calculateMean(attackFlowDuration).toFixed(2));
+
+    return {
+      categories: ["Normal", "Attack"],
+      data: [normalMean, attackMean],
+    }
   }, [attackVisualizations]);
 
   if (!attackVisualizations) return null;
@@ -131,11 +133,13 @@ export function AttackVisualizationsSection({
           <div className="grid grid-cols-2 gap-4">
             {/* BoxPlot - Flow Bytes */}
             <div className="p-6 rounded-lg border-2 flex flex-col">
-              <FTPBoxPlot
-                chartTitle="Distribution of Flow Bytes Per Second (Normal vs Attack)"
-                yAxisName="Flow Bytes Per Second"
-                groups={ftpBoxPlotFlowBytesPerSecondData}
-              />
+              <BarChart title = "Average Flow Bytes"
+                data={ftpBarPlotFlowByte.data}
+                categories={ftpBarPlotFlowByte.categories}
+                yAxisName="Mean"
+                enableZoom={false}
+                enableSorting={false}>
+              </BarChart>
             </div>
 
             {/* Sankey */}
@@ -146,20 +150,25 @@ export function AttackVisualizationsSection({
             {/* Scatter - Average Packet Size */}
             <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
               <h3 className="font-semibold mb-2">Average Packet Size</h3>
-              <FTPScatterChart
-                normalData={ftpScatterData.normalData}
-                attackData={ftpScatterData.attackData}
-              />
+              <BarChart title = "Average Packet Size"
+                data={ftpBarPlotAvgPacketSize.data}
+                categories={ftpBarPlotAvgPacketSize.categories}
+                yAxisName="Mean"
+                enableZoom={false}
+                enableSorting={false}>
+              </BarChart>
             </div>
 
             {/* BoxPlot - Flow Duration */}
             <div className="bg-white p-6 rounded-lg border-2 shadow-sm flex flex-col">
               <h3 className="font-semibold mb-2">Flow Duration</h3>
-              <FTPBoxPlot
-                chartTitle="Distribution of Flow Duration (Normal vs Attack)"
-                yAxisName="Flow Duration"
-                groups={ftpBoxplotFlowDuration}
-              />
+              <BarChart title = "Average Flow Duration"
+                data={ftpBarplotFlowDuration.data}
+                categories={ftpBarplotFlowDuration.categories}
+                yAxisName="Mean"
+                enableZoom={false}
+                enableSorting={false}>
+              </BarChart>
             </div>
           </div>
         </Tab>
