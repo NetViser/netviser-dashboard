@@ -39,7 +39,6 @@ export default function Page() {
   const {
     data: attackRecords,
     isLoading: isLoadingAttackRecords,
-    error: attackRecordsError,
   } = useSWR(
     `/attack_record?type=${attackType}&page=${page}&page_size=${pageSize}`,
     () => fetchAttackDetectionRecord(attackType, page, pageSize),
@@ -54,7 +53,6 @@ export default function Page() {
   const {
     data: attackVisualizations,
     isLoading: isLoadingVisualizations,
-    error: attackVisualsError,
   } = useSWR(
     `/attack_visuals?type=${attackType}`,
     () => fetchSpecificAttackDetection(attackType),
@@ -154,6 +152,7 @@ export default function Page() {
       {/* Conditional Attack Visualizations */}
       {explainabilityMode === "Visualization" && (
         <AttackVisualizationsSection
+          attackType={attackType}
           attackVisualizations={attackVisualizations}
         />
       )}
