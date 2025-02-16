@@ -41,7 +41,7 @@ export function AttackVisualizationsSection({
           {renderSpecificAttackVisualization()}
         </Tab>
         <Tab tab="timeseries" label="Time Series">
-          <AttackDetectionTimeSeries />
+          <AttackDetectionTimeSeries attackType={attackType} />
         </Tab>
       </Tabs>
     </div>
