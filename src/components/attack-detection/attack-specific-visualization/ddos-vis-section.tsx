@@ -6,6 +6,7 @@ import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
 import { calculateMean } from "@/lib/utils";
 import { categories } from "plotly.js/lib/box";
+import FTPSankey from "@/components/chart/ftp/sankey";
 
 type DDOSVisSectionProps = {
   data:
@@ -71,7 +72,42 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
     ];*/
   }, [data]);
 
-  // --- Bar Plot for Average Packet Size
+  // --- Sankey Data
+  const ftpSankeyData = useMemo(() => {
+    if (!data) return { nodes: [], links: [] };
+
+    let { attackData } = data;  // Let `attackData` be mutable
+
+    // Limit the number of records to 100
+    attackData = attackData.slice(0, 25);
+
+    const nodes = Array.from(
+      new Set(
+        attackData.flatMap((record) => [
+          String(record.srcPort),
+          String(record.dstIp),
+          String(record.srcIp),
+        ])
+      )
+    ).map((name) => ({ name }));
+
+    const srcIpLinks = attackData.map((record) => ({
+      source: String(record.srcIp),
+      target: String(record.srcPort),
+      value: record.srcIpPortPairCount,
+    }));
+
+    const portLinks = attackData.map((record) => ({
+      source: String(record.srcPort),
+      target: String(record.dstIp),
+      value: record.portPairCount,
+    }));
+
+    return {
+      nodes,
+      links: [...srcIpLinks, ...portLinks],
+    };
+  }, [data]);
 
   // --- Bar Plot for Flow Duration
 
@@ -103,9 +139,9 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
         />
       </div>
 
-      {/* BarPlot - Average Packet Size */}
+      {/* Sankey - srcip port dstip */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        
+        <FTPSankey data={ftpSankeyData} title="Sliced Data Sankey Diagram" />
       </div>
 
       {/* BarPlot - Flow Duration */}
