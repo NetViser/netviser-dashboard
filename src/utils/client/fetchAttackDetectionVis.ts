@@ -15,6 +15,7 @@ export type SpecificAttackRecord = {
   dstPort: number;
   portPairCount: number;
   srcIpPortPairCount: number;
+  packetlengthmean: number;
 };
 
 type FetchSpecificAttackResponse = {

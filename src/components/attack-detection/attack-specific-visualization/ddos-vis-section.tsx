@@ -1,9 +1,11 @@
 "use client";
 
 import BarChart from "@/components/chart/BarChart";
+import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
 import { calculateMean } from "@/lib/utils";
+import { categories } from "plotly.js/lib/box";
 
 type DDOSVisSectionProps = {
   data:
@@ -34,7 +36,40 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
     };
   }, [data]);
 
-  // --- Sankey Data
+  // --- Packet length
+  const BarPacketLength = useMemo(() => {
+    if (!data) return  { categories: [], data: [] };
+
+    const { normalData, attackData } = data;
+
+    const normalPacketLengthMeanValues = normalData.map((r) => r.packetlengthmean);
+    const attackPacketLengthMeanValues = attackData.map((r) => r.packetlengthmean);
+
+    const normalMean = parseFloat(
+        calculateMean(normalPacketLengthMeanValues).toFixed(2)
+      );
+    const attackMean = parseFloat(
+        calculateMean(attackPacketLengthMeanValues).toFixed(2)
+    );
+
+    return {
+        categories: ["Normal", "Attack"],
+        data: [normalMean, attackMean],
+    }
+    
+    /*[
+        {
+          name: "Normal",
+          data: normalPacketLengthMeanValues,
+          color: "#4CAF50", // Green
+        },
+        {
+          name: "Attack",
+          data: attackPacketLengthMeanValues,
+          color: "#F44336", // Red
+        },
+    ];*/
+  }, [data]);
 
   // --- Bar Plot for Average Packet Size
 
@@ -56,9 +91,16 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
         />
       </div>
 
-      {/* Sankey */}
+      {/* BoxPlot - Flow Bytes */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-
+        <BarChart
+            title="Average Packet Length"
+            data={BarPacketLength.data}
+            categories={BarPacketLength.categories}
+            yAxisName="Mean Packet Length"
+            enableZoom={false}
+            enableSorting={false}
+        />
       </div>
 
       {/* BarPlot - Average Packet Size */}
