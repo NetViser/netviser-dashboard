@@ -5,6 +5,7 @@ import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";
+import { DDOSVisSection } from "@/components/attack-detection/attack-specific-visualization/ddos-vis-section";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -25,6 +26,10 @@ export function AttackVisualizationsSection({
   const renderSpecificAttackVisualization = () => {
     if (attackType === "FTP-Patator") {
       return <FTPPatatorVisSection data={attackVisualizations} />;
+    }
+
+    if (attackType === "DDoS") {
+      return <DDOSVisSection data={attackVisualizations} />;
     }
 
     // Fallback if no matching visualization is found
