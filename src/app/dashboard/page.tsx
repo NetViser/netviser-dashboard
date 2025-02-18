@@ -95,7 +95,7 @@ export default function DashboardPage() {
     const formattedData = Object.entries(
       data.protocol_distribution as Record<string, number>
     ).map(([key, value]) => ({
-      name: key === "17" ? "TCP" : key === "6" ? "UDP" : key,
+      name: key === "6" ? "TCP" : key === "17" ? "UDP" : key,
       value,
     }));
     return formattedData;

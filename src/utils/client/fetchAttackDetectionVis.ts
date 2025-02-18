@@ -7,6 +7,7 @@ export type SpecificAttackRecord = {
   flowPacketsPerSecond: number;
   averagePacketSize: number;
   totalFwdPacket: number;
+  totalBwdPacket: number;
   totalLengthOfFwdPacket: number;
   protocol: number;
   srcIp: string;
@@ -16,6 +17,10 @@ export type SpecificAttackRecord = {
   portPairCount: number;
   srcIpPortPairCount: number;
   packetlengthmean: number;
+  synflagcount: number;
+  ackflagcount: number;
+  subflowfwdbytes: number;
+  protocol_distribution: Record<string, number>;
 };
 
 type FetchSpecificAttackResponse = {
