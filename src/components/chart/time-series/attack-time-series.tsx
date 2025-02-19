@@ -134,7 +134,7 @@ export default function AttackTimeSeriesChart({
   }, [attackType, data, highlight]);
 
   return (
-    <div className="w-full h-[600px]">
+    <div className="h-[500px]">
       <ReactECharts
         option={option}
         echarts={echarts}
