@@ -90,9 +90,9 @@ export default function AreaChart({
     };
 
     return (
-        <div className="bg-white p-8 py-4 rounded-lg shadow-md">
+        <div className="bg-white p-8 py-4 rounded-lg shadow-md h-full">
             <ReactECharts style={
-                { height: '360px', width: '100%' }
+                { height: "calc(100% - 2rem)" }
             } option={options} />
         </div>
     )

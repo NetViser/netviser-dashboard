@@ -21,6 +21,7 @@ interface SankeyData {
 
 interface FTPSankeyProps {
   data: SankeyData;
+  title?: string;
 }
 
 const labelMap: Record<string, string> = {
@@ -30,10 +31,10 @@ const labelMap: Record<string, string> = {
   // but you could expand this map or compute logic as needed.
 };
 
-const FTPSankey: React.FC<FTPSankeyProps> = ({ data }) => {
+const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diagram" }) => {
   const options = {
     title: {
-      text: "Sankey Diagram",
+      text: title,
       left: "center",
     },
     tooltip: {

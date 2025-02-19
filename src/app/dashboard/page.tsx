@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
 import AreaChart from "@/components/chart/AreaChart";
+import { ChartWrapper } from "@/components/chart/ChartWrapper";
 
 export default function DashboardPage() {
   const extractFileName = (name: string) => {
@@ -95,7 +96,7 @@ export default function DashboardPage() {
     const formattedData = Object.entries(
       data.protocol_distribution as Record<string, number>
     ).map(([key, value]) => ({
-      name: key === "17" ? "TCP" : key === "6" ? "UDP" : key,
+      name: key === "6" ? "TCP" : key === "17" ? "UDP" : key,
       value,
     }));
     return formattedData;
@@ -133,55 +134,65 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <PieChart
-            title="Protocol Distribution"
-            data={getProtocolPieChartData}
-            showFrequency
-          />
-          <BarChart
-            title="Source IP Distribution"
-            xLabelNameLocation="middle"
-            xAxisNameGap={60}
-            data={Object.values(
-              data?.src_ip_address_distribution as Record<string, number>
-            )}
-            categories={Object.keys(
-              data?.src_ip_address_distribution as Record<string, number>
-            ).map((key) => String(key))}
-          />
-          <PieChart
-            title="Destination Port Distribution"
-            data={getDstPortPieChartData}
-          />
-          <PieChart
-            title="Attack Class Distribution"
-            data={getAttackClassPieChartData}
-          />
+          <ChartWrapper height="30rem">
+            <PieChart
+              title="Protocol Distribution"
+              data={getProtocolPieChartData}
+              showFrequency
+            />
+          </ChartWrapper>
+          <ChartWrapper height="30rem">
+            <BarChart
+              title="Source IP Distribution"
+              xLabelNameLocation="middle"
+              xAxisNameGap={60}
+              data={Object.values(
+                data?.src_ip_address_distribution as Record<string, number>
+              )}
+              categories={Object.keys(
+                data?.src_ip_address_distribution as Record<string, number>
+              ).map((key) => String(key))}
+            />
+          </ChartWrapper>
+          <ChartWrapper height="30rem">
+            <PieChart
+              title="Destination Port Distribution"
+              data={getDstPortPieChartData}
+            />
+          </ChartWrapper>
+          <ChartWrapper height="30rem">
+            <PieChart
+              title="Attack Class Distribution"
+              data={getAttackClassPieChartData}
+            />
+          </ChartWrapper>
         </div>
 
-        <AreaChart
-          title="Forward Packets Per Second and Backward Packets Per Second"
-          dates={
-            data?.fwd_packets_per_second.map((item) => item.timestamp) || []
-          }
-          chartOption={{ yAxisLabel: "Packets Per Second" }}
-          datasets={[
-            {
-              name: "Forward Packets Per Second",
-              data:
-                data?.fwd_packets_per_second.map((item) => item.value) || [],
-              colorStart: "rgb(255, 158, 68)",
-              colorEnd: "rgb(255, 70, 131)",
-            },
-            {
-              name: "Backward Packets Per Second",
-              data:
-                data?.bwd_packets_per_second.map((item) => item.value) || [],
-              colorStart: "rgb(135, 206, 250)",
-              colorEnd: "rgb(70, 130, 180)",
-            },
-          ]}
-        />
+        <ChartWrapper height="30rem">
+          <AreaChart
+            title="Forward Packets Per Second and Backward Packets Per Second"
+            dates={
+              data?.fwd_packets_per_second.map((item) => item.timestamp) || []
+            }
+            chartOption={{ yAxisLabel: "Packets Per Second" }}
+            datasets={[
+              {
+                name: "Forward Packets Per Second",
+                data:
+                  data?.fwd_packets_per_second.map((item) => item.value) || [],
+                colorStart: "rgb(255, 158, 68)",
+                colorEnd: "rgb(255, 70, 131)",
+              },
+              {
+                name: "Backward Packets Per Second",
+                data:
+                  data?.bwd_packets_per_second.map((item) => item.value) || [],
+                colorStart: "rgb(135, 206, 250)",
+                colorEnd: "rgb(70, 130, 180)",
+              },
+            ]}
+          />
+        </ChartWrapper>
       </div>
     </div>
   );

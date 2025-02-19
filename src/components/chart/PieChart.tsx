@@ -58,11 +58,11 @@ export default function PieChart({
   };
 
   return (
-    <div className="bg-white p-8 py-4 rounded-lg shadow-md">
+    <div className="bg-white p-8 py-4 rounded-lg shadow-md h-full">
       <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
       <ReactECharts
-        style={{ height: "360px", width: "100%" }}
         option={options}
+        style={{ height: "calc(100% - 2rem)" }}
       />
     </div>
   );
