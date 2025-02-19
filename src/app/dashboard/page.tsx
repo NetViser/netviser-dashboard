@@ -134,14 +134,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <ChartWrapper height="30rem">
+          <div className="h-[30rem]">
             <PieChart
               title="Protocol Distribution"
               data={getProtocolPieChartData}
               showFrequency
             />
-          </ChartWrapper>
-          <ChartWrapper height="30rem">
+          </div>
+          <div className="h-[30rem]">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
@@ -153,22 +153,22 @@ export default function DashboardPage() {
                 data?.src_ip_address_distribution as Record<string, number>
               ).map((key) => String(key))}
             />
-          </ChartWrapper>
-          <ChartWrapper height="30rem">
+          </div>
+          <div className="h-[30rem]">
             <PieChart
               title="Destination Port Distribution"
               data={getDstPortPieChartData}
             />
-          </ChartWrapper>
-          <ChartWrapper height="30rem">
+          </div>
+          <div className="h-[30rem]">
             <PieChart
               title="Attack Class Distribution"
               data={getAttackClassPieChartData}
             />
-          </ChartWrapper>
+          </div>
         </div>
 
-        <ChartWrapper height="30rem">
+        <div className="h-[450px]">
           <AreaChart
             title="Forward Packets Per Second and Backward Packets Per Second"
             dates={
@@ -192,7 +192,7 @@ export default function DashboardPage() {
               },
             ]}
           />
-        </ChartWrapper>
+        </div>
       </div>
     </div>
   );
