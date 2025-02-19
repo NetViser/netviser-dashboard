@@ -13,7 +13,6 @@ import { useMemo } from "react";
 import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
 import AreaChart from "@/components/chart/AreaChart";
-import { ChartWrapper } from "@/components/chart/ChartWrapper";
 
 export default function DashboardPage() {
   const extractFileName = (name: string) => {
