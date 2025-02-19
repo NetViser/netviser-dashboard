@@ -54,36 +54,36 @@ export type FetchTimeSeriesAttackDataResponse = {
 export const FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL =
   "http://localhost:8000/api/attack-detection/visualization/attack-time-series";
 
-// export async function fetchAttackDetectionTimeSeries(
-//   attackType: string
-// ): Promise<FetchTimeSeriesAttackDataResponse> {
-//   try {
-//     const searchParams = new URLSearchParams({
-//       attack_type: attackType,
-//     });
-
-//     const url = `${FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL}?${searchParams.toString()}`;
-
-//     await new Promise((resolve) => setTimeout(resolve, 10000));
-//     const response = await axios.get<FetchTimeSeriesAttackDataResponse>(url, {
-//       withCredentials: true,
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching attack detection time series data:", error);
-//     throw new Error("Failed to fetch attack detection time series data.");
-//   }
-// }
-
-export const fetchAttackDetectionTimeSeries = async (
+export async function fetchAttackDetectionTimeSeries(
   attackType: string
-): Promise<FetchTimeSeriesAttackDataResponse> => {
-  // Simulate a network delay of 1 second
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+): Promise<FetchTimeSeriesAttackDataResponse> {
+  try {
+    const searchParams = new URLSearchParams({
+      attack_type: attackType,
+    });
 
-  // Returning the imported mock data instead of making an API call
-  return Promise.resolve(
-    timeseriesattackdata as FetchTimeSeriesAttackDataResponse
-  );
-};
+    const url = `${FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL}?${searchParams.toString()}`;
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+    const response = await axios.get<FetchTimeSeriesAttackDataResponse>(url, {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attack detection time series data:", error);
+    throw new Error("Failed to fetch attack detection time series data.");
+  }
+}
+
+// export const fetchAttackDetectionTimeSeries = async (
+//   attackType: string
+// ): Promise<FetchTimeSeriesAttackDataResponse> => {
+//   // Simulate a network delay of 1 second
+//   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+//   // Returning the imported mock data instead of making an API call
+//   return Promise.resolve(
+//     timeseriesattackdata as FetchTimeSeriesAttackDataResponse
+//   );
+// };
