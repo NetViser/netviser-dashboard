@@ -7,6 +7,7 @@ import {
   DataSchema,
   HighlightItem,
 } from "@/utils/client/fetchAttackDetectionTimeSeries";
+import { ChartWrapper } from "../ChartWrapper";
 
 type AttackTimeSeriesChartProps = {
   attackType: string;
@@ -134,12 +135,12 @@ export default function AttackTimeSeriesChart({
   }, [attackType, data, highlight]);
 
   return (
-    <div className="w-full h-[600px]">
+    <ChartWrapper height="500px" width="100%">
       <ReactECharts
         option={option}
         echarts={echarts}
         style={{ height: "100%", width: "100%" }}
       />
-    </div>
+    </ChartWrapper>
   );
 }
