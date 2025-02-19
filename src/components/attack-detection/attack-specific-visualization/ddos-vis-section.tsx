@@ -142,19 +142,19 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
   }, [data]);
 
   // barplot
-  const ddos_subflowfwd = useMemo(() => {
+  const ddos_bwdpacketlengthstd = useMemo(() => {
     if (!data) return { categories: [], data: [] };
 
     const { normalData, attackData } = data;
 
-    const normalSubflowfwd = normalData.map((r) => r.totalBwdPacket);
-    const attackSubflowfwd = attackData.map((r) => r.totalBwdPacket);
+    const normalbwdpacketlengthstd = normalData.map((r) => r.bwdpacketlengthstd);
+    const attackbwdpacketlengthstd = attackData.map((r) => r.bwdpacketlengthstd);
 
     const normalMean = parseFloat(
-      calculateMean(normalSubflowfwd).toFixed(2)
+      calculateMean(normalbwdpacketlengthstd).toFixed(2)
     );
     const attackMean = parseFloat(
-      calculateMean(attackSubflowfwd).toFixed(2)
+      calculateMean(attackbwdpacketlengthstd).toFixed(2)
     );
 
     return {
@@ -229,20 +229,19 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
         {/*
           <DdosScatterChart normalData={ddos_scatter.normalData} attackData={ddos_scatter.attackData} title={ddos_scatter.title} /> 
         */}
-        {/*<BarChart
-            title="SubFlow Fwd Bytes"
-            data={ddos_subflowfwd.data}
-            categories={ddos_subflowfwd.categories}
-            yAxisName="SubFlow Fwd Bytes"
+        <BarChart
+            title="Bwd Packet Length Std"
+            data={ddos_bwdpacketlengthstd.data}
+            categories={ddos_bwdpacketlengthstd.categories}
+            yAxisName="Bwd Packet Length Std"
             enableZoom={false}
             enableSorting={false}
           />
-        */}
-        <PieChart
+        {/*<PieChart
           title="Protocol Distribution"
           data={getProtocolPieChartData}
           showFrequency
-        />
+        />*/}
        </div>
     </div>
   );

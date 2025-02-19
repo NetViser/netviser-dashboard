@@ -9,6 +9,7 @@ export type SpecificAttackRecord = {
   totalFwdPacket: number;
   totalBwdPacket: number;
   totalLengthOfFwdPacket: number;
+  bwdpacketlengthstd: number;
   protocol: number;
   srcIp: string;
   dstIp: string;
