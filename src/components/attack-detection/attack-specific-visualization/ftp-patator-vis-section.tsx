@@ -16,7 +16,7 @@ type FTPPatatorVisSectionProps = {
 };
 
 export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
-  // --- Prepare data for FTPBoxPlot - Flow Bytes Per Second
+  // --- Bar Plot for Flow Bytes Per Second remains unchanged
   const ftpBarPlotFlowByte = useMemo(() => {
     if (!data) return { categories: [], data: [] };
 
@@ -38,7 +38,7 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
     };
   }, [data]);
 
-  // --- Sankey Data
+  // --- Sankey Data remains unchanged
   const ftpSankeyData = useMemo(() => {
     if (!data) return { nodes: [], links: [] };
 
@@ -72,21 +72,21 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
     };
   }, [data]);
 
-  // --- Bar Plot for Average Packet Size
-  const ftpBarPlotAvgPacketSize = useMemo(() => {
-    if (!data) {
-      return {
-        categories: [],
-        data: [],
-      };
-    }
+  // --- Bar Plot for Total TCP Flow Time (replacing Average Packet Size)
+  const ftpBarPlotTotalTCPFlowTime = useMemo(() => {
+    if (!data) return { categories: [], data: [] };
 
     const { normalData, attackData } = data;
-    const normalAvgPacket = normalData.map((r) => r.averagePacketSize);
-    const attackAvgPacket = attackData.map((r) => r.averagePacketSize);
+    // Assuming totalTCPFlowTime field exists in the data
+    const normalTotalTCPFlowTime = normalData.map((r) => (r as any).totalTCPFlowTime);
+    const attackTotalTCPFlowTime = attackData.map((r) => (r as any).totalTCPFlowTime);
 
-    const normalMean = parseFloat(calculateMean(normalAvgPacket).toFixed(2));
-    const attackMean = parseFloat(calculateMean(attackAvgPacket).toFixed(2));
+    const normalMean = parseFloat(
+      calculateMean(normalTotalTCPFlowTime).toFixed(2)
+    );
+    const attackMean = parseFloat(
+      calculateMean(attackTotalTCPFlowTime).toFixed(2)
+    );
 
     return {
       categories: ["Normal", "Attack"],
@@ -94,16 +94,21 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
     };
   }, [data]);
 
-  // --- Bar Plot for Flow Duration
-  const ftpBarplotFlowDuration = useMemo(() => {
+  // --- Bar Plot for bwdIATMean (replacing Average Flow Duration)
+  const ftpBarPlotBwdIATMean = useMemo(() => {
     if (!data) return { categories: [], data: [] };
 
     const { normalData, attackData } = data;
-    const normalFlowDuration = normalData.map((r) => r.flowDuration);
-    const attackFlowDuration = attackData.map((r) => r.flowDuration);
+    // Assuming bwdIATMean field exists in the data
+    const normalBwdIATMean = normalData.map((r) => (r as any).bwdIATMean);
+    const attackBwdIATMean = attackData.map((r) => (r as any).bwdIATMean);
 
-    const normalMean = parseFloat(calculateMean(normalFlowDuration).toFixed(2));
-    const attackMean = parseFloat(calculateMean(attackFlowDuration).toFixed(2));
+    const normalMean = parseFloat(
+      calculateMean(normalBwdIATMean).toFixed(2)
+    );
+    const attackMean = parseFloat(
+      calculateMean(attackBwdIATMean).toFixed(2)
+    );
 
     return {
       categories: ["Normal", "Attack"],
@@ -115,7 +120,7 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {/* BarPlot - Flow Bytes */}
+      {/* BarChart - Flow Bytes Per Second */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
         <BarChart
           title="Average Flow Bytes Per Second"
@@ -132,25 +137,25 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
         <FTPSankey data={ftpSankeyData} />
       </div>
 
-      {/* BarPlot - Average Packet Size */}
+      {/* BarChart - Total TCP Flow Time */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
         <BarChart
-          title="Average Packet Size"
-          data={ftpBarPlotAvgPacketSize.data}
-          categories={ftpBarPlotAvgPacketSize.categories}
-          yAxisName="Mean Packet Size"
+          title="Total TCP Flow Time"
+          data={ftpBarPlotTotalTCPFlowTime.data}
+          categories={ftpBarPlotTotalTCPFlowTime.categories}
+          yAxisName="Mean Total TCP Flow Time"
           enableZoom={false}
           enableSorting={false}
         />
       </div>
 
-      {/* BarPlot - Flow Duration */}
+      {/* BarChart - bwdIATMean */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
         <BarChart
-          title="Average Flow Duration"
-          data={ftpBarplotFlowDuration.data}
-          categories={ftpBarplotFlowDuration.categories}
-          yAxisName="Mean Flow Duration"
+          title="Backward Inter-Arrival Time Mean"
+          data={ftpBarPlotBwdIATMean.data}
+          categories={ftpBarPlotBwdIATMean.categories}
+          yAxisName="Mean bwdIATMean"
           enableZoom={false}
           enableSorting={false}
         />

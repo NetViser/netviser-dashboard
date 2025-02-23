@@ -1,13 +1,9 @@
 "use client";
 
 import BarChart from "@/components/chart/BarChart";
-import FTPBoxPlot from "@/components/chart/ftp/boxplot";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
 import { calculateMean } from "@/lib/utils";
-import { categories } from "plotly.js/lib/box";
-import DdosScatterChart from "@/components/chart/ddos/ddos_scatter";
-import PieChart from "@/components/chart/PieChart";
 import FTPSankey from "@/components/chart/ftp/sankey";
 
 type DDOSVisSectionProps = {

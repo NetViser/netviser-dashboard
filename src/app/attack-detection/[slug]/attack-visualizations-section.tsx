@@ -6,6 +6,7 @@ import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";
 import { DDOSVisSection } from "@/components/attack-detection/attack-specific-visualization/ddos-vis-section";
+import { PortscanVisSection } from "@/components/attack-detection/attack-specific-visualization/portscan-vis-section";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -30,6 +31,10 @@ export function AttackVisualizationsSection({
 
     if (attackType === "DDoS") {
       return <DDOSVisSection data={attackVisualizations} />;
+    }
+
+    if (attackType === "Portscan") {
+      return <PortscanVisSection data={attackVisualizations} />;
     }
 
     // Fallback if no matching visualization is found
