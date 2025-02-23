@@ -10,6 +10,7 @@ import AttacksTable from "@/components/attack-detection/attacks-table/attacks-ta
 import { useMemo, useState } from "react";
 import AttacksScatter from "@/components/attack-detection/attacks-scatter/attacks-scatter";
 import { fetchAttackDetectionScatter } from "@/utils/client/fetchAttackDetectionScatter";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function AttackDetectionPage() {
   const [selectedAttackType, setSelectedAttackType] = useState<string | null>(
@@ -82,7 +83,7 @@ export default function AttackDetectionPage() {
       },
       isSelected: selectedAttackType === key,
     }));
-  }, [data, isLoading, selectedAttackType]);
+  }, [data, selectedAttackType]);
 
   if (isLoading) {
     return (
@@ -96,7 +97,14 @@ export default function AttackDetectionPage() {
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
       {/* Header Section */}
       <div className="flex flex-col items-start w-full">
-        <div className="text-2xl font-bold">Attack Detection</div>
+        <div className="flex items-center">
+          <IoMdArrowRoundBack
+            className="text-stone-400 hover:text-stone-500 mr-2 cursor-pointer transition-transform duration-200 ease-in-out hover:-translate-x-0.5"
+            onClick={() => router.back()}
+            size={30}
+          />
+          <div className="text-2xl font-bold">Attack Detection</div>
+        </div>
         <div className="text-xl font-medium mb-6 text-gray-500">
           {data ? extractFileName(data?.file_name) : "Unknown"}
         </div>

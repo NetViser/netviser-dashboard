@@ -15,12 +15,28 @@ export function NavHeader() {
   const pathname = usePathname();
   const { isActiveSession } = useSessionStore();
 
+  // Only show "Upload" when data is inserted (i.e. session is active)
+  // and when the current path is not "/"
+  const extraLink =
+    isActiveSession && pathname !== "/" && (
+      <li key="Upload">
+        <Link
+          href="/"
+          className="px-4 py-2 rounded text-gray-300 hover:bg-orange-400 transition-colors"
+        >
+          Upload
+        </Link>
+      </li>
+    );
+
   const items = links.map((link) => (
     <li key={link.label}>
       <Link
         href={link.link}
         className={`px-4 py-2 rounded ${
-          pathname.includes(link.link) ? "bg-orange-500 text-white" : "text-gray-300"
+          pathname.includes(link.link)
+            ? "bg-orange-500 text-white"
+            : "text-gray-300"
         } hover:bg-orange-400 transition-colors ${
           isActiveSession ? "cursor-pointer" : "cursor-not-allowed"
         }`}
@@ -30,6 +46,14 @@ export function NavHeader() {
       </Link>
     </li>
   ));
+
+  // Combine the normal links with the extra link (if any)
+  const allItems = (
+    <>
+      {items}
+      {extraLink}
+    </>
+  );
 
   return (
     <header className="bg-stone-900 text-gray-100 shadow-md sticky top-0 z-50">
@@ -42,7 +66,7 @@ export function NavHeader() {
 
         {/* Desktop Navigation */}
         <nav className="hidden sm:block">
-          <ul className="flex items-center space-x-4">{items}</ul>
+          <ul className="flex items-center space-x-4">{allItems}</ul>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -88,7 +112,7 @@ export function NavHeader() {
       {/* Mobile Navigation */}
       {menuOpen && (
         <nav className="sm:hidden bg-stone-800">
-          <ul className="flex flex-col space-y-2 p-4">{items}</ul>
+          <ul className="flex flex-col space-y-2 p-4">{allItems}</ul>
         </nav>
       )}
     </header>
