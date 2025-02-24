@@ -14,6 +14,7 @@ export type SpecificAttackRecord = {
   bwdIATMean: number;
   bwdInitWinBytes: number;
   fwdPacketLengthMax: number;
+  fwdPSHFlags: number;
   protocol: number;
   srcIp: string;
   dstIp: string;

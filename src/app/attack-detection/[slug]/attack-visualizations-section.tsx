@@ -7,7 +7,8 @@ import AttackDetectionTimeSeries from "@/components/attack-detection/time-series
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";
 import { DDOSVisSection } from "@/components/attack-detection/attack-specific-visualization/ddos-vis-section";
 import { PortscanVisSection } from "@/components/attack-detection/attack-specific-visualization/portscan-vis-section";
-import { DosHulkVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-hulk-section";
+import { DosHulkVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-hulk-vis-section";
+import { DoSSlowlorisVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-slowloris-vis-section";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -40,6 +41,10 @@ export function AttackVisualizationsSection({
 
     if (attackType === "DoS Hulk") {
       return <DosHulkVisSection data={attackVisualizations} />;
+    }
+
+    if (attackType === "DoS Slowloris") {
+      return <DoSSlowlorisVisSection data={attackVisualizations} />;
     }
 
     // Fallback if no matching visualization is found
