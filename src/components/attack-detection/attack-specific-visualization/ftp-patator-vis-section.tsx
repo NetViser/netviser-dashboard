@@ -1,10 +1,11 @@
 "use client";
 
 import BarChart from "@/components/chart/BarChart";
-import FTPSankey from "@/components/chart/ftp/sankey";
+import SankeyChart from "@/components/chart/ftp/sankey"; // Rename import if necessary
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
 import { calculateMean } from "@/lib/utils";
+import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
 
 type FTPPatatorVisSectionProps = {
   data:
@@ -38,38 +39,9 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
     };
   }, [data]);
 
-  // --- Sankey Data remains unchanged
-  const ftpSankeyData = useMemo(() => {
-    if (!data) return { nodes: [], links: [] };
-
-    const { attackData } = data;
-
-    const nodes = Array.from(
-      new Set(
-        attackData.flatMap((record) => [
-          String(record.srcPort),
-          String(record.dstPort),
-          String(record.srcIp),
-        ])
-      )
-    ).map((name) => ({ name }));
-
-    const srcIpLinks = attackData.map((record) => ({
-      source: String(record.srcIp),
-      target: String(record.srcPort),
-      value: record.srcIpPortPairCount,
-    }));
-
-    const portLinks = attackData.map((record) => ({
-      source: String(record.srcPort),
-      target: String(record.dstPort),
-      value: record.portPairCount,
-    }));
-
-    return {
-      nodes,
-      links: [...srcIpLinks, ...portLinks],
-    };
+  // --- Sankey Data using the shared helper function
+  const ftpSankeyData: SankeyData = useMemo(() => {
+    return generateAttackSankeyData(data, 25);
   }, [data]);
 
   // --- Bar Plot for Total TCP Flow Time (replacing Average Packet Size)
@@ -78,8 +50,12 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
 
     const { normalData, attackData } = data;
     // Assuming totalTCPFlowTime field exists in the data
-    const normalTotalTCPFlowTime = normalData.map((r) => (r as any).totalTCPFlowTime);
-    const attackTotalTCPFlowTime = attackData.map((r) => (r as any).totalTCPFlowTime);
+    const normalTotalTCPFlowTime = normalData.map(
+      (r) => (r as any).totalTCPFlowTime
+    );
+    const attackTotalTCPFlowTime = attackData.map(
+      (r) => (r as any).totalTCPFlowTime
+    );
 
     const normalMean = parseFloat(
       calculateMean(normalTotalTCPFlowTime).toFixed(2)
@@ -132,9 +108,9 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
         />
       </div>
 
-      {/* Sankey */}
+      {/* Sankey Diagram */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        <FTPSankey data={ftpSankeyData} />
+        <SankeyChart data={ftpSankeyData} title="Sankey Diagram" />
       </div>
 
       {/* BarChart - Total TCP Flow Time */}

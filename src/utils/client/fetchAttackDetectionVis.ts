@@ -12,6 +12,8 @@ export type SpecificAttackRecord = {
   totalTCPFlowTime: number;
   bwdpacketlengthstd: number;
   bwdIATMean: number;
+  bwdInitWinBytes: number;
+  fwdPacketLengthMax: number;
   protocol: number;
   srcIp: string;
   dstIp: string;

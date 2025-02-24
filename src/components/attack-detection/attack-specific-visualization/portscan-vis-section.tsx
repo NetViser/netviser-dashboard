@@ -5,6 +5,7 @@ import FTPSankey from "@/components/chart/ftp/sankey";
 import { calculateMean } from "@/lib/utils";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
+import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
 
 type PortscanVisSectionProps = {
   data:
@@ -19,15 +20,11 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
   // --- Unique Source Port Count
   const uniqueSrcPortPlot = useMemo(() => {
     if (!data) return { categories: [], data: [] };
-
     const { normalData, attackData } = data;
-
     const normalSrcPortValues = normalData.map((r) => r.srcPort);
     const attackSrcPortValues = attackData.map((r) => r.srcPort);
-
     const normalUniqueSrcPort = Array.from(new Set(normalSrcPortValues)).length;
     const attackUniqueSrcPort = Array.from(new Set(attackSrcPortValues)).length;
-
     return {
       categories: ["Normal", "Attack"],
       data: [normalUniqueSrcPort, attackUniqueSrcPort],
@@ -37,70 +34,30 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
   // --- Unique Destination Port Count
   const uniqueDstPortPlot = useMemo(() => {
     if (!data) return { categories: [], data: [] };
-
     const { normalData, attackData } = data;
-
     const normalDstPortValues = normalData.map((r) => r.dstPort);
     const attackDstPortValues = attackData.map((r) => r.dstPort);
-
     const normalUniqueDstPort = Array.from(new Set(normalDstPortValues)).length;
     const attackUniqueDstPort = Array.from(new Set(attackDstPortValues)).length;
-
     return {
       categories: ["Normal", "Attack"],
       data: [normalUniqueDstPort, attackUniqueDstPort],
     };
   }, [data]);
 
-  // --- Sankey Data
-  const ftpSankeyData = useMemo(() => {
-    if (!data) return { nodes: [], links: [] };
-
-    let { attackData } = data; // Let `attackData` be mutable
-
-    // Limit the number of records to 25
-    attackData = attackData.slice(0, 25);
-
-    const nodes = Array.from(
-      new Set(
-        attackData.flatMap((record) => [
-          String(record.srcPort),
-          String(record.dstIp),
-          String(record.srcIp),
-        ])
-      )
-    ).map((name) => ({ name }));
-
-    const srcIpLinks = attackData.map((record) => ({
-      source: String(record.srcIp),
-      target: String(record.srcPort),
-      value: record.srcIpPortPairCount,
-    }));
-
-    const portLinks = attackData.map((record) => ({
-      source: String(record.srcPort),
-      target: String(record.dstIp),
-      value: record.portPairCount,
-    }));
-
-    return {
-      nodes,
-      links: [...srcIpLinks, ...portLinks],
-    };
+  // --- Sankey Data using the shared helper function
+  const portscanSankeyData: SankeyData = useMemo(() => {
+    return generateAttackSankeyData(data, 100);
   }, [data]);
 
   // --- Total Length of Forward Packet Plot (replaces Bwd Packet Length Std)
   const totalFwdPacketLengthPlot = useMemo(() => {
     if (!data) return { categories: [], data: [] };
-
     const { normalData, attackData } = data;
-
     const normalTotalLength = normalData.map((r) => r.totalLengthOfFwdPacket);
     const attackTotalLength = attackData.map((r) => r.totalLengthOfFwdPacket);
-
     const normalMean = parseFloat(calculateMean(normalTotalLength).toFixed(2));
     const attackMean = parseFloat(calculateMean(attackTotalLength).toFixed(2));
-
     return {
       categories: ["Normal", "Attack"],
       data: [normalMean, attackMean],
@@ -135,9 +92,12 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
         />
       </div>
 
-      {/* Sankey - srcip port dstip */}
+      {/* Sankey Diagram */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        <FTPSankey data={ftpSankeyData} title="Sliced Data Sankey Diagram" />
+        <FTPSankey
+          data={portscanSankeyData}
+          title="Sliced Data Sankey Diagram"
+        />
       </div>
 
       {/* BarChart - Total Length of Forward Packet */}

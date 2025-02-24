@@ -3,35 +3,31 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
 
-// Define the structure of each node
-interface SankeyNode {
+// Define the structure of each node and link
+export interface SankeyNode {
   name: string;
 }
 
-interface SankeyLink {
+export interface SankeyLink {
   source: string;
   target: string;
   value: number;
 }
 
-interface SankeyData {
+// SankeyData now includes a nodeMapping field
+export interface SankeyData {
   nodes: SankeyNode[];
   links: SankeyLink[];
+  // Maps each node name to its type, e.g., "Source IP", "Source Port", or "Dst Port"
+  nodeMapping: Record<string, "Source IP" | "Source Port" | "Dst Port">;
 }
 
-interface FTPSankeyProps {
+interface SankeyChartProps {
   data: SankeyData;
   title?: string;
 }
 
-const labelMap: Record<string, string> = {
-  "172.16.0.1": "Source IP",
-  "21": "Dest Port",
-  // Everything else we'll consider "Source Port"
-  // but you could expand this map or compute logic as needed.
-};
-
-const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diagram" }) => {
+const SankeyChart: React.FC<SankeyChartProps> = ({ data, title = "Sankey Diagram" }) => {
   const options = {
     title: {
       text: title,
@@ -40,22 +36,17 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diag
     tooltip: {
       trigger: "item",
       triggerOn: "mousemove",
-      // Custom formatter for nodes and edges
       formatter: (params: any) => {
         if (params.dataType === "node") {
-          // Node tooltip
           const nodeName = params.name;
-          const role = labelMap[nodeName] || "Source Port";
+          const role = data.nodeMapping[nodeName] || "";
           return `${nodeName} (${role})`;
         } else if (params.dataType === "edge") {
-          // Edge tooltip
           const sourceName = params.data.source;
           const targetName = params.data.target;
           const value = params.data.value;
-
-          const sourceRole = labelMap[sourceName] || "Source Port";
-          const targetRole = labelMap[targetName] || "Source Port";
-
+          const sourceRole = data.nodeMapping[sourceName] || "";
+          const targetRole = data.nodeMapping[targetName] || "";
           return `(${sourceRole}) ${sourceName} → (${targetRole}) ${targetName}<br/>Value: ${value}`;
         }
       },
@@ -81,7 +72,7 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diag
             label: {
               show: true,
               formatter: (params: any) =>
-                `${params.name} (${labelMap[params.name] || "Source Port"})`,
+                `${params.name} (${data.nodeMapping[params.name] || ""})`,
             },
           },
           {
@@ -96,7 +87,7 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diag
             label: {
               show: true,
               formatter: (params: any) =>
-                `${params.name} (${labelMap[params.name] || "Source Port"})`,
+                `${params.name} (${data.nodeMapping[params.name] || ""})`,
             },
           },
           {
@@ -111,7 +102,7 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diag
             label: {
               show: true,
               formatter: (params: any) =>
-                `${params.name} (${labelMap[params.name] || "Source Port"})`,
+                `${params.name} (${data.nodeMapping[params.name] || ""})`,
             },
           },
         ],
@@ -129,4 +120,4 @@ const FTPSankey: React.FC<FTPSankeyProps> = ({ data, title: title = "Sankey Diag
   );
 };
 
-export default FTPSankey;
+export default SankeyChart;
