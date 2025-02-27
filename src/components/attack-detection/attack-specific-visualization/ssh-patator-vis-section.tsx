@@ -117,7 +117,14 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
 
       {/* BarChart - Total TCP Flow Time */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        
+        <BarChart
+          title="Total TCP Flow Time"
+            data={sshBarPlotTotalTCPFlowTime.data}
+            categories={sshBarPlotTotalTCPFlowTime.categories}
+            yAxisName="Total TCP Flow Time"
+            enableZoom={false}
+            enableSorting={false}
+        />
       </div>
 
       {/* BarChart - bwdIinitWinBytes */}
