@@ -112,7 +112,7 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
 
       {/* Sankey Diagram */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        
+        <SankeyChart data={sshSankeyData} title="Sankey Diagram" />
       </div>
 
       {/* BarChart - Total TCP Flow Time */}
