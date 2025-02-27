@@ -129,7 +129,14 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
 
       {/* BarChart - bwdIinitWinBytes */}
       <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
-        
+        <BarChart
+          title="Bwd Init Win Bytes"
+            data={sshBarPlotBwdInitWinBytesMean.data}
+            categories={sshBarPlotBwdInitWinBytesMean.categories}
+            yAxisName="Bwd Init Win Bytes"
+            enableZoom={false}
+            enableSorting={false}
+        />
         </div> 
     </div>
   );
