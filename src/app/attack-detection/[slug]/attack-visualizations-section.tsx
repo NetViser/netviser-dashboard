@@ -9,6 +9,7 @@ import { DDOSVisSection } from "@/components/attack-detection/attack-specific-vi
 import { PortscanVisSection } from "@/components/attack-detection/attack-specific-visualization/portscan-vis-section";
 import { DosHulkVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-hulk-vis-section";
 import { DoSSlowlorisVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-slowloris-vis-section";
+import { SSHPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ssh-patator-vis-section";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -29,6 +30,10 @@ export function AttackVisualizationsSection({
   const renderSpecificAttackVisualization = () => {
     if (attackType === "FTP-Patator") {
       return <FTPPatatorVisSection data={attackVisualizations} />;
+    }
+
+    if (attackType === "SSH-Patator") {
+      return <SSHPatatorVisSection data={attackVisualizations} />;
     }
 
     if (attackType === "DDoS") {
