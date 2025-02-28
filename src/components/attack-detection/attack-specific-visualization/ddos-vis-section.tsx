@@ -6,6 +6,7 @@ import { calculateMean } from "@/lib/utils";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
 import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
+import { AttackVisTemplate } from "./template/AttackVisTemplate"; // Adjust the import path as needed
 
 type DDOSVisSectionProps = {
   data:
@@ -21,10 +22,10 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
   const activeFlowBarPlot = useMemo(() => {
     if (!data) return { categories: [], data: [] };
     const { normalData, attackData } = data;
-    const normalsrcIPValues = normalData.map((r) => r.srcIp);
-    const attacksrcIPValues = attackData.map((r) => r.srcIp);
-    const normalUniqueSrcIP = Array.from(new Set(normalsrcIPValues)).length;
-    const attackUniqueSrcIP = Array.from(new Set(attacksrcIPValues)).length;
+    const normalSrcIPValues = normalData.map((r) => r.srcIp);
+    const attackSrcIPValues = attackData.map((r) => r.srcIp);
+    const normalUniqueSrcIP = Array.from(new Set(normalSrcIPValues)).length;
+    const attackUniqueSrcIP = Array.from(new Set(attackSrcIPValues)).length;
     return {
       categories: ["Normal", "Attack"],
       data: [normalUniqueSrcIP, attackUniqueSrcIP],
@@ -32,7 +33,7 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
   }, [data]);
 
   // --- Packet Length (Average Packet Length)
-  const BarPacketLength = useMemo(() => {
+  const barPacketLength = useMemo(() => {
     if (!data) return { categories: [], data: [] };
     const { normalData, attackData } = data;
     const normalPacketLengthMeanValues = normalData.map((r) => r.packetlengthmean);
@@ -45,70 +46,101 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
     };
   }, [data]);
 
-  // --- Sankey Data using the helper function from "@/lib/vis_utils"
+  // --- Sankey Data
   const ddosSankeyData: SankeyData = useMemo(() => {
-    // Use a slice count of 25 records
+    if (!data) return { nodes: [], links: [], nodeMapping: {} };
     return generateAttackSankeyData(data, 10);
   }, [data]);
 
   // --- Bar Plot for Bwd Packet Length Std (Mean)
-  const ddos_bwdpacketlengthstd = useMemo(() => {
+  const ddosBwdPacketLengthStd = useMemo(() => {
     if (!data) return { categories: [], data: [] };
     const { normalData, attackData } = data;
-    const normalbwdpacketlengthstd = normalData.map((r) => r.bwdpacketlengthstd);
-    const attackbwdpacketlengthstd = attackData.map((r) => r.bwdpacketlengthstd);
-    const normalMean = parseFloat(calculateMean(normalbwdpacketlengthstd).toFixed(2));
-    const attackMean = parseFloat(calculateMean(attackbwdpacketlengthstd).toFixed(2));
+    const normalBwdPacketLengthStd = normalData.map((r) => r.bwdpacketlengthstd);
+    const attackBwdPacketLengthStd = attackData.map((r) => r.bwdpacketlengthstd);
+    const normalMean = parseFloat(calculateMean(normalBwdPacketLengthStd).toFixed(2));
+    const attackMean = parseFloat(calculateMean(attackBwdPacketLengthStd).toFixed(2));
     return {
       categories: ["Normal", "Attack"],
       data: [normalMean, attackMean],
     };
   }, [data]);
 
-  if (!data) return null;
-
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      {/* BarChart - Active Flow (Unique Source IPs) */}
-      <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
+  // Define the blocks for the AttackVisTemplate
+  const blocks = [
+    {
+      component: (
         <BarChart
-          title="Number of unique source IPs"
+          title="Number of Unique Source IPs"
           data={activeFlowBarPlot.data}
           categories={activeFlowBarPlot.categories}
           yAxisName="Unique Source IPs"
           enableZoom={false}
           enableSorting={false}
+          withBorder={false}
+          height={500}
         />
-      </div>
-
-      {/* BarChart - Average Packet Length */}
-      <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
+      ),
+      accordionTitle: "What is Unique Source IPs?",
+      description:
+        "Imagine a crowd of people trying to enter a building—'Unique Source IPs' is like counting " +
+        "how many different people (IPs) are sending data. In a DDoS attack, you might see a lot more " +
+        "people (IPs) trying to flood the network, which can be a sign of trouble!",
+    },
+    {
+      component: (
         <BarChart
           title="Average Packet Length"
-          data={BarPacketLength.data}
-          categories={BarPacketLength.categories}
+          data={barPacketLength.data}
+          categories={barPacketLength.categories}
           yAxisName="Mean Packet Length"
           enableZoom={false}
           enableSorting={false}
+          withBorder={false}
+          height={500}
         />
-      </div>
-
-      {/* Sankey Diagram */}
-      <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
+      ),
+      accordionTitle: "What is Average Packet Length?",
+      description:
+        "Think of packets as envelopes carrying data—'Average Packet Length' is like measuring " +
+        "the average size of these envelopes. In a DDoS attack, attackers might send unusually " +
+        "large or small envelopes to overwhelm the network, so this helps spot suspicious patterns.",
+    },
+    {
+      component: (
         <FTPSankey data={ddosSankeyData} title="Sliced Data Sankey Diagram" />
-      </div>
-
-      {/* BarChart - Bwd Packet Length Std */}
-      <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col">
+      ),
+      accordionTitle: "How to Read a Sankey Diagram?",
+      description:
+        "Think of a Sankey diagram like a map of a river system! The 'rivers' (lines) show how " +
+        "data flows from one place to another—like from a Source IP to a Source Port, then to a " +
+        "Destination Port. The thicker the river, the more data is flowing. The boxes (nodes) are " +
+        "like stops along the way, labeled with roles (e.g., 'Source IP'). Hover over them to see " +
+        "details! Here, it helps us track how normal or attack traffic moves through the network.",
+    },
+    {
+      component: (
         <BarChart
           title="Bwd Packet Length Std"
-          data={ddos_bwdpacketlengthstd.data}
-          categories={ddos_bwdpacketlengthstd.categories}
-          yAxisName="Bwd Packet Length Std"
+          data={ddosBwdPacketLengthStd.data}
+          categories={ddosBwdPacketLengthStd.categories}
+          yAxisName="Mean Bwd Packet Length Std"
           enableZoom={false}
           enableSorting={false}
+          withBorder={false}
+          height={500}
         />
-      </div>
-    </div>
-  );
+      ),
+      accordionTitle: "What is Bwd Packet Length Std?",
+      description:
+        "Imagine the sizes of envelopes coming back to you—'Bwd Packet Length Std' measures how " +
+        "much these sizes vary. In a DDoS attack, the variation might be unusually high or low, " +
+        "helping us detect if something’s off with the incoming data.",
+    },
+  ];
+
+  if (!data) return null;
+
+  // Render the template with the blocks
+  return <AttackVisTemplate blocks={blocks} />;
 }

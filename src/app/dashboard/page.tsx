@@ -140,7 +140,7 @@ export default function DashboardPage() {
               showFrequency
             />
           </div>
-          <div className="h-[30rem]">
+          <div className="h-[30rem] bg-white rounded-lg border-2 shadow-sm flex flex-col mx-4">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
