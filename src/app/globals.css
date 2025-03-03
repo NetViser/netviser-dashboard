@@ -70,3 +70,38 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-bg {
+  background: linear-gradient(45deg, #ea580c, #f97316, #fb923c, #ea580c);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
+}
+
+.animate-progress {
+  width: 0%;
+  animation: progressBar 2s ease-in-out infinite;
+}
+
+@keyframes progressBar {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
