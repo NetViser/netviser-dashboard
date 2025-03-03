@@ -4,30 +4,19 @@ import { useState } from "react";
 import { TbUpload } from "react-icons/tb";
 import { useDropzone } from "react-dropzone";
 import useSWRMutation from "swr/mutation";
+import useSWR from "swr";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/store/session";
 import { uploadFile } from "@/utils/client/uploadFIle";
+import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
 
 const UPLOAD_URL = "http://localhost:8000/api/upload";
-
-const mockSampleNetworkFile = [
-  {
-    name: "ddos_port_ftp.csv",
-    featuredAttacks: ["DDoS", "Portscan", "FTP-Patator"],
-  },
-  {
-    name: "dos_slow_hulk.csv",
-    featuredAttacks: ["DoS Hulk", "DoS Slowloris"],
-  },
-  {
-    name: "ssh_ftp_patator.csv",
-    featuredAttacks: ["SSH-Patator", "FTP-Patator"],
-  },
-];
 
 export default function Home() {
   const router = useRouter();
@@ -130,6 +119,34 @@ export default function Home() {
     multiple: false,
   });
 
+  // Fetch sample network files with SWR
+  const { data: sampleFiles, isLoading: isLoadingSamples } = useSWR(
+    "sample-network-files",
+    fetchAllSampleNetworkFiles,
+    {
+      shouldRetryOnError: false,
+      onError: async (error) => {
+        await Swal.fire({
+          icon: "error",
+          title: "Failed to Load Samples",
+          text: "Unable to fetch sample network files.",
+          confirmButtonText: "OK",
+          timer: 1500,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          background: "#fff",
+          customClass: {
+            popup: "rounded-xl shadow-2xl border border-red-200/50",
+            title: "text-stone-900 font-bold text-2xl",
+            confirmButton: "rounded-lg px-6 py-2 bg-red-500 text-white",
+          },
+        });
+        console.error("Failed to fetch sample network files:", error);
+      },
+    }
+  );
+
   // Framer Motion variants
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -201,7 +218,7 @@ export default function Home() {
 
             {/* Drag & Drop Box */}
             <motion.div
-              {...getRootProps()}
+              {...getRootProps() as any}
               className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50 to-gray-200 p-8 shadow-inner transition-all duration-300 ease-in-out ${
                 isDragActive
                   ? "border-orange-500 bg-orange-50/50"
@@ -257,15 +274,35 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-stone-900 mb-6 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
                 Try Sample Network Files
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {mockSampleNetworkFile.map((file, index) => (
-                  <SampleNetworkFileCard
-                    key={index}
-                    name={file.name}
-                    featuredAttacks={file.featuredAttacks}
-                  />
-                ))}
-              </div>
+              {isLoadingSamples ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Array(4)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-50 rounded-xl border border-gray-200 p-4"
+                      >
+                        <Skeleton height={24} width="80%" className="mb-3" />
+  
+                        <div className="flex flex-wrap gap-2">
+                          <Skeleton height={20} width={60} borderRadius={9999} />
+                          <Skeleton height={20} width={80} borderRadius={9999} />
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {sampleFiles?.map((file, index) => (
+                    <SampleNetworkFileCard
+                      key={index}
+                      name={file.name}
+                      featuredAttacks={file.featuredAttacks}
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
           </motion.div>
         </div>
