@@ -9,6 +9,7 @@ import { XAIBarSummaryModal } from "@/components/attack-detection/xai/xai-bar-su
 import SummaryBeeSwarmChart from "@/components/chart/xai/SummaryBeeSwarmChart";
 import { XAIBeeswarmSummaryModal } from "@/components/attack-detection/xai/xai-beeswarm-summary-modal";
 import Skeleton from "react-loading-skeleton";
+import { useSessionStore } from "@/store/session";
 
 type AttackXAISectionProps = {
   attackType: string;
@@ -16,11 +17,12 @@ type AttackXAISectionProps = {
 
 export function AttackXAISection({ attackType }: AttackXAISectionProps) {
   const [showBarChartModal, setShowBarChartModal] = React.useState(false);
+  const { sessionID } = useSessionStore()
   const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] =
     React.useState(false);
   // Use SWR to fetch the XAI summary data.
   const { data, error } = useSWR(
-    `/attack_summary_xai?attack_type=${attackType}`,
+    `${sessionID}/attack_summary_xai?attack_type=${attackType}`,
     () => fetchAttackSummaryXAI({ attack_type: attackType }),
     {
       shouldRetryOnError: false,

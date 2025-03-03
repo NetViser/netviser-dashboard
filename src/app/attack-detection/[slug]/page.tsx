@@ -24,7 +24,7 @@ export default function Page() {
   const [pageSize, setPageSize] = useState(10);
   const slugName = params?.slug || "";
   const attackType = decodeURIComponent(slugName as string);
-  const { setActiveSession } = useSessionStore();
+  const { setActiveSession, sessionID } = useSessionStore();
 
   const [explainabilityMode, setExplainabilityMode] = useState<
     "Visualization" | "XAI"
@@ -40,7 +40,7 @@ export default function Page() {
     data: attackRecords,
     isLoading: isLoadingAttackRecords,
   } = useSWR(
-    `/attack_record?type=${attackType}&page=${page}&page_size=${pageSize}`,
+    `${sessionID}/attack_record?type=${attackType}&page=${page}&page_size=${pageSize}`,
     () => fetchAttackDetectionRecord(attackType, page, pageSize),
     {
       shouldRetryOnError: false,
@@ -54,7 +54,7 @@ export default function Page() {
     data: attackVisualizations,
     isLoading: isLoadingVisualizations,
   } = useSWR(
-    `/attack_visuals?type=${attackType}`,
+    `${sessionID}/attack_visuals?type=${attackType}`,
     () => fetchSpecificAttackDetection(attackType),
     {
       shouldRetryOnError: false,

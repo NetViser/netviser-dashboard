@@ -23,9 +23,9 @@ export default function AttackDetectionPage() {
   };
 
   const router = useRouter();
-  const { setActiveSession, isActiveSession } = useSessionStore();
+  const { setActiveSession, sessionID } = useSessionStore();
 
-  const { data, isLoading } = useSWR("/api/dashboard", fetchDashboard, {
+  const { data, isLoading } = useSWR(`${sessionID}/api/dashboard`, fetchDashboard, {
     shouldRetryOnError: false,
     onError: async (error) => {
       await Swal.fire({
@@ -45,7 +45,7 @@ export default function AttackDetectionPage() {
 
   const { data: scatterData, isLoading: scatterIsLoading } = useSWR(
     selectedAttackType
-      ? `/api/attack-detection/brief/scatter?attack_type=${selectedAttackType}`
+      ? `${sessionID}/api/attack-detection/brief/scatter?attack_type=${selectedAttackType}`
       : null,
     () => fetchAttackDetectionScatter(selectedAttackType || ""),
     {

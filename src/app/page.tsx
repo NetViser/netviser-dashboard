@@ -14,11 +14,11 @@ const UPLOAD_URL = "http://localhost:8000/api/upload";
 
 export default function Home() {
   const router = useRouter();
-  const { setActiveSession } = useSessionStore();
+  const { setActiveSession, setSessionID } = useSessionStore();
   const [isMutating, setIsMutating] = useState(false);
 
   const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
-    onSuccess: async () => {
+    onSuccess: async (responseData) => {
       await Swal.fire({
         title: "File Uploaded Successfully",
         icon: "success",
@@ -27,8 +27,23 @@ export default function Home() {
         timerProgressBar: true,
       });
 
-      setActiveSession(true);
-      router.push("/dashboard");
+      try {
+        const sessionID = responseData.content.session_id; // Extract session_id
+        console.log("Session ID:", sessionID);
+        setSessionID(sessionID); // Set sessionID in store
+        setActiveSession(true); // You might want to set sessionID in store if needed
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error parsing JSON response:", error);
+        Swal.fire({
+          // Handle error parsing JSON (optional, but good practice)
+          title: "Error",
+          text: "Failed to parse server response.",
+          icon: "error",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#f44336",
+        });
+      }
     },
     onError: (error: Error) => {
       Swal.fire({
@@ -58,7 +73,9 @@ export default function Home() {
       {/* Header Section */}
       <div className="bg-orange-600 flex px-4 relative h-[58vh]">
         {/* Overlapping Card */}
-        <div className={`absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2`}>
+        <div
+          className={`absolute inset-x-0 top-[56%] mx-auto max-w-4xl z-10 transform -translate-y-1/2`}
+        >
           <div className="bg-white rounded-lg border border-2 shadow-sm p-6 md:p-10">
             <div className="text-center mb-6">
               <h1 className="text-4xl font-extrabold text-stone-900">
@@ -117,7 +134,8 @@ export default function Home() {
               Getting Started with NetViser
             </h3>
             <p className="text-stone-700 mb-6">
-              Follow these steps to detect and visualize your network traffic with the benefit of explanable AI
+              Follow these steps to detect and visualize your network traffic
+              with the benefit of explanable AI
             </p>
             {[
               "Upload network capture files or synthetic attack datasets",

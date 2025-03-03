@@ -22,11 +22,10 @@ export default function DashboardPage() {
   };
 
   const router = useRouter();
-  const { setActiveSession } = useSessionStore();
+  const { setActiveSession, sessionID } = useSessionStore();
 
-  const { data, isLoading } = useSWR("/api/dashboard", fetchDashboard, {
+  const { data, isLoading } = useSWR(`${sessionID}/api/dashboard`, fetchDashboard, {
     shouldRetryOnError: false,
-
     onError: async (error) => {
       await Swal.fire({
         icon: "error",
