@@ -89,7 +89,7 @@ export default function Home() {
           html: `
             <div class="flex flex-col items-center space-y-4">
               <div class="relative w-16 h-16">
-                <img src="/Sharingan_triple.svg" alt="NetViser Logo" class="w-16 h-16 animate-spin" />
+                <img src="/loader-circle.svg" alt="NetViser Logo" class="w-16 h-16 animate-spin" />
                 <div class="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/30 to-orange-700/30 blur-md animate-pulse"></div>
               </div>
               <p class="text-stone-700 font-semibold text-lg animate-pulse">Processing...</p>
