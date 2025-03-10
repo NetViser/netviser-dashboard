@@ -34,6 +34,7 @@
     "react-spinners": "^0.15.0",
     "react-typed": "^2.0.12",
     "react-typing-effect": "^2.0.5",
+    "shepherd.js": "^14.5.0",
     "sweetalert2": "^11.15.10",
     "swr": "^2.3.0",
     "tailwind-merge": "^2.6.0",

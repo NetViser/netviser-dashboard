@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
+import DragDropBoxTour from "./tour/upload_tour";
 
 const UPLOAD_URL = "http://localhost:8000/api/upload";
 
@@ -214,8 +215,10 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-stone-700 mt-3 tracking-wide">
                 Network Traffic Visualization Platform
               </h2>
-            </motion.div>
 
+              <DragDropBoxTour />
+            </motion.div>
+          
             {/* Drag & Drop Box */}
             <motion.div
               {...getRootProps() as any}
@@ -224,6 +227,7 @@ export default function Home() {
                   ? "border-orange-500 bg-orange-50/50"
                   : "border-gray-300 hover:border-orange-400"
               } cursor-pointer`}
+              id="drag-drop-box"
               whileHover={{ scale: 1.02, boxShadow: "0 8px 24px rgba(234, 88, 12, 0.2)" }}
               whileTap={{ scale: 0.98 }}
             >
@@ -267,6 +271,7 @@ export default function Home() {
             {/* Sample Network Files */}
             <motion.div
               className="mt-10"
+              id="sample-file"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
