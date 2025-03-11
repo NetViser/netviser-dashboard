@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
 import AreaChart from "@/components/chart/AreaChart";
+import DashBoardTour from "../tour/dashboard_tour";
 
 export default function DashboardPage() {
   const extractFileName = (name: string) => {
@@ -115,12 +116,13 @@ export default function DashboardPage() {
         <div className="text-2xl font-bold">Dashboard</div>
         <div className="text-xl font-medium mb-6 text-gray-500">
           {data ? extractFileName(data?.file_name) : "Unknown"}
+          <DashBoardTour />
         </div>
       </div>
 
       <div className="flex flex-col gap-y-6 mb-4">
         {/* Summary Cards Section */}
-        <div className="flex flex-row items-start gap-x-6">
+        <div className="flex flex-row items-start gap-x-6" id="summary-cards">
           {summaryCards.map((card, index) => (
             <SummaryCard
               key={index}
@@ -132,14 +134,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <div className="h-[30rem]">
+          <div className="h-[30rem]" id="protocol-distribution">
             <PieChart
               title="Protocol Distribution"
               data={getProtocolPieChartData}
               showFrequency
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg border-2 shadow-sm flex flex-col mx-4">
+          <div className="h-[30rem] bg-white rounded-lg border-2 shadow-sm flex flex-col mx-4" id="src-ip-distribution">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
@@ -152,13 +154,13 @@ export default function DashboardPage() {
               ).map((key) => String(key))}
             />
           </div>
-          <div className="h-[30rem]">
+          <div className="h-[30rem]" id="dst-port-distribution">
             <PieChart
               title="Destination Port Distribution"
               data={getDstPortPieChartData}
             />
           </div>
-          <div className="h-[30rem]">
+          <div className="h-[30rem]" id="attack-class-distribution">
             <PieChart
               title="Attack Class Distribution"
               data={getAttackClassPieChartData}
@@ -166,7 +168,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="h-[450px]">
+        <div className="h-[450px]" id="packets-per-second">
           <AreaChart
             title="Forward Packets Per Second and Backward Packets Per Second"
             dates={
