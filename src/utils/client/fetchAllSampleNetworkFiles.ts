@@ -12,17 +12,29 @@ export async function fetchAllSampleNetworkFiles(): Promise<
     // Return mock data
     return [
       {
-        name: "ddos_port_ftp.csv",
-        featuredAttacks: ["DDoS", "Portscan", "FTP-Patator"],
+        name: "ddos-ftp.csv",
+        featuredAttacks: ["DDoS", "FTP-Patator"],
       },
       {
-        name: "dos_slow_hulk.csv",
-        featuredAttacks: ["DoS Hulk", "DoS Slowloris"],
-      },
-      {
-        name: "ssh_ftp_patator.csv",
+        name: "ssh-ftp.csv",
         featuredAttacks: ["SSH-Patator", "FTP-Patator"],
       },
+      {
+        name: "ftp_patator_occurence.csv",
+        featuredAttacks: ["FTP-Patator"],
+      },
+      {
+        name: "portscan_dos_hulk_slowloris.csv",
+        featuredAttacks: ["DoS Hulk", "DoS Slowloris", "PortScan"],
+      },
+      {
+        name: "portscan_dos_hulk.csv",
+        featuredAttacks: ["DoS Hulk", "PortScan"],
+      },
+      {
+        name: "portscan.csv",
+        featuredAttacks: ["PortScan"],
+      }
     ];
   } catch (error) {
     console.error("Error fetching sample network files:", error);
