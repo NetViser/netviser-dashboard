@@ -1,4 +1,6 @@
 import data from "@/mocks/attackDetectionScatter.json";
+import { customFetch } from "@/utils/client/fetchClient";
+
 export interface DataPoint {
   timestamp: string;
   value: number;
@@ -11,28 +13,29 @@ export interface AttackDetectionBriefScatterResponse {
   feature_name: string;
 }
 
-export async function fetchAttackDetectionScatter(attack_type: string): Promise<AttackDetectionBriefScatterResponse> {
-    const url = new URL("http://localhost:8000/api/attack-detection/brief/scatter");
-    url.searchParams.append("attack_type", attack_type);
-    
-    const response = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        credentials: "include",
-    });
-    
-    if (!response.ok) {
-        const errorMessage = await response.json();
-        throw new Error(errorMessage || "Failed to get attack detection scatter data");
-    }
-    
-    return response.json();
+export async function fetchAttackDetectionScatter(
+  attack_type: string
+): Promise<AttackDetectionBriefScatterResponse> {
+  // Build the query parameters using URLSearchParams
+  const params = new URLSearchParams({
+    attack_type,
+  });
+  // Use a relative URL so the base URL is prepended by customFetch
+  const url = `/api/attack-detection/brief/scatter?${params.toString()}`;
+
+  // Call the custom fetch client; it automatically includes credentials
+  const dataResponse = await customFetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return dataResponse as AttackDetectionBriefScatterResponse;
 }
 
 // export const fetchAttackDetectionScatter = async (attack_type: string): Promise<AttackDetectionBriefScatterResponse> => {
 //     await new Promise((resolve) => setTimeout(resolve, 1000))
-
+//
 //     return Promise.resolve(data as AttackDetectionBriefScatterResponse);
-// }
+// };

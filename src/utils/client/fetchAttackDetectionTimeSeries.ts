@@ -1,6 +1,5 @@
-import axios from "axios";
+import { customFetch } from "@/utils/client/fetchClient";
 
-// Update the FetchTimeSeriesAttackDataResponse interface to include features
 export interface DataSchema {
   /**
    * Parallel array of ISO8601 date/time strings
@@ -100,30 +99,33 @@ export interface FetchTimeSeriesAttackDataResponse {
 }
 
 export const FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL =
-  "http://localhost:8000/api/attack-detection/visualization/attack-time-series";
+  "/api/attack-detection/visualization/attack-time-series";
 
 export async function fetchAttackDetectionTimeSeries(
   attackType: string,
   partitionIndex: number = 0,
-  featureName?: string // Add optional featureName parameter
+  featureName?: string // Optional featureName parameter
 ): Promise<FetchTimeSeriesAttackDataResponse> {
   try {
-    const searchParams = new URLSearchParams({
+    const params = new URLSearchParams({
       attack_type: attackType,
       partition_index: String(partitionIndex),
     });
 
     if (featureName) {
-      searchParams.append("feature_name", featureName);
+      params.append("feature_name", featureName);
     }
 
-    const url = `${FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL}?${searchParams.toString()}`;
+    const url = `${FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL}?${params.toString()}`;
 
-    const response = await axios.get<FetchTimeSeriesAttackDataResponse>(url, {
-      withCredentials: true,
+    const data = await customFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    return response.data;
+    return data as FetchTimeSeriesAttackDataResponse;
   } catch (error) {
     console.error("Error fetching attack detection time series data:", error);
     throw new Error("Failed to fetch attack detection time series data.");

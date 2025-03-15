@@ -1,4 +1,4 @@
-import axios from "axios";
+import { customFetch } from "@/utils/client/fetchClient";
 
 export type SpecificAttackRecord = {
   timestamp: string;
@@ -29,25 +29,28 @@ export type SpecificAttackRecord = {
   protocol_distribution: Record<string, number>;
 };
 
-type FetchSpecificAttackResponse = {
+export type FetchSpecificAttackResponse = {
   normalData: SpecificAttackRecord[];
   attackData: SpecificAttackRecord[];
 };
-
-export const SPECIFIC_ATTACK_API_URL = "http://localhost:8000/api/attack-detection/specific";
 
 export async function fetchSpecificAttackDetection(
   attackType: string,
 ): Promise<FetchSpecificAttackResponse> {
   try {
-    const response = await axios.get<FetchSpecificAttackResponse>(SPECIFIC_ATTACK_API_URL, {
-      params: {
-        attack_type: attackType,
+    const params = new URLSearchParams({
+      attack_type: attackType,
+    });
+    const url = `/api/attack-detection/specific?${params.toString()}`;
+
+    const data = await customFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
       },
-      withCredentials: true, // Automatically sends cookies
     });
 
-    return response.data;
+    return data as FetchSpecificAttackResponse;
   } catch (error) {
     console.error("Error fetching specific attack detection data:", error);
     throw new Error("Failed to fetch specific attack detection data.");
