@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLocalStorage } from "react-use"; // Robust hook for persisted state
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
@@ -25,33 +25,31 @@ export function AttackVisualizationsSection({
   attackType,
   attackVisualizations,
 }: AttackVisualizationsSectionProps) {
-  const [activeTab, setActiveTab] = useState("overall");
+  // Create a key that depends on the attack type.
+  const localStorageKey = `attack-visualizations-active-tab-${attackType}`;
+
+  // Use useLocalStorage with the dynamic key so each attack type gets its own state.
+  const [activeTab, setActiveTab] = useLocalStorage(localStorageKey, "overall");
 
   const renderSpecificAttackVisualization = () => {
     if (attackType === "FTP-Patator") {
       return <FTPPatatorVisSection data={attackVisualizations} />;
     }
-
     if (attackType === "SSH-Patator") {
       return <SSHPatatorVisSection data={attackVisualizations} />;
     }
-
     if (attackType === "DDoS") {
       return <DDOSVisSection data={attackVisualizations} />;
     }
-
     if (attackType === "Portscan") {
       return <PortscanVisSection data={attackVisualizations} />;
     }
-
     if (attackType === "DoS Hulk") {
       return <DosHulkVisSection data={attackVisualizations} />;
     }
-
     if (attackType === "DoS Slowloris") {
       return <DoSSlowlorisVisSection data={attackVisualizations} />;
     }
-
     // Fallback if no matching visualization is found
     return null;
   };
@@ -60,8 +58,7 @@ export function AttackVisualizationsSection({
     <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
       <h2 className="text-xl font-bold mb-4">Attack Specific Visualizations</h2>
 
-      {/* Tabs */}
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab}>
+      <Tabs activeTab={activeTab!} setActiveTab={setActiveTab}>
         <Tab tab="overall" label="Overall">
           {renderSpecificAttackVisualization()}
         </Tab>

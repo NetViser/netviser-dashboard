@@ -2,7 +2,6 @@
 
 import Spinner from "@/components/loader/spinner";
 import { useSessionStore } from "@/store/session";
-import { fetchDashboard } from "@/utils/client/fetchDashboard";
 import { fetchAttackDetectionRecord } from "@/utils/client/fetchAttackDetectionRecord";
 import { fetchSpecificAttackDetection } from "@/utils/client/fetchAttackDetectionVis";
 import { useParams, useRouter } from "next/navigation";
@@ -10,7 +9,7 @@ import Swal from "sweetalert2";
 import useSWR from "swr";
 import { useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
-
+import { useLocalStorage } from "react-use";
 import { AttackRecordsSection } from "./attack-records-section";
 import { AttackVisualizationsSection } from "./attack-visualizations-section";
 import { ExplainabilitySelector } from "@/components/ui/select";
@@ -26,9 +25,12 @@ export default function Page() {
   const attackType = decodeURIComponent(slugName as string);
   const { setActiveSession, sessionID } = useSessionStore();
 
-  const [explainabilityMode, setExplainabilityMode] = useState<
-    "Visualization" | "XAI"
-  >("Visualization");
+  // Use a dynamic local storage key for explainability mode based on the attack type.
+  const explainabilityKey = `explainability-mode-${attackType}`;
+  const [explainabilityMode, setExplainabilityMode] = useLocalStorage(
+    explainabilityKey,
+    "Visualization"
+  );
 
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
@@ -124,14 +126,14 @@ export default function Page() {
         </div>
 
         {/* Explainability Mode Selector */}
-        <ExplainabilitySelector onSelect={handleExplainabilityModeChange} />
+        <ExplainabilitySelector onSelect={handleExplainabilityModeChange} value={explainabilityMode!} />
       </div>
 
       {/* Attack Records Table */}
       <AttackRecordsSection
         attackRecords={attackRecords}
         attackType={attackType}
-        explainabilityMode={explainabilityMode}
+        explainabilityMode={explainabilityMode as any}
         page={page}
         pageSize={pageSize}
         onPageChange={handlePageChange}

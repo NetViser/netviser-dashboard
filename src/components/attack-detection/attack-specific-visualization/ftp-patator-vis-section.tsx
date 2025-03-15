@@ -4,8 +4,8 @@ import BarChart from "@/components/chart/BarChart";
 import SankeyChart from "@/components/chart/ftp/sankey";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
-import { calculateMean } from "@/lib/utils";
-import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
+import { calculateMean } from "@/utils/utils";
+import { generateAttackSankeyData, SankeyData } from "@/utils/vis_utils";
 import { AttackVisTemplate } from './template/AttackVisTemplate';
 
 type FTPPatatorVisSectionProps = {
