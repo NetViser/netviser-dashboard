@@ -41,7 +41,7 @@ export function AttackRecordsSection({
     })) || [];
 
   return (
-    <div className="w-full rounded-lg shadow-sm bg-white p-6">
+    <div className="w-full rounded-lg shadow-sm bg-white p-6" id="attack-records">
       <h2 className="text-xl font-bold mb-4">Detected Attacks Records</h2>
       <DataTable
         columns={columnsToRender}

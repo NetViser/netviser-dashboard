@@ -57,7 +57,7 @@ export function AttackVisualizationsSection({
   };
 
   return (
-    <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6">
+    <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6" id="attack-visualizations">
       <h2 className="text-xl font-bold mb-4">Attack Specific Visualizations</h2>
 
       {/* Tabs */}

@@ -16,6 +16,8 @@ import { AttackVisualizationsSection } from "./attack-visualizations-section";
 import { ExplainabilitySelector } from "@/components/ui/select";
 import { XAIModal } from "@/components/attack-detection/xai/xai-modal";
 import { AttackXAISection } from "./attack-xai-section";
+import AttackTour from "@/app/tour/attack_tour";
+import XAITour from "@/app/tour/xai_tour";
 
 export default function Page() {
   const router = useRouter();
@@ -121,6 +123,8 @@ export default function Page() {
             Attack Detection /{" "}
             <span className="text-orange-500">{attackType}</span>
           </h1>
+          {explainabilityMode === "Visualization" && <AttackTour />}
+          {explainabilityMode === "XAI" && <XAITour />}
         </div>
 
         {/* Explainability Mode Selector */}

@@ -147,7 +147,7 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
 function ExplainabilitySelector({ onSelect }: { onSelect: (value: string) => void }) {
   return (
-    <div className="flex justify-end items-center w-fit min-w-[18rem] py-4 pr-6">
+    <div className="flex justify-end items-center w-fit min-w-[18rem] py-4 pr-6" id="explainability-selector">
       <label className="text-md font-semibold text-gray-700 w-full">Explain Mode:</label>
       <Select onValueChange={onSelect}>
         <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">

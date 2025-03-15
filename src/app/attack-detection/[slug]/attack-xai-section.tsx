@@ -101,7 +101,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-md mt-4">
+    <div className="bg-white rounded-lg p-6 shadow-md mt-4" id="attackxai">
       <h1 className="text-xl font-bold mb-4">XAI Section</h1>
       {/* First Row */}
       <div className="flex flex-col md:flex-row gap-4">
