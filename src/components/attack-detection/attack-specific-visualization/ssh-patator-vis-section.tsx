@@ -65,14 +65,14 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
           title="Fwd Packet Length Max"
           data={sshBarPlotFwdPacketLengthMax.data}
           categories={sshBarPlotFwdPacketLengthMax.categories}
-          yAxisName="Mean Fwd Packet Length Max"
+          yAxisName="Mean Forward Packet Length Max (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
           height={500}
         />
       ),
-      accordionTitle: "What is Fwd Packet Length Max?",
+      accordionTitle: "What is Forward Packet Length Max?",
       description:
         "Imagine sending a package through the mail—'Fwd Packet Length Max' is like measuring " +
         "the size of the largest package you sent in a conversation. In network terms, it’s the " +
@@ -97,7 +97,7 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
           title="Total TCP Flow Time"
           data={sshBarPlotTotalTCPFlowTime.data}
           categories={sshBarPlotTotalTCPFlowTime.categories}
-          yAxisName="Mean Total TCP Flow Time"
+          yAxisName="Mean Total TCP Flow Time (seconds)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -118,7 +118,7 @@ export function SSHPatatorVisSection({ data }: SSHPatatorVisSectionProps) {
           title="Bwd Init Win Bytes"
           data={sshBarPlotBwdInitWinBytesMean.data}
           categories={sshBarPlotBwdInitWinBytesMean.categories}
-          yAxisName="Mean Bwd Init Win Bytes"
+          yAxisName="Mean Bwd Init Win Bytes (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}

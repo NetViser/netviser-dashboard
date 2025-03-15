@@ -74,7 +74,7 @@ export function DosHulkVisSection({ data }: DosHulkVisSectionProps) {
           title="Mean Bwd Packet Length Std"
           data={bwdPacketLengthStdPlot.data}
           categories={bwdPacketLengthStdPlot.categories}
-          yAxisName="Mean Bwd Packet Length Std"
+          yAxisName="Mean Bwd Packet Length Std (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -93,7 +93,7 @@ export function DosHulkVisSection({ data }: DosHulkVisSectionProps) {
           title="Number of Unique Dst Port"
           data={uniqueDstPortPlot.data}
           categories={uniqueDstPortPlot.categories}
-          yAxisName="Unique Dst Port Count"
+          yAxisName="Unique Dst Port Count (count)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -127,7 +127,7 @@ export function DosHulkVisSection({ data }: DosHulkVisSectionProps) {
           title="Mean Fwd Packet Length Max"
           data={fwdPacketLengthMaxPlot.data}
           categories={fwdPacketLengthMaxPlot.categories}
-          yAxisName="Mean Fwd Packet Length Max"
+          yAxisName="Mean Fwd Packet Length Max (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}

@@ -74,7 +74,7 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
           title="Number of unique Src Port"
           data={uniqueSrcPortPlot.data}
           categories={uniqueSrcPortPlot.categories}
-          yAxisName="Unique Src Port Count"
+          yAxisName="Unique Src Port Count (count)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -93,7 +93,7 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
           title="Number of unique Dst Port"
           data={uniqueDstPortPlot.data}
           categories={uniqueDstPortPlot.categories}
-          yAxisName="Unique Dst Port Count"
+          yAxisName="Unique Dst Port Count (count)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -127,7 +127,7 @@ export function PortscanVisSection({ data }: PortscanVisSectionProps) {
           title="Total Length of Forward Packet"
           data={totalFwdPacketLengthPlot.data}
           categories={totalFwdPacketLengthPlot.categories}
-          yAxisName="Mean Total Length of Forward Packet"
+          yAxisName="Mean Total Length of Forward Packet (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
