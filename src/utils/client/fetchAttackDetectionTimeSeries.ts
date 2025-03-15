@@ -1,6 +1,6 @@
 import axios from "axios";
-import timeseriesattackdata from "@/mocks/attackTimeSeriesData.json";
 
+// Update the FetchTimeSeriesAttackDataResponse interface to include features
 export interface DataSchema {
   /**
    * Parallel array of ISO8601 date/time strings
@@ -26,6 +26,21 @@ export interface DataSchema {
    * E.g. "Flow Bytes/s"
    */
   feature: string;
+
+  /**
+   * Array of [timestamp, value] for FTP-Patator port 20 events
+   */
+  port20MarkPoint?: Array<[string, number]>;
+
+  /**
+   * Array of [timestamp, value] for FTP-Patator port 21 events
+   */
+  port21MarkPoint?: Array<[string, number]>;
+
+  /**
+   * Array of [timestamp, value] for SSH-Patator port 22 events
+   */
+  port22MarkPoint?: Array<[string, number]>;
 }
 
 export interface HighlightItem {
@@ -52,7 +67,7 @@ export interface PartitionBoundary {
   end: string;
 }
 
-export type FetchTimeSeriesAttackDataResponse = {
+export interface FetchTimeSeriesAttackDataResponse {
   /**
    * Main data for charting
    */
@@ -69,18 +84,23 @@ export type FetchTimeSeriesAttackDataResponse = {
   partitions: PartitionBoundary[];
 
   /**
+   * List of available features for the attack type
+   */
+  features: string[];
+
+  /**
    * The current partition index, if available
    */
   current_partition_index?: number;
-};
-
+}
 
 export const FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL =
   "http://localhost:8000/api/attack-detection/visualization/attack-time-series";
 
 export async function fetchAttackDetectionTimeSeries(
   attackType: string,
-  partitionIndex: number = 0
+  partitionIndex: number = 0,
+  featureName?: string // Add optional featureName parameter
 ): Promise<FetchTimeSeriesAttackDataResponse> {
   try {
     const searchParams = new URLSearchParams({
@@ -88,9 +108,12 @@ export async function fetchAttackDetectionTimeSeries(
       partition_index: String(partitionIndex),
     });
 
+    if (featureName) {
+      searchParams.append("feature_name", featureName);
+    }
+
     const url = `${FETCH_ATTACK_DETECTION_TIME_SERIES_API_URL}?${searchParams.toString()}`;
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await axios.get<FetchTimeSeriesAttackDataResponse>(url, {
       withCredentials: true,
     });
@@ -101,15 +124,3 @@ export async function fetchAttackDetectionTimeSeries(
     throw new Error("Failed to fetch attack detection time series data.");
   }
 }
-
-// export const fetchAttackDetectionTimeSeries = async (
-//   attackType: string
-// ): Promise<FetchTimeSeriesAttackDataResponse> => {
-//   // Simulate a network delay of 1 second
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-
-//   // Returning the imported mock data instead of making an API call
-//   return Promise.resolve(
-//     timeseriesattackdata as FetchTimeSeriesAttackDataResponse
-//   );
-// };

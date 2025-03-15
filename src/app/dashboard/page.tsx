@@ -2,7 +2,6 @@
 
 import Spinner from "@/components/loader/spinner";
 import { fetchDashboard } from "@/utils/client/fetchDashboard";
-import ReactECharts from "echarts-for-react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -139,7 +138,7 @@ export default function DashboardPage() {
               showFrequency
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg border-2 shadow-sm flex flex-col mx-4">
+          <div className="h-[30rem] bg-white rounded-lg shadow-md">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
