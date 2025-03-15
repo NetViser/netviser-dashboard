@@ -28,6 +28,11 @@ export interface DataSchema {
   feature: string;
 
   /**
+   * E.g. "seconds"
+   */
+  feature_unit: string;
+
+  /**
    * Array of [timestamp, value] for FTP-Patator port 20 events
    */
   port20MarkPoint?: Array<[string, number]>;

@@ -22,6 +22,7 @@ type AttackDetectionTimeSeriesProps = {
   attackType: string;
 };
 
+
 export default function AttackDetectionTimeSeries({
   attackType,
 }: AttackDetectionTimeSeriesProps) {

@@ -8,6 +8,7 @@ import {
   DataSchema,
   HighlightItem,
 } from "@/utils/client/fetchAttackDetectionTimeSeries";
+import { name } from "plotly.js/lib/scatter";
 
 type AttackTimeSeriesChartProps = {
   attackType: string;
@@ -34,7 +35,7 @@ export default function AttackTimeSeriesChart({
   const isFTP = attackType === "FTP-Patator";
   const isSSH = attackType === "SSH-Patator";
 
-  // Check if port mark points are empty
+  // Check if port mark points are available
   const hasPort20Events = data.port20MarkPoint && data.port20MarkPoint?.length > 0;
   const hasPort21Events = data.port21MarkPoint && data.port21MarkPoint?.length > 0;
   const hasPort22Events = data.port22MarkPoint && data.port22MarkPoint?.length > 0;
@@ -43,7 +44,7 @@ export default function AttackTimeSeriesChart({
     // Build the main series data from timestamps and values
     const mainSeriesData = data.timestamps.map((ts, idx) => [ts, data.values[idx]]);
 
-    // Filter data points based on active port filters, only if there are events
+    // Filter main series data if a port filter is active and events exist.
     let filteredMainSeriesData = mainSeriesData;
     if (filterPort20 && hasPort20Events) {
       filteredMainSeriesData = mainSeriesData.filter(([ts]) =>
@@ -59,7 +60,7 @@ export default function AttackTimeSeriesChart({
       );
     }
 
-    // Build mark areas for attack intervals
+    // Build mark areas for attack intervals for the given attackType and for "otherAttack"
     const markAreaAttackData =
       highlight
         ?.filter(([start]) => start.name === attackType)
@@ -90,7 +91,7 @@ export default function AttackTimeSeriesChart({
       },
       tooltip: { trigger: "axis" },
       xAxis: { type: "time", boundaryGap: false },
-      yAxis: { type: "value", name: data.feature },
+      yAxis: { type: "value", name: `${data.feature} (${data.feature_unit})`, nameLocation: "center", nameGap: 100 },
       dataZoom: [
         { type: "inside", start: 0, end: 100 },
         { type: "slider", start: 0, end: 100 },
@@ -104,7 +105,7 @@ export default function AttackTimeSeriesChart({
           data: filteredMainSeriesData,
           itemStyle: { color: "rgb(2,153,105)" },
         },
-        // Attack and other attack markers (always shown, not affected by port filters)
+        // Attack Markers
         {
           name: "Attack Markers",
           type: "scatter",
@@ -119,6 +120,7 @@ export default function AttackTimeSeriesChart({
               }
             : undefined,
         },
+        // Other Attack Markers
         {
           name: "Other Attacks",
           type: "scatter",
@@ -135,7 +137,19 @@ export default function AttackTimeSeriesChart({
         },
       ],
     };
-  }, [attackType, data, highlight, filterPort20, filterPort21, filterPort22, isFTP, isSSH, hasPort20Events, hasPort21Events, hasPort22Events]);
+  }, [
+    attackType,
+    data,
+    highlight,
+    filterPort20,
+    filterPort21,
+    filterPort22,
+    isFTP,
+    isSSH,
+    hasPort20Events,
+    hasPort21Events,
+    hasPort22Events,
+  ]);
 
   return (
     <div className="w-full">
@@ -156,8 +170,7 @@ export default function AttackTimeSeriesChart({
                       setFilterPort22(false);
                     }
                   }}
-                  disabled={!hasPort20Events} // Disable if no Port 20 events
-                  className=""
+                  disabled={!hasPort20Events}
                 />
               </div>
               <div className="flex items-center space-x-3">
@@ -173,8 +186,7 @@ export default function AttackTimeSeriesChart({
                       setFilterPort22(false);
                     }
                   }}
-                  disabled={!hasPort21Events} // Disable if no Port 21 events
-                  className=""
+                  disabled={!hasPort21Events}
                 />
               </div>
             </>
@@ -193,8 +205,7 @@ export default function AttackTimeSeriesChart({
                     setFilterPort21(false);
                   }
                 }}
-                disabled={!hasPort22Events} // Disable if no Port 22 events
-                className=""
+                disabled={!hasPort22Events}
               />
             </div>
           )}
