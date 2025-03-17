@@ -17,9 +17,10 @@ type AttackXAISectionProps = {
 
 export function AttackXAISection({ attackType }: AttackXAISectionProps) {
   const [showBarChartModal, setShowBarChartModal] = React.useState(false);
-  const { sessionID } = useSessionStore()
+  const { sessionID } = useSessionStore();
   const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] =
     React.useState(false);
+
   // Use SWR to fetch the XAI summary data.
   const { data, error } = useSWR(
     `${sessionID}/attack_summary_xai?attack_type=${attackType}`,
@@ -27,7 +28,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
     {
       shouldRetryOnError: false,
       keepPreviousData: true,
-      onError: (_error) => {
+      onError: () => {
         Swal.fire({
           icon: "error",
           title: "Have Problem Fetching XAI Summary",
@@ -100,8 +101,18 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
     );
   }
 
+  // If data is undefined or lacks required properties, show a fallback
+  if (!data?.bar_summary || !data?.beeswarm_summary) {
+    return (
+      <div className="bg-white rounded-lg p-6 shadow-md mt-4" id="attackxai">
+        <h1 className="text-xl font-bold mb-4">XAI Section</h1>
+        <p className="text-gray-500">No summary data available.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-lg p-6 shadow-md mt-4">
+    <div className="bg-white rounded-lg p-6 shadow-md mt-4" id="attackxai">
       <h1 className="text-xl font-bold mb-4">XAI Section</h1>
       {/* First Row */}
       <div className="flex flex-col md:flex-row gap-4">
@@ -109,7 +120,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
         <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
           <SummaryBarChart
             attackType={attackType}
-            data={data?.bar_summary!}
+            data={data.bar_summary}
             onHelpClick={() => setShowBarChartModal(true)}
           />
         </div>
@@ -118,7 +129,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
             attackType={attackType}
             withDataZoom={false}
             onHelpClick={() => setShowBeeSwarmChartModal(true)}
-            data={data?.beeswarm_summary!}
+            data={data.beeswarm_summary}
           />
         </div>
       </div>
@@ -128,7 +139,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
           open={showBarChartModal}
           onOpenChange={setShowBarChartModal}
           attackType={attackType}
-          data={data?.bar_summary!}
+          data={data.bar_summary}
         />
       )}
       {showBeeSwarmChartModal && (
@@ -136,7 +147,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
           open={showBeeSwarmChartModal}
           onOpenChange={setShowBeeSwarmChartModal}
           attackType={attackType}
-          data={data?.beeswarm_summary!}
+          data={data.beeswarm_summary}
         />
       )}
     </div>

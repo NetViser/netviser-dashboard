@@ -14,8 +14,14 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
 import { clearSavedState } from "@/utils/utils";
+import dynamic from "next/dynamic";
+
+// Dynamically import DragDropBoxTour with SSR disabled
+const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
+  ssr: false, // Disable server-side rendering
+});
 
 const UPLOAD_URL = "/api/upload";
 
@@ -207,8 +213,10 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
               <h2 className="text-xl font-semibold text-stone-700 mt-3 tracking-wide">
                 Network Traffic Visualization Platform
               </h2>
-            </motion.div>
 
+              <DragDropBoxTour />
+            </motion.div>
+          
             {/* Drag & Drop Box */}
             <motion.div
               {...(getRootProps() as any)}
@@ -217,6 +225,7 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
                   ? "border-orange-500 bg-orange-50/50"
                   : "border-gray-300 hover:border-orange-400"
               } cursor-pointer`}
+              id="drag-drop-box"
               whileHover={{
                 scale: 1.02,
                 boxShadow: "0 8px 24px rgba(234, 88, 12, 0.2)",
@@ -269,6 +278,7 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
             {/* Sample Network Files */}
             <motion.div
               className="mt-10"
+              id="sample-file"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}

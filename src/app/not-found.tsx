@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 
 export default function NotFoundPage() {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="flex flex-col items-center justify-center h-full text-center">
-        <Image
+        <img
           src="/404-not-found.png"
           alt="404"
           width={300}
@@ -19,7 +18,7 @@ export default function NotFoundPage() {
             Oops! Page Not Found
           </h1>
           <p className="text-gray-500 text-lg">
-            Sorry, we couldn't find the page you're looking for.
+            Sorry, we couldn&apos;t find the page you&apos;re looking for.
           </p>
         </div>
         <Link href="/">

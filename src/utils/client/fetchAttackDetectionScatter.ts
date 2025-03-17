@@ -1,4 +1,4 @@
-import data from "@/mocks/attackDetectionScatter.json";
+// import data from "@/mocks/attackDetectionScatter.json";
 import { customFetch } from "@/utils/client/fetchClient";
 
 export interface DataPoint {

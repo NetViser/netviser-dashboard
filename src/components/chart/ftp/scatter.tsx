@@ -12,11 +12,11 @@ interface FtpScatterProps {
 }
 
 function calculateAverage(data: number[]) {
-  let total = 0;
-  for (var i = 0; i < data.length; i++) {
-    total += data[i];
-  }
-  return (total /= data.length);
+    let total = 0;
+    for (let i = 0; i < data.length; i++) {
+      total += data[i];
+    }
+    return (total /= data.length);
 }
 
 const FTPChart = ({ normalData, attackData }: FtpScatterProps) => {
