@@ -8,7 +8,6 @@ import {
   DataSchema,
   HighlightItem,
 } from "@/utils/client/fetchAttackDetectionTimeSeries";
-import { name } from "plotly.js/lib/scatter";
 
 type AttackTimeSeriesChartProps = {
   attackType: string;

@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
 import { clearSavedState } from "@/utils/utils";
 
-const UPLOAD_URL = "http://localhost:8000/api/upload";
+const UPLOAD_URL = "/api/upload";
 
 export default function Home() {
   const router = useRouter();

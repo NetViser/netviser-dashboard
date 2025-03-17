@@ -1,11 +1,6 @@
-// Read the stage from environment variables; use NEXT_PUBLIC_STAGE on the client side.
-const stage = process.env.NEXT_PUBLIC_STAGE || "local";
-
 // Choose the base URL based on the stage.
 const baseURL =
-  stage === "production"
-    ? "https://api.production.example.com" // Replace with your production API URL.
-    : "http://localhost:8000"; // Replace with your local API URL if needed.
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
 
 /**
  * A custom fetch client that:
@@ -28,6 +23,8 @@ export async function customFetch(
   } else if (input instanceof Request && !/^https?:\/\//i.test(input.url)) {
     url = baseURL + input.url;
   }
+
+  console.log("Final url: ", url);
 
   // Merge default settings with any provided init; ensures credentials are included.
   const defaultInit: RequestInit = { credentials: "include" };

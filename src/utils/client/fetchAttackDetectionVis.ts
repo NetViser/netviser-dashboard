@@ -41,7 +41,7 @@ export async function fetchSpecificAttackDetection(
     const params = new URLSearchParams({
       attack_type: attackType,
     });
-    const url = `/api/attack-detection/specific?${params.toString()}`;
+    const url = `/api/attack-detection/overview?${params.toString()}`;
 
     const data = await customFetch(url, {
       method: "GET",
