@@ -2,7 +2,6 @@
 
 import Spinner from "@/components/loader/spinner";
 import { fetchDashboard } from "@/utils/client/fetchDashboard";
-import ReactECharts from "echarts-for-react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -24,23 +23,27 @@ export default function DashboardPage() {
   const router = useRouter();
   const { setActiveSession, sessionID } = useSessionStore();
 
-  const { data, isLoading } = useSWR(`${sessionID}/api/dashboard`, fetchDashboard, {
-    shouldRetryOnError: false,
-    onError: async (error) => {
-      await Swal.fire({
-        icon: "error",
-        title: "Session Expired",
-        confirmButtonText: "OK",
-        timer: 1000,
-        timerProgressBar: true,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-      });
-      console.error("Failed to get file name:", error);
-      setActiveSession(false);
-      router.push("/");
-    },
-  });
+  const { data, isLoading } = useSWR(
+    `${sessionID}/api/dashboard`,
+    fetchDashboard,
+    {
+      shouldRetryOnError: false,
+      onError: async (error) => {
+        await Swal.fire({
+          icon: "error",
+          title: "Session Expired",
+          confirmButtonText: "OK",
+          timer: 1000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        });
+        console.error("Failed to get file name:", error);
+        setActiveSession(false);
+        router.push("/");
+      },
+    }
+  );
 
   const summaryCards = useMemo(
     () => [
@@ -90,13 +93,32 @@ export default function DashboardPage() {
 
   const getProtocolPieChartData = useMemo(() => {
     if (!data) return [];
-    // Map 17 to TCP and 6 to UDP
-    const formattedData = Object.entries(
+    // Build an object mapping protocols to their counts
+    const protocol_distribution: Record<string, number> = {};
+    Object.entries(
       data.protocol_distribution as Record<string, number>
-    ).map(([key, value]) => ({
-      name: key === "6" ? "TCP" : key === "17" ? "UDP" : key,
-      value,
-    }));
+    ).forEach(([key, value]) => {
+      const protocolMapping: any = {
+        "6": "TCP",
+        "1": "TCP",
+        "17": "UDP",
+        "0": "UDP",
+      };
+
+      const mappedKey = protocolMapping[key] ?? key;
+      if (protocol_distribution[mappedKey]) {
+        protocol_distribution[mappedKey] += value;
+      } else {
+        protocol_distribution[mappedKey] = value;
+      }
+    });
+    // Convert the object to an array of { name, value } objects
+    const formattedData = Object.entries(protocol_distribution).map(
+      ([name, value]) => ({
+        name,
+        value,
+      })
+    );
     return formattedData;
   }, [data, isLoading]);
 
@@ -137,9 +159,10 @@ export default function DashboardPage() {
               title="Protocol Distribution"
               data={getProtocolPieChartData}
               showFrequency
+              classLabel="Protocol"
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg border-2 shadow-sm flex flex-col mx-4">
+          <div className="h-[30rem] bg-white rounded-lg shadow-md">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
@@ -156,12 +179,15 @@ export default function DashboardPage() {
             <PieChart
               title="Destination Port Distribution"
               data={getDstPortPieChartData}
+              classLabel="Port"
             />
           </div>
           <div className="h-[30rem]">
             <PieChart
               title="Attack Class Distribution"
               data={getAttackClassPieChartData}
+              classLabel="Attack Class"
+              showFrequency
             />
           </div>
         </div>

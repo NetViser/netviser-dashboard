@@ -6,38 +6,52 @@ import ReactECharts from "echarts-for-react";
 type PieChartProps = {
   title: string;
   data: { value: number; name: string }[];
-  showFrequency?: boolean; // New prop to toggle frequency display
+  showFrequency?: boolean; // Toggle frequency display
+  classLabel?: string; // New prop to customize the term "Class"
 };
 
 export default function PieChart({
   title,
   data,
   showFrequency = false,
+  classLabel = "Class", // Default to "Class" if not provided
 }: PieChartProps) {
+  // Determine if we have a large number of items to adjust layout
+  const isLargeDataset = data.length > 10;
+
   const options = {
     tooltip: {
       trigger: "item",
       formatter: showFrequency
-        ? "<b>Class: {b}</b><br/>Frequency: {c} <br/>Percentage: {d}%"
-        : "<b>Class: {b}</b><br/>Percentage: {d}%",
+        ? `<b>${classLabel}: {b}</b><br/>Frequency: {c} <br/>Percentage: {d}%`
+        : `<b>${classLabel}: {b}</b><br/>Percentage: {d}%`,
     },
     legend: {
-      left: "center",
-      top: "1%",
+      type: "scroll", // Enable scrollable legend
+      orient: isLargeDataset ? "vertical" : "horizontal", // Vertical for large datasets, horizontal otherwise
+      left: isLargeDataset ? "right" : "center", // Right for large datasets, center otherwise
+      top: isLargeDataset ? "middle" : "1%", // Middle for vertical, top for horizontal
+      height: isLargeDataset ? "80%" : "auto", // Limit height for vertical scroll
+      pageButtonPosition: "end", // Position scroll buttons at the end
+      pageTextStyle: {
+        color: "#333", // Ensure scroll text is readable
+      },
     },
     series: [
       {
         name: "Protocol Type",
         type: "pie",
-        radius: ["30%", "70%"],
-        center: ["50%", "56%"], // Moves the chart down
-        avoidLabelOverlap: false,
+        radius: isLargeDataset ? ["20%", "50%"] : ["30%", "70%"], // Smaller radius for large datasets
+        center: ["50%", "56%"], // Keep centered vertically
+        avoidLabelOverlap: true, // Enable overlap avoidance
         label: {
           show: true,
           formatter: showFrequency
-            ? "{b}: {c} (Freq), {d}% (Perc)"
-            : "{b}: {d}%",
+            ? `{b}: {c} (Freq), {d}% (Perc)`
+            : `{b}: {d}%`, // Keeping this as is, but can include classLabel if needed
           position: "outside",
+          overflow: "truncate", // Truncate long labels
+          maxWidth: 100, // Limit label width to prevent overlap
         },
         emphasis: {
           label: {
@@ -45,12 +59,14 @@ export default function PieChart({
             fontSize: 16,
             fontWeight: "bold",
             formatter: showFrequency
-              ? "{b}: {c} (Freq), {d}% (Perc)"
-              : "{b}: {d}%",
+              ? `{b}: {c} (Freq), {d}% (Perc)`
+              : `{b}: {d}%`, // Keeping this as is, but can include classLabel if needed
           },
         },
         labelLine: {
           show: true,
+          length: 15, // Adjust line length for better spacing
+          length2: 10,
         },
         data: data,
       },

@@ -15,8 +15,9 @@ import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
+import { clearSavedState } from "@/utils/utils";
 
-const UPLOAD_URL = "http://localhost:8000/api/upload";
+const UPLOAD_URL = "/api/upload";
 
 export default function Home() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function Home() {
 
   const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
     onSuccess: async (responseData) => {
+      clearSavedState(); // Clear any saved state from previous sessions
       await Swal.fire({
         title: "File Uploaded Successfully",
         icon: "success",
@@ -61,6 +63,7 @@ export default function Home() {
         });
       }
     },
+    
     onError: (error: Error) => {
       Swal.fire({
         title: "Error",
