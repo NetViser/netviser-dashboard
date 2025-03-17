@@ -1,11 +1,10 @@
 "use client";
+
 import React, { useState } from "react";
 import useSWR from "swr";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Swal from "sweetalert2";
-import { ReactTyped } from "react-typed";
-
 import {
   Dialog,
   DialogContent,
@@ -13,9 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FaExpandAlt } from "react-icons/fa";
 import SummaryBeeSwarmChart from "@/components/chart/xai/SummaryBeeSwarmChart";
-
 import {
   BeeswarmSummaryItem,
   fetchAttackBeeswarmSummaryXAIExplanation,
@@ -35,10 +32,8 @@ export function XAIBeeswarmSummaryModal({
   attackType,
   data,
 }: XAIBeeswarmSummaryModalProps) {
-  // Local state controlling whether we should fetch the Gemini explanation
   const [explanationRequested, setExplanationRequested] = useState(false);
 
-  // Use SWR to fetch the beeswarm explanation only when explanationRequested = true
   const { data: explanationData, isLoading: explanationLoading } =
     useSWR<FetchAttackBeeswarmSummaryXAIExplanationResponse>(
       explanationRequested
@@ -69,7 +64,6 @@ export function XAIBeeswarmSummaryModal({
           <DialogTitle>{`SHAP Beeswarm Plot (${attackType})`}</DialogTitle>
         </DialogHeader>
         <div className="mx-16 -mt-10">
-          {/* Render the beeswarm chart */}
           <SummaryBeeSwarmChart
             attackType={attackType}
             data={data}
@@ -113,13 +107,11 @@ export function XAIBeeswarmSummaryModal({
                       width="100%"
                     />
                   ) : explanationData ? (
-                    <ReactTyped
-                      strings={[explanationData.explanation]}
-                      typeSpeed={1}
-                      backSpeed={0}
-                      showCursor={false}
-                      className="text-stone-800 text-base"
-                    />
+                    <p
+                      className="text-stone-800 text-base animate-in fade-in slide-in-from-bottom-4 duration-500"
+                    >
+                      {explanationData.explanation}
+                    </p>
                   ) : (
                     <div className="text-red-500">
                       Failed to load explanation.
