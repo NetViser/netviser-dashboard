@@ -19,8 +19,6 @@ import Swal from "sweetalert2";
 import Spinner from "@/components/loader/spinner";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TypeIt from "typeit-react";
-import { ReactTyped } from "react-typed";
 
 interface XAIModalProps {
   open: boolean;
@@ -134,36 +132,34 @@ export function XAIModal({
 
             {explanationRequested && (
               <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-              <div className="relative">
-                <img
-                  src="/gemini-icon.svg"
-                  alt="Gemini Icon"
-                  className="w-6 h-6 absolute top-0 left-0"
-                />
-                <div className="pl-8">
-                  {explanationLoading ? (
-                    <Skeleton
-                      style={{
-                        borderRadius: "8px",
-                        height: "1.5rem",
-                      }}
-                      count={4}
-                      width="100%"
-                    />
-                  ) : explanationData ? (
-                    <ReactTyped
-                      strings={[explanationData.explanation]}
-                      typeSpeed={1}
-                      backSpeed={0}
-                      showCursor={false}
-                      className="text-stone-800 text-base"
-                    />
-                  ) : (
-                    <div className="text-red-500">Failed to load explanation.</div>
-                  )}
+                <div className="relative">
+                  <img
+                    src="/gemini-icon.svg"
+                    alt="Gemini Icon"
+                    className="w-6 h-6 absolute top-0 left-0"
+                  />
+                  <div className="pl-8">
+                    {explanationLoading ? (
+                      <Skeleton
+                        style={{
+                          borderRadius: "8px",
+                          height: "1.5rem",
+                        }}
+                        count={4}
+                        width="100%"
+                      />
+                    ) : explanationData ? (
+                      <p
+                        className="text-stone-800 text-base animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      >
+                        {explanationData.explanation}
+                      </p>
+                    ) : (
+                      <div className="text-red-500">Failed to load explanation.</div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
             )}
           </div>
         </div>
