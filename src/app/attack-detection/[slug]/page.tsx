@@ -3,7 +3,7 @@
 import Spinner from "@/components/loader/spinner";
 import { useSessionStore } from "@/store/session";
 import { fetchAttackDetectionRecord } from "@/utils/client/fetchAttackDetectionRecord";
-import { fetchSpecificAttackDetection } from "@/utils/client/fetchAttackDetectionVis";
+import { fetchSpecificAttackDetection } from "@/utils/client/fetchAttackDetectionOverview";
 import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useSWR from "swr";

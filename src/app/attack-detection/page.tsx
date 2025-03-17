@@ -8,14 +8,10 @@ import useSWR from "swr";
 import { useSessionStore } from "@/store/session";
 import AttacksTable from "@/components/attack-detection/attacks-table/attacks-table";
 import { useMemo, useState } from "react";
-import AttacksScatter from "@/components/attack-detection/attacks-scatter/attacks-scatter";
 import { fetchAttackDetectionScatter } from "@/utils/client/fetchAttackDetectionScatter";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function AttackDetectionPage() {
-  const [selectedAttackType, setSelectedAttackType] = useState<string | null>(
-    null
-  );
   const extractFileName = (name: string) => {
     console.log(name);
     const [, , ...words] = name.split("/");
@@ -43,30 +39,6 @@ export default function AttackDetectionPage() {
     },
   });
 
-  const { data: scatterData, isLoading: scatterIsLoading } = useSWR(
-    selectedAttackType
-      ? `${sessionID}/api/attack-detection/brief/scatter?attack_type=${selectedAttackType}`
-      : null,
-    () => fetchAttackDetectionScatter(selectedAttackType || ""),
-    {
-      shouldRetryOnError: false,
-      onError: async (error) => {
-        await Swal.fire({
-          icon: "error",
-          title: "Session Expired",
-          confirmButtonText: "OK",
-          timer: 1000,
-          timerProgressBar: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-        });
-        console.error("Failed to get attack detection scatter data:", error);
-        setActiveSession(false);
-        router.push("/");
-      },
-    }
-  );
-
   const tableData = useMemo(() => {
     if (!data) return [];
     return Object.keys(data.detected_attacks_distribution).map((key) => ({
@@ -74,16 +46,8 @@ export default function AttackDetectionPage() {
       numberOfAttacks: data.detected_attacks_distribution[key],
       description:
         "Overwhelms a website or server with a flood of traffic, making it inaccessible to real users.",
-      onAttackTypeClick: (attackType: string) => {
-        if (selectedAttackType === attackType) {
-          setSelectedAttackType(null);
-          return;
-        }
-        setSelectedAttackType(attackType);
-      },
-      isSelected: selectedAttackType === key,
     }));
-  }, [data, selectedAttackType]);
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -118,18 +82,6 @@ export default function AttackDetectionPage() {
             router.push(`/attack-detection/${attackType}`);
           }}
         />
-
-        {/* Attack Scatter Plot */}
-        {selectedAttackType ? (
-          <AttacksScatter
-            title="Network Traffic Scatter Plot"
-            attackName={selectedAttackType || ""}
-            feature={scatterData?.feature_name || ""}
-            attackData={scatterData?.attack_data || []}
-            benignData={scatterData?.benign_data || []}
-            isLoading={scatterIsLoading}
-          />
-        ) : null}
       </div>
     </div>
   );
