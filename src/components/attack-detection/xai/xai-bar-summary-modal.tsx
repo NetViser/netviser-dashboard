@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import TypeIt from "typeit-react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +18,6 @@ import {
 } from "@/utils/client/fetchAttackSummaryXAI";
 import SummaryBarChart from "@/components/chart/xai/SummaryBarChart";
 import Swal from "sweetalert2";
-import { ReactTyped } from "react-typed";
 
 export type XAIBarSummaryModalProps = {
   open: boolean;
@@ -34,7 +32,6 @@ export function XAIBarSummaryModal({
   attackType,
   data,
 }: XAIBarSummaryModalProps) {
-  // When the user clicks the button, we start fetching the explanation.
   const [explanationRequested, setExplanationRequested] = useState(false);
 
   const { data: explanationData, isLoading: explanationLoading } =
@@ -105,14 +102,11 @@ export function XAIBarSummaryModal({
                       width="100%"
                     />
                   ) : explanationData ? (
-                    // The key ensures that TypeIt re-mounts when the text changes.
-                    <ReactTyped
-                      strings={[explanationData.explanation]}
-                      typeSpeed={1}
-                      backSpeed={0}
-                      showCursor={false}
-                      className="text-stone-800 text-base"
-                    />
+                    <p
+                      className="text-stone-800 text-base animate-in fade-in slide-in-from-bottom-4 duration-500"
+                    >
+                      {explanationData.explanation}
+                    </p>
                   ) : (
                     <div className="text-red-500">
                       Failed to load explanation.

@@ -8,15 +8,20 @@ import useSWR from "swr";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/store/session";
-import { uploadFile } from "@/utils/client/uploadFIle";
+import { uploadFile, UploadFileResult } from "@/utils/client/uploadFIle";
 import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
-import DragDropBoxTour from "./tour/upload_tour";
 import { clearSavedState } from "@/utils/utils";
+import dynamic from "next/dynamic";
+
+// Dynamically import DragDropBoxTour with SSR disabled
+const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
+  ssr: false, // Disable server-side rendering
+});
 
 const UPLOAD_URL = "/api/upload";
 
@@ -25,71 +30,56 @@ export default function Home() {
   const { setActiveSession, setSessionID } = useSessionStore();
   const [isMutating, setIsMutating] = useState(false);
 
-  const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
-    onSuccess: async (responseData) => {
-      clearSavedState(); // Clear any saved state from previous sessions
-      await Swal.fire({
-        title: "File Uploaded Successfully",
-        icon: "success",
-        timer: 1000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-orange-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-        },
-      });
+const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
+  onSuccess: async (responseData: UploadFileResult) => {
+    clearSavedState();
+    await Swal.fire({
+      title: "File Uploaded Successfully",
+      icon: "success",
+      timer: 1000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+      background: "#fff",
+      customClass: {
+        popup: "rounded-xl shadow-2xl border border-orange-200/50",
+        title: "text-stone-900 font-bold text-2xl",
+      },
+    });
 
-      try {
-        const sessionID = responseData.content.session_id;
-        console.log("Session ID:", sessionID);
-        setSessionID(sessionID);
-        setActiveSession(true);
-        router.push("/dashboard");
-      } catch (error) {
-        console.error("Error parsing JSON response:", error);
-        Swal.fire({
-          title: "Error",
-          text: "Failed to parse server response.",
-          icon: "error",
-          confirmButtonText: "Close",
-          confirmButtonColor: "#f44336",
-          background: "#fff",
-          customClass: {
-            popup: "rounded-xl shadow-2xl border border-red-200/50",
-            title: "text-stone-900 font-bold text-2xl",
-            confirmButton: "rounded-lg px-6 py-2",
-          },
-        });
-      }
-    },
-    
-    onError: (error: Error) => {
-      Swal.fire({
-        title: "Error",
-        text: error.message,
-        icon: "error",
-        confirmButtonText: "Close",
-        confirmButtonColor: "#f44336",
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-red-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-          confirmButton: "rounded-lg px-6 py-2",
-        },
-      });
-      console.error("Upload failed:", error);
-    },
-  });
+    const sessionID = responseData.content.session_id;
+    console.log("Session ID:", sessionID);
+    setSessionID(sessionID);
+    setActiveSession(true);
+    router.push("/dashboard");
+  },
+  onError: (error: Error) => {
+    setIsMutating(false);
+    Swal.close();
+    Swal.fire({
+      title: "Error",
+      text: error.message,
+      icon: "error",
+      confirmButtonText: "Close",
+      confirmButtonColor: "#f44336",
+      background: "#fff",
+      customClass: {
+        popup: "rounded-xl shadow-2xl border border-red-200/50",
+        title: "text-stone-900 font-bold text-2xl",
+        confirmButton: "rounded-lg px-6 py-2",
+      },
+    });
+    console.error("Upload failed:", error);
+  },
+});
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles) => {
+    onDrop: (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
         setIsMutating(true);
         Swal.fire({
-          title: '<span class="bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-bold text-2xl">Analyzing Your File</span>',
+          title:
+            '<span class="bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-bold text-2xl">Analyzing Your File</span>',
           html: `
             <div class="flex flex-col items-center space-y-4">
               <div class="relative w-16 h-16">
@@ -109,14 +99,11 @@ export default function Home() {
           customClass: {
             popup: "rounded-xl shadow-2xl border border-orange-200/50",
           },
-          didOpen: () => {
-            // Optional: Add subtle pulsating glow effect with JS if desired
-          },
         });
 
         trigger(file).finally(() => {
           setIsMutating(false);
-          Swal.close(); // Close the loading popup
+          Swal.close();
         });
       }
     },
@@ -129,7 +116,7 @@ export default function Home() {
     fetchAllSampleNetworkFiles,
     {
       shouldRetryOnError: false,
-      onError: async (error) => {
+      onError: async (error: Error) => {
         await Swal.fire({
           icon: "error",
           title: "Failed to Load Samples",
@@ -154,12 +141,20 @@ export default function Home() {
   // Framer Motion variants
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   const headerVariants = {
     hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, delay: 0.2 } },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, delay: 0.2 },
+    },
   };
 
   const buttonVariants = {
@@ -224,21 +219,28 @@ export default function Home() {
           
             {/* Drag & Drop Box */}
             <motion.div
-              {...getRootProps() as any}
+              {...(getRootProps() as any)}
               className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50 to-gray-200 p-8 shadow-inner transition-all duration-300 ease-in-out ${
                 isDragActive
                   ? "border-orange-500 bg-orange-50/50"
                   : "border-gray-300 hover:border-orange-400"
               } cursor-pointer`}
               id="drag-drop-box"
-              whileHover={{ scale: 1.02, boxShadow: "0 8px 24px rgba(234, 88, 12, 0.2)" }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 8px 24px rgba(234, 88, 12, 0.2)",
+              }}
               whileTap={{ scale: 0.98 }}
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center space-y-4">
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 >
                   <TbUpload className="w-14 h-14 text-orange-500 group-hover:text-orange-600 transition-colors" />
                 </motion.div>
@@ -268,7 +270,9 @@ export default function Home() {
 
             {/* Supported Formats */}
             <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight">
-              Supported formats: <span className="text-orange-600">PCAP, CSV, NETFLOW</span> | Max size: 2GB
+              Supported formats:{" "}
+              <span className="text-orange-600">PCAP, CSV, NETFLOW</span> | Max
+              size: 2GB
             </p>
 
             {/* Sample Network Files */}
@@ -292,10 +296,17 @@ export default function Home() {
                         className="bg-gray-50 rounded-xl border border-gray-200 p-4"
                       >
                         <Skeleton height={24} width="80%" className="mb-3" />
-  
                         <div className="flex flex-wrap gap-2">
-                          <Skeleton height={20} width={60} borderRadius={9999} />
-                          <Skeleton height={20} width={80} borderRadius={9999} />
+                          <Skeleton
+                            height={20}
+                            width={60}
+                            borderRadius={9999}
+                          />
+                          <Skeleton
+                            height={20}
+                            width={80}
+                            borderRadius={9999}
+                          />
                         </div>
                       </div>
                     ))}

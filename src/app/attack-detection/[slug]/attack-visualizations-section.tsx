@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocalStorage } from "react-use"; // Robust hook for persisted state
-import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
+import { FetchSpecificAttackResponse } from "@/utils/client/fetchAttackDetectionOverview";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";
@@ -13,12 +13,7 @@ import { SSHPatatorVisSection } from "@/components/attack-detection/attack-speci
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
-  attackVisualizations:
-    | {
-        normalData: SpecificAttackRecord[];
-        attackData: SpecificAttackRecord[];
-      }
-    | undefined;
+  attackVisualizations: FetchSpecificAttackResponse | undefined;
 };
 
 export function AttackVisualizationsSection({

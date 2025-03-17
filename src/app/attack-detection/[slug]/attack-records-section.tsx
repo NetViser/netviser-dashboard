@@ -20,7 +20,6 @@ type Props = {
 
 export function AttackRecordsSection({
   attackRecords,
-  attackType,
   explainabilityMode,
   page,
   pageSize,

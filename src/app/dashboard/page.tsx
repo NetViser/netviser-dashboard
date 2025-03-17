@@ -63,7 +63,7 @@ export default function DashboardPage() {
           "N/A",
       },
     ],
-    [data, isLoading]
+    [data]
   );
 
   const getDstPortPieChartData = useMemo(() => {
@@ -77,7 +77,7 @@ export default function DashboardPage() {
     }));
 
     return formattedData;
-  }, [data, isLoading]);
+  }, [data]);
 
   const getAttackClassPieChartData = useMemo(() => {
     if (!data) return [];
@@ -90,7 +90,7 @@ export default function DashboardPage() {
     }));
 
     return formattedData;
-  }, [data, isLoading]);
+  }, [data]);
 
   const getProtocolPieChartData = useMemo(() => {
     if (!data) return [];
@@ -121,7 +121,7 @@ export default function DashboardPage() {
       })
     );
     return formattedData;
-  }, [data, isLoading]);
+  }, [data]);
 
   if (isLoading) {
     return (

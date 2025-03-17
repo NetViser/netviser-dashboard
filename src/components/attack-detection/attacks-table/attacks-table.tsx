@@ -7,9 +7,8 @@ import clsx from "clsx";
 interface AttackData {
   attackType: string;
   numberOfAttacks: number;
-  description: string;
-  onAttackTypeClick: (attackType: string) => void;
-  isSelected: boolean;
+  description: string;  
+  isSelected?: boolean;
 }
 
 interface AttacksTableProps {
@@ -47,7 +46,7 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
                 <tr
                   key={index}
                   className={clsx(
-                    "cursor-pointer transition-colors",
+                    "transition-colors",
                     {
                       "bg-orange-200": rowData.isSelected,
                       "bg-white": !rowData.isSelected,
@@ -56,7 +55,6 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
                       "hover:bg-orange-50": rowData.isSelected,
                     }
                   )}
-                  onClick={() => rowData.onAttackTypeClick(rowData.attackType)}
                 >
                   <th
                     scope="row"
