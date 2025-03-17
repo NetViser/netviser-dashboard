@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocalStorage } from "react-use"; // Robust hook for persisted state
-import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
+import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionOverview";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";

@@ -1,6 +1,6 @@
 // File: src/lib/vis_utils.ts
 
-import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
+import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionOverview";
 
 export type SankeyNode = { name: string };
 export type SankeyLink = { source: string; target: string; value: number };
