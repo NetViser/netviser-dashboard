@@ -1,4 +1,4 @@
-import axios from "axios";
+import { customFetch } from "@/utils/client/fetchClient";
 
 export type AttackRecord = {
   id: number;
@@ -16,7 +16,7 @@ export type AttackRecord = {
   dstPort: number;
 };
 
-type FetchAttackRecordsResponse = {
+export type FetchAttackRecordsResponse = {
   attack_data: AttackRecord[];
   attack_type: string;
   has_next_page: boolean;
@@ -29,27 +29,23 @@ type FetchAttackRecordsResponse = {
   total_records: number;
 };
 
-export const API_URL = "http://localhost:8000/api/attack-detection/records";
-
 export async function fetchAttackDetectionRecord(
-    attackType: string,
-    page: number,
-    pageSize: number
+  attackType: string,
+  page: number,
+  pageSize: number
 ): Promise<FetchAttackRecordsResponse> {
-    try {
-      // TODO: REMOVE FORCING ATTACK TYPE to BENIGN
-      const response = await axios.get<FetchAttackRecordsResponse>(API_URL, {
-        params: {
-          attack_type: attackType,
-          page,
-          page_size: pageSize,
-        },
-        withCredentials: true, // Ensure session cookies are sent
-      });
-  
-      return response.data; // Return the API response data
-    } catch (error) {
-      console.error("Error fetching attack detection records:", error);
-      throw new Error("Failed to fetch attack detection records.");
-    }
+  try {
+    const params = new URLSearchParams({
+      attack_type: attackType,
+      page: page.toString(),
+      page_size: pageSize.toString(),
+    });
+    const url = `/api/attack-detection/records?${params.toString()}`;
+
+    const response = await customFetch(url);
+    return response as FetchAttackRecordsResponse;
+  } catch (error) {
+    console.error("Error fetching attack detection records:", error);
+    throw new Error("Failed to fetch attack detection records.");
   }
+}

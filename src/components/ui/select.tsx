@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as SelectPrimitive from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import * as React from "react";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils/utils";
 
-const Select = SelectPrimitive.Root
+const Select = SelectPrimitive.Root;
 
-const SelectGroup = SelectPrimitive.Group
+const SelectGroup = SelectPrimitive.Group;
 
-const SelectValue = SelectPrimitive.Value
+const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -29,8 +29,8 @@ const SelectTrigger = React.forwardRef<
       <ChevronDown className="h-4 w-4 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
-))
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
+));
+SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
@@ -46,8 +46,8 @@ const SelectScrollUpButton = React.forwardRef<
   >
     <ChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
-))
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
+));
+SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
 
 const SelectScrollDownButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
@@ -63,9 +63,9 @@ const SelectScrollDownButton = React.forwardRef<
   >
     <ChevronDown className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
-))
+));
 SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName
+  SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
@@ -96,8 +96,8 @@ const SelectContent = React.forwardRef<
       <SelectScrollDownButton />
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
-))
-SelectContent.displayName = SelectPrimitive.Content.displayName
+));
+SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
@@ -108,8 +108,8 @@ const SelectLabel = React.forwardRef<
     className={cn("px-2 py-1.5 text-sm font-semibold", className)}
     {...props}
   />
-))
-SelectLabel.displayName = SelectPrimitive.Label.displayName
+));
+SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
@@ -130,8 +130,8 @@ const SelectItem = React.forwardRef<
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
-))
-SelectItem.displayName = SelectPrimitive.Item.displayName
+));
+SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
@@ -142,26 +142,40 @@ const SelectSeparator = React.forwardRef<
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
     {...props}
   />
-))
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName
+));
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
-function ExplainabilitySelector({ onSelect }: { onSelect: (value: string) => void }) {
+function ExplainabilitySelector({
+  value,
+  onSelect,
+}: {
+  value: string;
+  onSelect: (value: string) => void;
+}) {
   return (
     <div className="flex justify-end items-center w-fit min-w-[18rem] py-4 pr-6" id="explainability-selector">
-      <label className="text-md font-semibold text-gray-700 w-full">Explain Mode:</label>
-      <Select onValueChange={onSelect}>
+      <label className="text-md font-semibold text-gray-700 w-full">
+        Explain Mode:
+      </label>
+      <Select value={value} onValueChange={onSelect}>
         <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
           <SelectPrimitive.Value placeholder="Visualization" />
         </SelectTrigger>
         <SelectContent className="bg-orange-500 text-white">
-          <SelectItem value="Visualization" className="text-md hover:bg-orange-600">Visualization</SelectItem>
-          <SelectItem value="XAI" className="text-md hover:bg-orange-600">XAI</SelectItem>
+          <SelectItem
+            value="Visualization"
+            className="text-md hover:bg-orange-600"
+          >
+            Visualization
+          </SelectItem>
+          <SelectItem value="XAI" className="text-md hover:bg-orange-600">
+            XAI
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
   );
 }
-
 
 export {
   Select,
@@ -175,4 +189,4 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
   ExplainabilitySelector,
-}
+};

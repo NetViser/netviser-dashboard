@@ -4,8 +4,8 @@ import BarChart from "@/components/chart/BarChart";
 import SankeyChart from "@/components/chart/ftp/sankey";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
-import { calculateMean } from "@/lib/utils";
-import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
+import { calculateMean } from "@/utils/utils";
+import { generateAttackSankeyData, SankeyData } from "@/utils/vis_utils";
 import { AttackVisTemplate } from './template/AttackVisTemplate';
 
 type FTPPatatorVisSectionProps = {
@@ -65,7 +65,7 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
           title="Average Flow Bytes Per Second"
           data={ftpBarPlotFlowByte.data}
           categories={ftpBarPlotFlowByte.categories}
-          yAxisName="Mean Flow Bytes/s"
+          yAxisName="Mean Flow Bytes/s (logscale - bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -98,7 +98,7 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
           title="Total TCP Flow Time"
           data={ftpBarPlotTotalTCPFlowTime.data}
           categories={ftpBarPlotTotalTCPFlowTime.categories}
-          yAxisName="Mean Total TCP Flow Time"
+          yAxisName="Mean Total TCP Flow Time (seconds)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -119,16 +119,16 @@ export function FTPPatatorVisSection({ data }: FTPPatatorVisSectionProps) {
           title="Backward Inter-Arrival Time Mean"
           data={ftpBarPlotBwdIATMean.data}
           categories={ftpBarPlotBwdIATMean.categories}
-          yAxisName="Mean bwdIATMean"
+          yAxisName="Mean Backward Inter-Arrival Time (seconds)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
           height={500}
         />
       ),
-      accordionTitle: "What is Mean bwdIATMean?",
+      accordionTitle: "What is Mean Backward Inter-Arrival Time?",
       description:
-        "Think of 'Mean bwdIATMean' as a way to measure the average waiting time " +
+        "Think of 'Mean Backward Inter-Arrival Time' as a way to measure the average waiting time " +
         "between messages arriving back to you in a conversation. In the world of " +
         "networks, it shows how quickly data packets come from the other side. Big " +
         "changes in this time can hint at something odd, like a cyber attack, " +

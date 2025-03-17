@@ -1,4 +1,4 @@
-import axios from "axios";
+import { customFetch } from "@/utils/client/fetchClient";
 
 export interface BarSummaryItem {
   feature: string;
@@ -36,33 +36,24 @@ export type FetchAttackBeeswarmSummaryXAIExplanationPayload = {
 
 export type FetchAttackBeeswarmSummaryXAIExplanationResponse = {
   explanation: string;
-}
-
-export const FETCH_ATTACK_SUMMARY_XAI_API_URL =
-  "http://localhost:8000/api/attack-detection/xai/summary";
-
-export const FETCH_ATTACK_BAR_SUMMARY_XAI_EXPLANATION_API_URL =
-  "http://localhost:8000/api/attack-detection/xai/summary/bar/explanation";
-
-export const FETCH_ATTACK_BEESWARM_SUMMARY_XAI_EXPLANATION_API_URL =
-    "http://localhost:8000/api/attack-detection/xai/summary/beeswarm/explanation";
+};
 
 export async function fetchAttackSummaryXAI(
   payload: FetchAttackSummaryXAIPayload
 ): Promise<FetchAttackSummaryXAIResponse> {
   try {
-    // Construct the search parameters explicitly.
-    const searchParams = new URLSearchParams({
+    const params = new URLSearchParams({
       attack_type: payload.attack_type,
     });
+    const url = `/api/attack-detection/xai/summary?${params.toString()}`;
 
-    const url = `${FETCH_ATTACK_SUMMARY_XAI_API_URL}?${searchParams.toString()}`;
-
-    const response = await axios.get<FetchAttackSummaryXAIResponse>(url, {
-      withCredentials: true, // Ensure session cookies are sent
+    const data = await customFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-
-    return response.data; // Return the API response data
+    return data as FetchAttackSummaryXAIResponse;
   } catch (error) {
     console.error("Error fetching individual XAI data:", error);
     throw new Error("Failed to fetch individual XAI data.");
@@ -73,19 +64,18 @@ export async function fetchAttackBarSummaryXAIExplanation(
   payload: FetchAttackBarSummaryXAIExplanationPayload
 ): Promise<FetchAttackBarSummaryXAIExplanationResponse> {
   try {
-    // Construct the search parameters explicitly.
-    const searchParams = new URLSearchParams({
+    const params = new URLSearchParams({
       attack_type: payload.attack_type,
     });
+    const url = `/api/attack-detection/xai/summary/bar/explanation?${params.toString()}`;
 
-    const url = `${FETCH_ATTACK_BAR_SUMMARY_XAI_EXPLANATION_API_URL}?${searchParams.toString()}`;
-
-    const response =
-      await axios.get<FetchAttackBarSummaryXAIExplanationResponse>(url, {
-        withCredentials: true, // Ensure session cookies are sent
-      });
-
-    return response.data; // Return the API response data
+    const data = await customFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return data as FetchAttackBarSummaryXAIExplanationResponse;
   } catch (error) {
     console.error("Error fetching individual XAI data:", error);
     throw new Error("Failed to fetch individual XAI data.");
@@ -96,19 +86,18 @@ export async function fetchAttackBeeswarmSummaryXAIExplanation(
   payload: FetchAttackBeeswarmSummaryXAIExplanationPayload
 ): Promise<FetchAttackBeeswarmSummaryXAIExplanationResponse> {
   try {
-    // Construct the search parameters explicitly.
-    const searchParams = new URLSearchParams({
+    const params = new URLSearchParams({
       attack_type: payload.attack_type,
     });
+    const url = `/api/attack-detection/xai/summary/beeswarm/explanation?${params.toString()}`;
 
-    const url = `${FETCH_ATTACK_BEESWARM_SUMMARY_XAI_EXPLANATION_API_URL}?${searchParams.toString()}`;
-
-    const response =
-      await axios.get<FetchAttackBeeswarmSummaryXAIExplanationResponse>(url, {
-        withCredentials: true, // Ensure session cookies are sent
-      });
-
-    return response.data; // Return the API response data
+    const data = await customFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return data as FetchAttackBeeswarmSummaryXAIExplanationResponse;
   } catch (error) {
     console.error("Error fetching individual XAI data:", error);
     throw new Error("Failed to fetch individual XAI data.");

@@ -4,8 +4,8 @@ import BarChart from "@/components/chart/BarChart";
 import SankeyChart from "@/components/chart/ftp/sankey";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
-import { calculateMean } from "@/lib/utils";
-import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
+import { calculateMean } from "@/utils/utils";
+import { generateAttackSankeyData, SankeyData } from "@/utils/vis_utils";
 import { AttackVisTemplate } from "./template/AttackVisTemplate"; // Adjust the import path as needed
 
 type DoSSlowlorisVisSectionProps = {
@@ -74,7 +74,7 @@ export function DoSSlowlorisVisSection({ data }: DoSSlowlorisVisSectionProps) {
           title="Total TCP Flow Time"
           data={totalTCPFlowTimePlot.data}
           categories={totalTCPFlowTimePlot.categories}
-          yAxisName="Mean Total TCP Flow Time"
+          yAxisName="Mean Total TCP Flow Time (seconds)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -107,7 +107,7 @@ export function DoSSlowlorisVisSection({ data }: DoSSlowlorisVisSectionProps) {
           title="Forward PSH Flags Mean"
           data={fwdPSHFlagsPlot.data}
           categories={fwdPSHFlagsPlot.categories}
-          yAxisName="Mean fwdPSHFlags"
+          yAxisName="Mean Forward PSH Flags (count)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -127,16 +127,16 @@ export function DoSSlowlorisVisSection({ data }: DoSSlowlorisVisSectionProps) {
           title="Backward IAT Mean"
           data={bwdIATMeanPlot.data}
           categories={bwdIATMeanPlot.categories}
-          yAxisName="Mean bwdIATMean"
+          yAxisName="Mean Backward Inter-Arrival Time (seconds)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
           height={500}
         />
       ),
-      accordionTitle: "What is Backward IAT Mean?",
+      accordionTitle: "What is Backward Inter-Arrival Time Mean?",
       description:
-        "Think of 'Backward IAT Mean' as measuring the average time between replies in a conversation. " +
+        "Think of 'Backward Inter-Arrival Time Mean' as measuring the average time between replies in a conversation. " +
         "In network terms, it tracks how quickly data packets arrive from the other side. In a Slowloris " +
         "attack, these times might be unusually long as the attacker tries to keep connections open slowly.",
     },

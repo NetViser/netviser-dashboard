@@ -2,10 +2,10 @@
 
 import BarChart from "@/components/chart/BarChart";
 import FTPSankey from "@/components/chart/ftp/sankey";
-import { calculateMean } from "@/lib/utils";
+import { calculateMean } from "@/utils/utils";
 import { SpecificAttackRecord } from "@/utils/client/fetchAttackDetectionVis";
 import { useMemo } from "react";
-import { generateAttackSankeyData, SankeyData } from "@/lib/vis_utils";
+import { generateAttackSankeyData, SankeyData } from "@/utils/vis_utils";
 import { AttackVisTemplate } from "./template/AttackVisTemplate"; // Adjust the import path as needed
 
 type DDOSVisSectionProps = {
@@ -74,7 +74,7 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
           title="Number of Unique Source IPs"
           data={activeFlowBarPlot.data}
           categories={activeFlowBarPlot.categories}
-          yAxisName="Unique Source IPs"
+          yAxisName="Unique Source IPs (count)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -93,7 +93,7 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
           title="Average Packet Length"
           data={barPacketLength.data}
           categories={barPacketLength.categories}
-          yAxisName="Mean Packet Length"
+          yAxisName="Mean Packet Length (bytes)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
@@ -124,7 +124,7 @@ export function DDOSVisSection({ data }: DDOSVisSectionProps) {
           title="Bwd Packet Length Std"
           data={ddosBwdPacketLengthStd.data}
           categories={ddosBwdPacketLengthStd.categories}
-          yAxisName="Mean Bwd Packet Length Std"
+          yAxisName="Mean Bwd Packet Length Std (units)"
           enableZoom={false}
           enableSorting={false}
           withBorder={false}
