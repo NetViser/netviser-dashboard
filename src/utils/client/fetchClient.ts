@@ -14,9 +14,8 @@ const baseURL =
  */
 export async function customFetch(
   input: RequestInfo,
-  init?: RequestInit
+  init?: RequestInit & { parseJson?: boolean } // Add optional flag
 ): Promise<any> {
-  // If input is a string and not an absolute URL, prepend the base URL.
   let url = typeof input === "string" ? input : "";
   if (typeof input === "string" && !/^https?:\/\//i.test(input)) {
     url = baseURL + input;
@@ -26,25 +25,22 @@ export async function customFetch(
 
   console.log("Final url: ", url);
 
-  // Merge default settings with any provided init; ensures credentials are included.
   const defaultInit: RequestInit = { credentials: "include" };
   const mergedInit: RequestInit = { ...defaultInit, ...init };
 
-  // Perform the fetch request.
   const response = await fetch(url, mergedInit);
 
-  // Throw an error if the response is not OK.
   if (!response.ok) {
     let errorMessage = "Fetch error";
     try {
       const errorData = await response.json();
       errorMessage = errorData?.message || JSON.stringify(errorData);
     } catch (e) {
-      // Fallback error message if JSON parsing fails.
+      // Fallback error message
     }
     throw new Error(errorMessage);
   }
 
-  // Return the parsed JSON response.
-  return response.json();
+  // Only parse JSON if parseJson isn’t explicitly false
+  return init?.parseJson === false ? response : response.json();
 }
