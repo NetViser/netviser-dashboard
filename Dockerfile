@@ -11,6 +11,10 @@ RUN npm ci --no-audit --no-fund
 # Copy the rest of the application code
 COPY . .
 
+# Accept build-time argument for NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # Build the Next.js application
 RUN npm run build
 
@@ -29,13 +33,12 @@ COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
-# Install only production dependencies using npm ci with --production flag
+# Install only production dependencies
 RUN npm ci --omit=dev --no-audit --no-fund \
     && npm cache clean --force
 
-# Expose the port your Next.js app runs on (default is 3000)
+# Expose the port dynamically based on the PORT env variable
 EXPOSE $PORT
 
-# Start the application
+# Start the application with the PORT environment variable
 CMD npm start -- -p $PORT
-    
