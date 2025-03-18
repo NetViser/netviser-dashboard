@@ -1,5 +1,6 @@
 // Choose the base URL based on the stage.
-const baseURL = "https://netviser-app-440043701198.asia-east1.run.app";
+const baseURL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
 
 /**
  * A custom fetch client that:
