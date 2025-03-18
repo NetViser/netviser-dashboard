@@ -50,7 +50,7 @@ jobs:
             --max-instances 1 \
             --memory 16Gi \
             --platform managed \
-            --set-env-vars "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}"
+            --set-env-vars=NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 
       - name: Allow Unauthenticated Access
         run: |
