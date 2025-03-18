@@ -34,8 +34,8 @@ RUN npm ci --omit=dev --no-audit --no-fund \
     && npm cache clean --force
 
 # Expose the port your Next.js app runs on (default is 3000)
-EXPOSE 3000
+EXPOSE $PORT
 
 # Start the application
-CMD ["npm", "start"]
+CMD npm start -- -p $PORT
     
