@@ -164,7 +164,7 @@ export default function DashboardPage() {
               classLabel="Protocol"
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg shadow-md flex flex-col mx-4" id="src-ip-distribution">
+          <div className="h-[30rem] bg-white rounded-lg shadow-md" id="src-ip-distribution">
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
