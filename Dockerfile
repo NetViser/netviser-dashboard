@@ -1,43 +1,23 @@
-# ---- Build Stage ----
-FROM node:20.15.1-alpine AS builder
+# Single stage for local development
+FROM node:20.15.1-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package files and install all dependencies (including dev)
 COPY package.json package-lock.json* ./
 RUN npm ci --no-audit --no-fund
 
-# Copy the rest of the application code
+# Copy all application code
 COPY . .
 
-# Accept build-time argument for NEXT_PUBLIC_ENV for local development
+# Set development environment variables
+ENV NODE_ENV=development
 ENV NEXT_PUBLIC_ENV=local
+ENV PORT=3000
 
-# Build the Next.js application
-RUN npm run build
+# Expose the development port
+EXPOSE 3000
 
-# ---- Production Stage ----
-FROM node:20.15.1-alpine AS runner
-
-# Set working directory
-WORKDIR /app
-
-# Set production environment variables
-ENV NODE_ENV=production
-
-# Copy necessary files from the builder stage
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-
-# Install only production dependencies
-RUN npm ci --omit=dev --no-audit --no-fund \
-    && npm cache clean --force
-
-# Expose the port dynamically based on the PORT env variable
-EXPOSE $PORT
-
-# Start the application with the PORT environment variable
-CMD npm start -- -p $PORT
+# Start the Next.js development server with hot reloading
+CMD ["npm", "run", "dev"]

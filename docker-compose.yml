@@ -6,10 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:${PORT:-3000}"  # Map host port 3000 to container's PORT (default 3000)
-    environment:
-      - NODE_ENV=production  # Set runtime env var
-      - PORT=${PORT:-3000}   # Allow PORT to be overridden, default to 3000
-    env_file:
-      - .env  # Load additional env vars from .env file if needed
+      - "3000:3000"
     restart: unless-stopped
