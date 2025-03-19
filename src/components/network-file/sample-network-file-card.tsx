@@ -1,7 +1,7 @@
 "use client";
 
 import { useSessionStore } from "@/store/session";
-import { uploadFile } from "@/utils/client/uploadFile";
+import { uploadFile } from "@/utils/client/upload-file";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
