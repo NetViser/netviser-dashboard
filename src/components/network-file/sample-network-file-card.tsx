@@ -1,7 +1,7 @@
 "use client";
 
 import { useSessionStore } from "@/store/session";
-import { fetchSampleNetworkFile } from "@/utils/client/fetchSampleNetworkFile";
+import { uploadFile } from "@/utils/client";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -17,49 +17,21 @@ function SampleNetworkFileCard({
 }: SampleNetworkFileCardProps) {
   const router = useRouter();
   const { setActiveSession, setSessionID } = useSessionStore();
+
   const handleClick = async () => {
     console.log(`Fetching sample network file: ${name}`);
     try {
-      const responseData = await fetchSampleNetworkFile(name);
-      
-      // ✅ On success: Show success alert and process response
-      await Swal.fire({
-        title: "File Uploaded Successfully",
-        icon: "success",
-        timer: 1000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-orange-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-        },
-      });
+      // Call uploadFile with the sample file name
+      const responseData = await uploadFile("/api/upload", { arg: name });
 
-      try {
-        const sessionID = responseData.content.session_id;
-        console.log("Session ID:", sessionID);
-        setSessionID(sessionID); // Assuming setSessionID is available
-        setActiveSession(true);  // Assuming setActiveSession is available
-        router.push("/dashboard"); // Assuming router is available
-      } catch (error) {
-        console.error("Error parsing JSON response:", error);
-        Swal.fire({
-          title: "Error",
-          text: "Failed to parse server response.",
-          icon: "error",
-          confirmButtonText: "Close",
-          confirmButtonColor: "#f44336",
-          background: "#fff",
-          customClass: {
-            popup: "rounded-xl shadow-2xl border border-red-200/50",
-            title: "text-stone-900 font-bold text-2xl",
-            confirmButton: "rounded-lg px-6 py-2",
-          },
-        });
-      }
+      // Process the response
+      const sessionID = responseData.content.session_id;
+      console.log("Session ID:", sessionID);
+      setSessionID(sessionID);
+      setActiveSession(true);
+      router.push("/dashboard");
     } catch (error: any) {
-      // ❌ On error: Show error alert
+      // Show error alert on failure
       Swal.fire({
         title: "Error",
         text: error.message,

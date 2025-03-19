@@ -8,7 +8,7 @@ import useSWR from "swr";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/store/session";
-import { uploadFile, UploadFileResult } from "@/utils/client/uploadFIle";
+import { uploadFile, UploadFileResult } from "@/utils/client/uploadFile";
 import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
 import Image from "next/image";
 import { motion } from "framer-motion";
