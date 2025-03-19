@@ -38,7 +38,7 @@ jobs:
           NEXT_PUBLIC_ENV: 'production'
         run: |
           DOCKER_TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_NAME }}/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" --build-arg NEXT_PUBLIC_ENV=${NEXT_PUBLIC_ENV} .
+          docker build -f Dockerfile.production --tag "${DOCKER_TAG}" --build-arg NEXT_PUBLIC_ENV=${NEXT_PUBLIC_ENV} .
           docker push "${DOCKER_TAG}"
 
       # Deploy to Cloud Run with custom CPU and memory settings using gcloud
