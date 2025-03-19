@@ -1,6 +1,9 @@
-// Choose the base URL based on the stage.
-const baseURL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
+const env = process.env.NEXT_PUBLIC_ENV ?? "local"
+
+let baseURL = "http://localhost:8080"
+if (env === "production") {
+  baseURL = "https://api.netviser.tech"
+}
 
 /**
  * A custom fetch client that:
