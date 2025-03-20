@@ -132,14 +132,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="h-full px-6 py-4">
+    <div className="h-full px-8 py-6 bg-gray-50">
       {/* Header Section */}
-      <div className="flex flex-col items-start w-full">
-        <div className="text-2xl font-bold">Dashboard</div>
-        <div className="text-xl font-medium mb-6 text-gray-500">
-          {data ? extractFileName(data?.file_name) : "Unknown"}
+      <div className="flex flex-col items-start w-full mb-8">
+        <div className="flex items-center justify-between w-full mb-4">
+          <h1 className="text-3xl font-bold text-gray-900">Network Analytics Dashboard</h1>
           <DashBoardTour />
         </div>
+        <div className="flex items-center gap-3">
+          <span className="text-lg font-medium text-gray-500">Analyzing:</span>
+          <span className="px-4 py-2 text-gray-700 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50">
+            {data ? extractFileName(data?.file_name) : "Unknown"}
+          </span>
+        </div>
+        <div className="w-full mt-6 border-b-2 border-gray-200" />
       </div>
 
       <div className="flex flex-col gap-y-6 mb-4">

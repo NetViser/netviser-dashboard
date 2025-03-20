@@ -7,8 +7,7 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useSessionStore } from "@/store/session";
 import AttacksTable from "@/components/attack-detection/attacks-table/attacks-table";
-import { useMemo, useState } from "react";
-import { fetchAttackDetectionScatter } from "@/utils/client/fetchAttackDetectionScatter";
+import { useMemo } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function AttackDetectionPage() {
@@ -21,23 +20,27 @@ export default function AttackDetectionPage() {
   const router = useRouter();
   const { setActiveSession, sessionID } = useSessionStore();
 
-  const { data, isLoading } = useSWR(`${sessionID}/api/dashboard`, fetchDashboard, {
-    shouldRetryOnError: false,
-    onError: async (error) => {
-      await Swal.fire({
-        icon: "error",
-        title: "Session Expired",
-        confirmButtonText: "OK",
-        timer: 1000,
-        timerProgressBar: true,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-      });
-      console.error("Failed to get file name:", error);
-      setActiveSession(false);
-      router.push("/");
-    },
-  });
+  const { data, isLoading } = useSWR(
+    `${sessionID}/api/dashboard`,
+    fetchDashboard,
+    {
+      shouldRetryOnError: false,
+      onError: async (error) => {
+        await Swal.fire({
+          icon: "error",
+          title: "Session Expired",
+          confirmButtonText: "OK",
+          timer: 1000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        });
+        console.error("Failed to get file name:", error);
+        setActiveSession(false);
+        router.push("/");
+      },
+    }
+  );
 
   const tableData = useMemo(() => {
     if (!data) return [];
@@ -60,19 +63,23 @@ export default function AttackDetectionPage() {
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
       {/* Header Section */}
-      <div className="flex flex-col items-start w-full">
+      <div className="flex items-center justify-between w-full mb-4">
         <div className="flex items-center">
           <IoMdArrowRoundBack
-            className="text-stone-400 hover:text-stone-500 mr-2 cursor-pointer transition-transform duration-200 ease-in-out hover:-translate-x-0.5"
+            className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer transition-transform duration-200 ease-in-out hover:-translate-x-0.5"
             onClick={() => router.back()}
             size={30}
           />
-          <div className="text-2xl font-bold">Attack Detection</div>
-        </div>
-        <div className="text-xl font-medium mb-6 text-gray-500">
-          {data ? extractFileName(data?.file_name) : "Unknown"}
+          <h1 className="text-3xl font-bold text-gray-900">Attack Detection</h1>
         </div>
       </div>
+      <div className="flex items-center gap-3">
+        <span className="text-lg font-medium text-gray-500">Analyzing:</span>
+        <span className="px-4 py-2 text-gray-700 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50">
+          {data ? extractFileName(data?.file_name) : "Unknown"}
+        </span>
+      </div>
+      <div className="w-full mt-6 mb-8 border-b-2 border-gray-200" />
 
       <div className="flex flex-col gap-y-6">
         {/* Attacks Table */}
