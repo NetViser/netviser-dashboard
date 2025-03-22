@@ -7,7 +7,6 @@ import clsx from "clsx";
 interface AttackData {
   attackType: string;
   numberOfAttacks: number;
-  description: string;  
   isSelected?: boolean;
 }
 
@@ -18,57 +17,54 @@ interface AttacksTableProps {
 
 const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
   return (
-    <div className="py-6 bg-white rounded-lg px-6 shadow-md">
-      <div className="pb-4 text-xl font-semibold text-left text-stone-900">
-        Detected Attack Types
-        <p className="mt-1 text-md font-normal text-gray-500">
-          Browse the detected attack types, their frequency, and descriptions to
-          understand potential threats better.
+    <div className="py-8 px-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl shadow-xl">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Detected Attack Types</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Browse the detected attack types and their frequencies to understand potential threats.
         </p>
       </div>
-      <div className="relative overflow-x-auto border bg-white rounded-lg">
-        <table className="w-full text-md text-left text-gray-500">
-          <thead className="text-white uppercase bg-stone-900 rounded-lg">
+      <div className="overflow-x-auto border rounded-xl">
+        <table className="min-w-full bg-white divide-y divide-gray-200 shadow-lg rounded-xl">
+          <thead className="bg-orange-600">
             <tr>
-              <th scope="col" className="px-6 py-3">Attack Type</th>
-              <th scope="col" className="px-6 py-3">Number of Attacks</th>
-              <th scope="col" className="px-6 py-3">Description</th>
-              <th scope="col" className="px-6 py-3">
+              <th className="px-8 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                Attack Type
+              </th>
+              <th className="px-8 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                Number of Attacks
+              </th>
+              <th className="px-8 py-4 text-center text-sm font-semibold text-white uppercase tracking-wider">
                 <span className="sr-only">Analyze</span>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-100">
             {data.map((rowData, index) => {
               const isLastRow = index === data.length - 1;
-
               return (
                 <tr
                   key={index}
                   className={clsx(
-                    "transition-colors",
+                    "transition duration-300 ease-in-out",
                     {
-                      "bg-orange-200": rowData.isSelected,
-                      "bg-white": !rowData.isSelected,
-                      "border-b": !isLastRow,
-                      "hover:bg-gray-200": !rowData.isSelected,
-                      "hover:bg-orange-50": rowData.isSelected,
+                      "bg-yellow-100": rowData.isSelected,
+                      "hover:bg-gray-50": !rowData.isSelected,
+                      "hover:bg-yellow-50": rowData.isSelected,
                     }
                   )}
                 >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-stone-900 whitespace-nowrap"
-                  >
+                  <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                     {rowData.attackType}
-                  </th>
-                  <td className="px-6 py-4">{rowData.numberOfAttacks}</td>
-                  <td className="px-6 py-4">{rowData.description}</td>
-                  <td className="px-6 py-4 text-right">
+                  </td>
+                  <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {rowData.numberOfAttacks}
+                  </td>
+                  <td className="px-8 py-4 whitespace-nowrap text-center">
                     <button
-                      className="flex items-center px-4 py-2 bg-orange-500 text-white font-semibold text-sm rounded-md hover:bg-orange-600 transition"
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 transition duration-300"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the row click
+                        e.stopPropagation();
                         onAnalyze(rowData.attackType);
                       }}
                     >

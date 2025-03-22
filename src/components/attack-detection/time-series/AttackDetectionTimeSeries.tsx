@@ -22,15 +22,14 @@ type AttackDetectionTimeSeriesProps = {
   attackType: string;
 };
 
-
 export default function AttackDetectionTimeSeries({
   attackType,
 }: AttackDetectionTimeSeriesProps) {
   const [selectedPartitionIndex, setSelectedPartitionIndex] =
-    useState<number>(0); // Default to the first partition
+    useState<number>(0);
   const [selectedFeatureName, setSelectedFeatureName] = useState<string | null>(
     null
-  ); // Default to no feature selected
+  );
 
   const { sessionID } = useSessionStore();
   const swrKey = `${sessionID}/api/attack-detection/visualization/attack-time-series?attack_type=${attackType}&partition_index=${selectedPartitionIndex}${
@@ -54,7 +53,6 @@ export default function AttackDetectionTimeSeries({
   useEffect(() => {
     if (data) {
       setSelectedPartitionIndex(data.current_partition_index || 0);
-      // If no feature is selected yet and features are available, default to the first one
       if (!selectedFeatureName && data.features?.length > 0) {
         setSelectedFeatureName(data.features[0]);
       }
@@ -64,38 +62,20 @@ export default function AttackDetectionTimeSeries({
   const handlePartitionChange = (value: string) => {
     const partitionIndex = parseInt(value, 10);
     setSelectedPartitionIndex(partitionIndex);
-    mutate(); // Refetch data with new partition index
+    mutate();
   };
 
   const handleFeatureChange = (value: string) => {
     setSelectedFeatureName(value);
-    mutate(); // Refetch data with new feature name
+    mutate();
   };
 
-  if (isLoading) {
-    return (
-      <Skeleton
-        style={{
-          padding: "1rem",
-          borderRadius: "8px",
-          height: "4rem",
-          marginTop: "1rem",
-        }}
-        count={4}
-        width="100%"
-      />
-    );
-  }
-
-  if (!data) {
+  if (!data && !isLoading) {
     return <div>No data available.</div>;
   }
 
-  const { data: timeSeriesData, highlight, partitions, features } = data;
-  const { timestamps, values, attackMarkPoint, otherAttackMarkPoint, feature, port21MarkPoint, port22MarkPoint } =
-    timeSeriesData;
+  const { data: timeSeriesData, highlight, partitions, features } = data || {};
 
-  // Create options for the Partition Select dropdown
   const partitionOptions = partitions?.map((partition, index) => {
     const { start, end } = partition;
     const startDate = moment(start).format("YYYY-MM-DD HH:mm:ss");
@@ -108,7 +88,6 @@ export default function AttackDetectionTimeSeries({
     );
   });
 
-  // Create options for the Feature Select dropdown with loading/undefined handling
   const featureOptions = features?.length ? (
     features.map((feat, index) => (
       <SelectItem key={index} value={feat}>
@@ -121,60 +100,71 @@ export default function AttackDetectionTimeSeries({
     </SelectItem>
   );
 
-  // Determine if port-specific filters should be enabled
-  const enablePortFilters = attackType === "FTP-Patator" || attackType === "SSH-Patator";
+  const enablePortFilters =
+    attackType === "FTP-Patator" || attackType === "SSH-Patator";
 
   return (
-    <div className="flex flex-col items-start gap-y-4 w-full">
-      {/* Controls Container */}
-      <div className="flex flex-row gap-6 w-full">
-        {/* Partition Selection */}
-        <div className="flex items-center">
-          <label className="mr-2 text-md font-semibold whitespace-nowrap">
-            Select Partition:
-          </label>
-          <Select
-            onValueChange={handlePartitionChange}
-            value={String(selectedPartitionIndex)}
-          >
-            <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
-              <SelectValue placeholder="Select a partition" />
-            </SelectTrigger>
-            <SelectContent className="bg-orange-500 text-white">
-              {partitionOptions}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Feature Selection */}
-        <div className="flex items-center">
-          <label className="mr-2 text-md font-semibold whitespace-nowrap">
-            Select Feature:
-          </label>
-          <Select
-            onValueChange={handleFeatureChange}
-            value={selectedFeatureName || ""}
-            disabled={isLoading || !features?.length} // Disable if loading or no features
-          >
-            <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
-              <SelectValue placeholder="Select a feature" />
-            </SelectTrigger>
-            <SelectContent className="bg-orange-500 text-white">
-              {featureOptions}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Chart */}
-      <div className="w-full">
-        <AttackTimeSeriesChart
-          attackType={attackType}
-          data={timeSeriesData}
-          highlight={highlight}
-          enablePortFilters={enablePortFilters} // Updated prop name for generality
+    <div className="w-full p-6 mt-6 bg-white rounded-lg border-2 shadow-sm">
+      {isLoading ? (
+        <Skeleton
+          style={{
+            padding: "1rem",
+            borderRadius: "8px",
+            height: "4rem",
+            marginTop: "1rem",
+          }}
+          count={4}
+          width="100%"
         />
-      </div>
+      ) : (
+        <div className="flex flex-col items-start gap-y-4 w-full">
+          <div className="flex flex-row gap-6 w-full">
+            <div className="flex items-center">
+              <label className="mr-2 text-md font-semibold whitespace-nowrap">
+                Select Partition:
+              </label>
+              <Select
+                onValueChange={handlePartitionChange}
+                value={String(selectedPartitionIndex)}
+              >
+                <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
+                  <SelectValue placeholder="Select a partition" />
+                </SelectTrigger>
+                <SelectContent className="bg-orange-500 text-white">
+                  {partitionOptions}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center">
+              <label className="mr-2 text-md font-semibold whitespace-nowrap">
+                Select Feature:
+              </label>
+              <Select
+                onValueChange={handleFeatureChange}
+                value={selectedFeatureName || ""}
+                disabled={isLoading || !features?.length}
+              >
+                <SelectTrigger className="text-md bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-700">
+                  <SelectValue placeholder="Select a feature" />
+                </SelectTrigger>
+                <SelectContent className="bg-orange-500 text-white">
+                  {featureOptions}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <AttackTimeSeriesChart
+              attackType={attackType}
+              data={timeSeriesData!}
+              highlight={highlight}
+              enablePortFilters={enablePortFilters}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
