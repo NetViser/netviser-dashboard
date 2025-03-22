@@ -61,7 +61,7 @@ export function NavHeader() {
         {/* Logo Section */}
         <Link href="/" className="flex items-center gap-2">
           <img src="/netviser.svg" alt="NetViser Logo" className="w-10 h-10" />
-          <h1 className="text-xl font-semibold">NetViser</h1>
+          <h1 className="text-2xl">NetViser</h1>
         </Link>
 
         {/* Desktop Navigation */}

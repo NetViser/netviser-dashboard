@@ -46,9 +46,7 @@ export default function AttackDetectionPage() {
     if (!data) return [];
     return Object.keys(data.detected_attacks_distribution).map((key) => ({
       attackType: key,
-      numberOfAttacks: data.detected_attacks_distribution[key],
-      description:
-        "Overwhelms a website or server with a flood of traffic, making it inaccessible to real users.",
+      numberOfAttacks: data.detected_attacks_distribution[key]
     }));
   }, [data]);
 

@@ -17,6 +17,10 @@ import { XAIModal } from "@/components/attack-detection/xai/xai-modal";
 import { AttackXAISection } from "./attack-xai-section";
 import AttackTour from "@/app/tour/attack_tour";
 import XAITour from "@/app/tour/xai_tour";
+import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
+
+// Import the custom message box component to display attack descriptions
+import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
 
 export default function Page() {
   const router = useRouter();
@@ -40,10 +44,7 @@ export default function Page() {
   // -- Data Fetching
 
   // Attack Records
-  const {
-    data: attackRecords,
-    isLoading: isLoadingAttackRecords,
-  } = useSWR(
+  const { data: attackRecords, isLoading: isLoadingAttackRecords } = useSWR(
     `${sessionID}/attack_record?type=${attackType}&page=${page}&page_size=${pageSize}`,
     () => fetchAttackDetectionRecord(attackType, page, pageSize),
     {
@@ -54,18 +55,16 @@ export default function Page() {
   );
 
   // Attack Visualizations
-  const {
-    data: attackVisualizations,
-    isLoading: isLoadingVisualizations,
-  } = useSWR(
-    `${sessionID}/attack_visuals?type=${attackType}`,
-    () => fetchSpecificAttackDetection(attackType),
-    {
-      shouldRetryOnError: false,
-      keepPreviousData: true,
-      onError: handleSessionExpired,
-    }
-  );
+  const { data: attackVisualizations, isLoading: isLoadingVisualizations } =
+    useSWR(
+      `${sessionID}/attack_visuals?type=${attackType}`,
+      () => fetchSpecificAttackDetection(attackType),
+      {
+        shouldRetryOnError: false,
+        keepPreviousData: true,
+        onError: handleSessionExpired,
+      }
+    );
 
   // Common error handler for session expiry
   async function handleSessionExpired(error: any) {
@@ -110,6 +109,11 @@ export default function Page() {
     );
   }
 
+  // Find the current attack description from the list
+  const currentAttackDescription = attackTypeDescription.find(
+    (desc) => desc.attackType === attackType
+  );
+
   // -- Render
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
@@ -130,8 +134,18 @@ export default function Page() {
         </div>
 
         {/* Explainability Mode Selector */}
-        <ExplainabilitySelector onSelect={handleExplainabilityModeChange} value={explainabilityMode!} />
+        <ExplainabilitySelector
+          onSelect={handleExplainabilityModeChange}
+          value={explainabilityMode!}
+        />
       </div>
+
+      {/* Attack Description Message Box */}
+      {currentAttackDescription && (
+        <div className="my-6">
+          <AttackDescriptionBox attack={currentAttackDescription} />
+        </div>
+      )}
 
       {/* Attack Records Table */}
       <AttackRecordsSection
@@ -162,6 +176,7 @@ export default function Page() {
           attackVisualizations={attackVisualizations}
         />
       )}
+
       {/* Conditional render XAI section */}
       {explainabilityMode === "XAI" && (
         <AttackXAISection attackType={attackType} />

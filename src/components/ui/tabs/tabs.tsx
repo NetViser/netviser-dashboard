@@ -49,7 +49,7 @@ export const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab, children })
       </div>
 
       {/* Tab Content */}
-      <div className="shadow border-[0.2rem] border-orange-300 font-light p-8 rounded text-gray-500 bg-stone-100/30 mt-4">
+      <div className="font-light rounded text-gray-500 bg-stone-100/30 mt-4">
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             const { tab, children } = (child as React.ReactElement<TabProps>).props;
