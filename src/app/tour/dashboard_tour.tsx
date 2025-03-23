@@ -17,6 +17,8 @@ const scrollToHandler = (element: HTMLElement | null) => {
 const DashBoardTour = () => {
     const tour = new Shepherd.Tour({
       defaultStepOptions: {
+        modalOverlayOpeningRadius: 10,
+        modalOverlayOpeningPadding: 10,
         classes: 'shepherd-theme-dark',
         scrollTo: true,
         scrollToHandler: (element) => scrollToHandler(element),

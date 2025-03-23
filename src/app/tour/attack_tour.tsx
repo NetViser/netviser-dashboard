@@ -16,12 +16,27 @@ const scrollToHandler = (element: HTMLElement | null) => {
 const AttackTour = () => {
     const tour = new Shepherd.Tour({
       defaultStepOptions: {
+        modalOverlayOpeningRadius: 10,
+        modalOverlayOpeningPadding: 10,
         classes: 'shepherd-theme-dark',
         scrollTo: true,
         scrollToHandler: (element) => scrollToHandler(element),
       },
       useModalOverlay: true,
     });
+
+    tour.addStep({
+        id: 'attack-description',
+        text: 'This section provides a description of the attack type.',
+        attachTo: {element:'#attack-description', on:"bottom"},
+        arrow: true,
+        buttons: [
+          {
+            text: 'Next',
+            action: tour.next,
+          },
+        ],
+      });
 
     tour.addStep({
         id: 'attack-records',
@@ -51,8 +66,21 @@ const AttackTour = () => {
       });
 
       tour.addStep({
+        id: "Overall",
+        text: "This chart shows the distribution of protocols in the network data file.",
+        attachTo: { element: "#overall", on: "left" },
+        arrow: true,
+        buttons: [
+          {
+            text: "Next",
+            action: tour.next,
+          },
+        ],
+      });
+
+      tour.addStep({
         id: "attack-visualizations",
-        text: "This chart shows the distribution of source IP addresses.",
+        text: "These charts shows the attack based characteristic visualization of the network data file.",
         attachTo: { element: "#attack-visualizations", on: "left" },
         arrow: true,
         buttons: [
@@ -62,11 +90,54 @@ const AttackTour = () => {
           },
         ],
       });
-    
+
+      tour.addStep({
+        id: "Time Series",
+        text: "This button allows you to view the time series visualization of the network data file.",
+        attachTo: { element: "#timeseries", on: "left" },
+        arrow: true,
+        buttons: [
+          {
+            text: "Next",
+            action () {
+              const selector = document.getElementById('timeseries')
+              selector.click()
+              return this.next()
+            },
+          },
+        ],
+      });
+
+      tour.addStep({
+        id: "attack-visualizations",
+        text: "This chart shows the time series visualization of the network data file.",
+        attachTo: { element: "#attack-visualizations", on: "left" },
+        arrow: true,
+        buttons: [
+          {
+            text: "Next",
+            action: tour.next,
+          },
+        ],
+      });
+
       /*tour.addStep({
-        id: "attack-xai",
-        text: "This chart displays the distribution of destination ports.",
-        attachTo: { element: "#attack-xai", on: "left" },
+        id: "partition-select",
+        text: "This box allows you to select the partition index.",
+        attachTo: { element: "#partition-select", on: "left" },
+        arrow: true,
+        buttons: [
+          {
+            text: "Next",
+            action: tour.next,
+          },
+        ],
+      });
+
+      tour.addStep({
+        id: "feature-select",
+        text: "This box allows you to select the feature to be visualize.",
+        attachTo: { element: "#feature-select", on: "left" },
         arrow: true,
         buttons: [
           {
@@ -75,8 +146,6 @@ const AttackTour = () => {
           },
         ],
       });*/
-
-      
 
   return <button
     onClick={() => tour?.start()}

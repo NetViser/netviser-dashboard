@@ -39,6 +39,7 @@ export const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab, children })
                     : "bg-white text-orange-500 border border-gray-300 shadow-sm hover:bg-orange-100"} 
                   hover:shadow-md hover:scale-105 
                   focus:ring-2 focus:ring-orange-400 focus:outline-none active:scale-95`}
+                  id={tab}
               >
                 {label}
               </button>

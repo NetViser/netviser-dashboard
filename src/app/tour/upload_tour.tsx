@@ -7,6 +7,8 @@ import 'shepherd.js/dist/css/shepherd.css';
 const DragDropBoxTour = () => {
     const tour = new Shepherd.Tour({
       defaultStepOptions: {
+        modalOverlayOpeningRadius: 10,
+        modalOverlayOpeningPadding: 10,
         classes: 'shepherd-theme-dark',
         scrollTo: false,
       },
