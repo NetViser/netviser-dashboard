@@ -19,8 +19,8 @@ import AttackTour from "@/app/tour/attack_tour";
 import XAITour from "@/app/tour/xai_tour";
 import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
 
-// Import the custom message box component to display attack descriptions
 import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
+import PageTitleFooter from "@/components/header/page-title-footer";
 
 export default function Page() {
   const router = useRouter();
@@ -29,20 +29,18 @@ export default function Page() {
   const [pageSize, setPageSize] = useState(10);
   const slugName = params?.slug || "";
   const attackType = decodeURIComponent(slugName as string);
-  const { setActiveSession, sessionID } = useSessionStore();
-  const [activeVisualizationTab, setActiveVisualizationTab] = useState("overall");
-
+  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
   // Use a dynamic local storage key for explainability mode based on the attack type.
   const explainabilityKey = `explainability-mode-${attackType}`;
   const [explainabilityMode, setExplainabilityMode] = useLocalStorage(
     explainabilityKey,
     "Visualization"
   );
+  const localStorageKey = `attack-visualizations-active-tab-${attackType}`;
+  const [activeTab, setActiveTab] = useLocalStorage(localStorageKey, "overall");
 
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
-
-  // -- Data Fetching
 
   // Attack Records
   const { data: attackRecords, isLoading: isLoadingAttackRecords } = useSWR(
@@ -54,18 +52,6 @@ export default function Page() {
       onError: handleSessionExpired,
     }
   );
-
-  // Attack Visualizations
-  const { data: attackVisualizations, isLoading: isLoadingVisualizations } =
-    useSWR(
-      `${sessionID}/attack_visuals?type=${attackType}`,
-      () => fetchSpecificAttackDetection(attackType),
-      {
-        shouldRetryOnError: false,
-        keepPreviousData: true,
-        onError: handleSessionExpired,
-      }
-    );
 
   // Common error handler for session expiry
   async function handleSessionExpired(error: any) {
@@ -102,7 +88,7 @@ export default function Page() {
     setShowXaiModal(true);
   };
 
-  if (isLoadingAttackRecords || isLoadingVisualizations) {
+  if (isLoadingAttackRecords) {
     return (
       <div className="h-screen bg-transparent flex flex-col items-center justify-center">
         <Spinner />
@@ -115,7 +101,6 @@ export default function Page() {
     (desc) => desc.attackType === attackType
   );
 
-  // -- Render
   return (
     <div className="h-full pt-4 px-6 bg-stone-100 mb-8">
       {/* Header */}
@@ -142,6 +127,9 @@ export default function Page() {
           value={explainabilityMode!}
         />
       </div>
+
+      {/* Analyzing Section */}
+      <PageTitleFooter fileName={networkFileName} />
 
       {/* Attack Description Message Box */}
       {currentAttackDescription && (
@@ -176,7 +164,8 @@ export default function Page() {
       {explainabilityMode === "Visualization" && (
         <AttackVisualizationsSection
           attackType={attackType}
-          attackVisualizations={attackVisualizations}
+          activeTab={activeTab as 'overall' | 'timeseries'}
+          setActiveTab={setActiveTab}
         />
       )}
 

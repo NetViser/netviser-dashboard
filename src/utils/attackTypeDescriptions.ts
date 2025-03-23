@@ -20,7 +20,7 @@ export const attackTypeDescription = [
       "FTP-Patator targets FTP services by automating numerous login attempts in a short period. It repeatedly opens TCP connections to the FTP control port (typically port 21), leveraging the low overhead of FTP handshakes to flood the server with authentication requests.",
   },
   {
-    attackType: "PortScan",
+    attackType: "Portscan",
     description:
       "PortScan probes a target system by sending TCP/UDP packets across a range of ports to identify which ones are open. It methodically scans ports using techniques like sending TCP SYN packets and analyzing responses (SYN-ACK or RST), allowing attackers to map network services without disrupting normal traffic.",
   },

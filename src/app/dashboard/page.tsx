@@ -7,22 +7,19 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useSessionStore } from "@/store/session";
 import SummaryCard from "@/components/dashboard/SummaryCard";
-import { FcAbout } from "react-icons/fc";
 import { useMemo } from "react";
 import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
 import AreaChart from "@/components/chart/AreaChart";
 import DashBoardTour from "../tour/dashboard_tour";
+import { FaTable } from "react-icons/fa";
+import { SiDowndetector } from "react-icons/si";
+import { TbCategoryFilled } from "react-icons/tb";
+import PageTitleFooter from "@/components/header/page-title-footer";
 
 export default function DashboardPage() {
-  const extractFileName = (name: string) => {
-    console.log(name);
-    const [, , ...words] = name.split("/");
-    return words.join("/");
-  };
-
   const router = useRouter();
-  const { setActiveSession, sessionID } = useSessionStore();
+  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
 
   const { data, isLoading } = useSWR(
     `${sessionID}/api/dashboard`,
@@ -51,16 +48,19 @@ export default function DashboardPage() {
       {
         title: "Total Rows",
         value: data?.total_rows ?? "N/A",
+        icon: <FaTable size={32} />,
       },
       {
         title: "Total Detected Attacks",
         value: data?.total_detected_attacks ?? "N/A",
+        icon: <SiDowndetector size={32} />,
       },
       {
         title: "Detected Attack Types",
         value:
           Object.keys(data?.detected_attacks_distribution || {}).length ??
           "N/A",
+        icon: <TbCategoryFilled size={32} />,
       },
     ],
     [data]
@@ -134,18 +134,14 @@ export default function DashboardPage() {
   return (
     <div className="h-full px-8 py-6 bg-gray-50">
       {/* Header Section */}
-      <div className="flex flex-col items-start w-full mb-8">
+      <div className="flex flex-col items-start w-full">
         <div className="flex items-center justify-between w-full mb-4">
-          <h1 className="text-3xl font-bold text-gray-900">Network Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Network Analytics Dashboard
+          </h1>
           <DashBoardTour />
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-medium text-gray-500">Analyzing:</span>
-          <span className="px-4 py-2 text-gray-700 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50">
-            {data ? extractFileName(data?.file_name) : "Unknown"}
-          </span>
-        </div>
-        <div className="w-full mt-6 border-b-2 border-gray-200" />
+        <PageTitleFooter fileName={networkFileName} />
       </div>
 
       <div className="flex flex-col gap-y-6 mb-4">
@@ -156,7 +152,7 @@ export default function DashboardPage() {
               key={index}
               title={card.title}
               value={card.value}
-              icon={<FcAbout size={32} />}
+              icon={card.icon}
             />
           ))}
         </div>
@@ -170,7 +166,10 @@ export default function DashboardPage() {
               classLabel="Protocol"
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg shadow-md" id="src-ip-distribution">
+          <div
+            className="h-[30rem] bg-white rounded-lg shadow-md"
+            id="src-ip-distribution"
+          >
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"

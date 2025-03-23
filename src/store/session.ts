@@ -8,6 +8,8 @@ export type SessionState = {
   setSessionID: (sessionID: string) => void;
   isActiveSession: boolean;
   setActiveSession: (isActiveSession: boolean) => void;
+  networkFileName: string;
+  setNetworkFileName: (networkFileName: string) => void;
 };
 
 
@@ -18,6 +20,8 @@ export const useSessionStore = create<SessionState>()(
       setSessionID: (sessionID: string) => set({ sessionID }),
       isActiveSession: false,
       setActiveSession: (isActiveSession: boolean) => set({ isActiveSession }),
+      networkFileName: "",
+      setNetworkFileName: (networkFileName: string) => set({ networkFileName }),
     }),
     {
       name: "session-storage", // The name of the storage key

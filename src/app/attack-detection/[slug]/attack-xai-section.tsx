@@ -10,6 +10,7 @@ import SummaryBeeSwarmChart from "@/components/chart/xai/SummaryBeeSwarmChart";
 import { XAIBeeswarmSummaryModal } from "@/components/attack-detection/xai/xai-beeswarm-summary-modal";
 import Skeleton from "react-loading-skeleton";
 import { useSessionStore } from "@/store/session";
+import { useLoadingStore } from "@/store/loadingStore";
 
 type AttackXAISectionProps = {
   attackType: string;
@@ -18,11 +19,11 @@ type AttackXAISectionProps = {
 export function AttackXAISection({ attackType }: AttackXAISectionProps) {
   const [showBarChartModal, setShowBarChartModal] = React.useState(false);
   const { sessionID } = useSessionStore();
-  const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] =
-    React.useState(false);
+  const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] = React.useState(false);
+  const { setLoading } = useLoadingStore();
 
   // Use SWR to fetch the XAI summary data.
-  const { data, error } = useSWR(
+  const { data, error, isLoading } = useSWR(
     `${sessionID}/attack_summary_xai?attack_type=${attackType}`,
     () => fetchAttackSummaryXAI({ attack_type: attackType }),
     {
@@ -41,6 +42,11 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
       },
     }
   );
+
+  // Update global loading state once data or error is available
+  React.useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
 
   // Show loading skeletons while fetching data
   if (!data && !error) {
@@ -124,6 +130,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
             onHelpClick={() => setShowBarChartModal(true)}
           />
         </div>
+        {/* Right: Beeswarm Summary Chart */}
         <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
           <SummaryBeeSwarmChart
             attackType={attackType}

@@ -1,7 +1,12 @@
 "use client";
 
-import { useLocalStorage } from "react-use"; // Robust hook for persisted state
-import { FetchSpecificAttackResponse } from "@/utils/client/fetchAttackDetectionOverview";
+import useSWR from "swr";
+import Spinner from "@/components/loader/spinner";
+import Swal from "sweetalert2";
+import {
+  fetchSpecificAttackDetection,
+  FetchSpecificAttackResponse,
+} from "@/utils/client/fetchAttackDetectionOverview";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/components/attack-detection/time-series/AttackDetectionTimeSeries";
 import { FTPPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ftp-patator-vis-section";
@@ -10,50 +15,111 @@ import { PortscanVisSection } from "@/components/attack-detection/attack-specifi
 import { DosHulkVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-hulk-vis-section";
 import { DoSSlowlorisVisSection } from "@/components/attack-detection/attack-specific-visualization/dos-slowloris-vis-section";
 import { SSHPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ssh-patator-vis-section";
+import { useSessionStore } from "@/store/session";
+import { useRouter } from "next/navigation";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
-  attackVisualizations: FetchSpecificAttackResponse | undefined;
+  activeTab: "overall" | "timeseries";
+  setActiveTab: (tab: "overall" | "timeseries") => void;
 };
 
 export function AttackVisualizationsSection({
   attackType,
-  attackVisualizations,
+  activeTab,
+  setActiveTab,
 }: AttackVisualizationsSectionProps) {
-  // Create a key that depends on the attack type.
-  const localStorageKey = `attack-visualizations-active-tab-${attackType}`;
+  const router = useRouter();
+  const { setActiveSession } = useSessionStore();
+  async function handleSessionExpired(error: any) {
+    console.error("Session Expired or fetch error:", error);
+    await Swal.fire({
+      icon: "error",
+      title: "Session Expired",
+      confirmButtonText: "OK",
+      timer: 1000,
+      timerProgressBar: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+    setActiveSession(false);
+    router.push("/");
+  }
 
-  // Use useLocalStorage with the dynamic key so each attack type gets its own state.
-  const [activeTab, setActiveTab] = useLocalStorage(localStorageKey, "overall");
+  // Fetch the attack visualization data using SWR
+  const { data, error, isLoading } = useSWR<FetchSpecificAttackResponse>(
+    `/api/${attackType}/attack_visuals`,
+    () => fetchSpecificAttackDetection(attackType),
+    {
+      shouldRetryOnError: false,
+      keepPreviousData: true,
+      onError: async (err) => {
+        console.error("Error fetching attack visualizations:", err);
+        await Swal.fire({
+          icon: "error",
+          title: "Error fetching visualizations",
+          confirmButtonText: "OK",
+          timer: 1000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        }).then(async () => {
+          await handleSessionExpired(err);
+        });
+      },
+    }
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-6">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="p-6">
+        <p className="text-red-500">Failed to load visualizations.</p>
+      </div>
+    );
+  }
 
   const renderSpecificAttackVisualization = () => {
     if (attackType === "FTP-Patator") {
-      return <FTPPatatorVisSection data={attackVisualizations} />;
+      return <FTPPatatorVisSection data={data} />;
     }
     if (attackType === "SSH-Patator") {
-      return <SSHPatatorVisSection data={attackVisualizations} />;
+      return <SSHPatatorVisSection data={data} />;
     }
     if (attackType === "DDoS") {
-      return <DDOSVisSection data={attackVisualizations} />;
+      return <DDOSVisSection data={data} />;
     }
     if (attackType === "Portscan") {
-      return <PortscanVisSection data={attackVisualizations} />;
+      return <PortscanVisSection data={data} />;
     }
     if (attackType === "DoS Hulk") {
-      return <DosHulkVisSection data={attackVisualizations} />;
+      return <DosHulkVisSection data={data} />;
     }
     if (attackType === "DoS Slowloris") {
-      return <DoSSlowlorisVisSection data={attackVisualizations} />;
+      return <DoSSlowlorisVisSection data={data} />;
     }
     // Fallback if no matching visualization is found
     return null;
   };
 
   return (
-    <div className="w-full rounded-lg shadow-sm bg-white p-6 mt-6" id="attack-visualizations">
+    <div
+      className="w-full rounded-lg shadow-sm bg-white p-6 mt-6"
+      id="attack-visualizations"
+    >
       <h2 className="text-xl font-bold mb-4">Attack Specific Visualizations</h2>
 
-      <Tabs activeTab={activeTab!} setActiveTab={setActiveTab}>
+      <Tabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab as (tab: string) => void}
+      >
         <Tab tab="overall" label="Overall">
           {renderSpecificAttackVisualization()}
         </Tab>
