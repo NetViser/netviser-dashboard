@@ -119,7 +119,7 @@ export default function AttackDetectionTimeSeries({
       ) : (
         <div className="flex flex-col items-start gap-y-4 w-full">
           <div className="flex flex-row gap-6 w-full">
-            <div className="flex items-center">
+            <div className="flex items-center" id="partition-select">
               <label className="mr-2 text-md font-semibold whitespace-nowrap">
                 Select Partition:
               </label>
@@ -136,7 +136,7 @@ export default function AttackDetectionTimeSeries({
               </Select>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center" id="feature-select">
               <label className="mr-2 text-md font-semibold whitespace-nowrap">
                 Select Feature:
               </label>
