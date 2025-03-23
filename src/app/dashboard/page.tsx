@@ -13,6 +13,9 @@ import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
 import AreaChart from "@/components/chart/AreaChart";
 import DashBoardTour from "../tour/dashboard_tour";
+import { FaTable } from "react-icons/fa";
+import { SiDowndetector } from "react-icons/si";
+import { TbCategoryFilled } from "react-icons/tb";
 
 export default function DashboardPage() {
   const extractFileName = (name: string) => {
@@ -51,16 +54,19 @@ export default function DashboardPage() {
       {
         title: "Total Rows",
         value: data?.total_rows ?? "N/A",
+        icon: <FaTable size={32} />,
       },
       {
         title: "Total Detected Attacks",
         value: data?.total_detected_attacks ?? "N/A",
+        icon: <SiDowndetector size={32} />,
       },
       {
         title: "Detected Attack Types",
         value:
           Object.keys(data?.detected_attacks_distribution || {}).length ??
           "N/A",
+        icon: <TbCategoryFilled size={32} />,
       },
     ],
     [data]
@@ -136,7 +142,9 @@ export default function DashboardPage() {
       {/* Header Section */}
       <div className="flex flex-col items-start w-full mb-8">
         <div className="flex items-center justify-between w-full mb-4">
-          <h1 className="text-3xl font-bold text-gray-900">Network Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Network Analytics Dashboard
+          </h1>
           <DashBoardTour />
         </div>
         <div className="flex items-center gap-3">
@@ -156,7 +164,7 @@ export default function DashboardPage() {
               key={index}
               title={card.title}
               value={card.value}
-              icon={<FcAbout size={32} />}
+              icon={card.icon}
             />
           ))}
         </div>
@@ -170,7 +178,10 @@ export default function DashboardPage() {
               classLabel="Protocol"
             />
           </div>
-          <div className="h-[30rem] bg-white rounded-lg shadow-md" id="src-ip-distribution">
+          <div
+            className="h-[30rem] bg-white rounded-lg shadow-md"
+            id="src-ip-distribution"
+          >
             <BarChart
               title="Source IP Distribution"
               xLabelNameLocation="middle"
