@@ -9,16 +9,11 @@ import { useSessionStore } from "@/store/session";
 import AttacksTable from "@/components/attack-detection/attacks-table/attacks-table";
 import { useMemo } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import PageTitleFooter from "@/components/header/page-title-footer";
 
 export default function AttackDetectionPage() {
-  const extractFileName = (name: string) => {
-    console.log(name);
-    const [, , ...words] = name.split("/");
-    return words.join("/");
-  };
-
   const router = useRouter();
-  const { setActiveSession, sessionID } = useSessionStore();
+  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
 
   const { data, isLoading } = useSWR(
     `${sessionID}/api/dashboard`,
@@ -71,13 +66,7 @@ export default function AttackDetectionPage() {
           <h1 className="text-3xl font-bold text-gray-900">Attack Detection</h1>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <span className="text-lg font-medium text-gray-500">Analyzing:</span>
-        <span className="px-4 py-2 text-gray-700 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50">
-          {data ? extractFileName(data?.file_name) : "Unknown"}
-        </span>
-      </div>
-      <div className="w-full mt-6 mb-8 border-b-2 border-gray-200" />
+      <PageTitleFooter fileName={networkFileName} />
 
       <div className="flex flex-col gap-y-6">
         {/* Attacks Table */}

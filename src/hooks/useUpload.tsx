@@ -3,6 +3,8 @@ import { customFetch } from "@/utils/client/fetchClient";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
+import { clearSavedState } from "@/utils/utils";
+import { useSessionStore } from "@/store/session";
 
 export interface UploadSampleResponse {
   completed: boolean;
@@ -41,8 +43,10 @@ export function useUpload() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<UploadFileResult | null>(null);
-  const { setUploadedBytesProgress, totalBytes, setTotalBytes } =
+  const { setUploadedBytesProgress, setTotalBytes } =
     useGCSUploadProgressStore();
+  const { setActiveSession, setSessionID, setNetworkFileName } =
+    useSessionStore();
 
   const upload = useCallback(
     async (url: string, { arg: uploadItem }: UploadFileParams) => {
@@ -67,6 +71,7 @@ export function useUpload() {
           if (!initiateData.bucket_key) {
             throw new Error("Missing bucket_key for sample upload");
           }
+          clearSavedState();
           await Swal.fire({
             title: "Success",
             text: "Sample Selected Successfully",
@@ -88,6 +93,11 @@ export function useUpload() {
             },
           };
           setResult(sampleResult);
+          setSessionID(initiateData.session_id);
+          setActiveSession(true);
+          setNetworkFileName(
+            uploadItem instanceof File ? uploadItem.name : uploadItem
+          );
           return sampleResult;
         }
 
@@ -142,7 +152,14 @@ export function useUpload() {
             bucket_key: completeData.bucket_key,
           },
         };
+        clearSavedState();
         setResult(uploadResult);
+        setSessionID(completeData.session_id);
+        setActiveSession(true);
+        setNetworkFileName(
+          uploadItem instanceof File ? uploadItem.name : uploadItem
+        );
+
         return uploadResult;
       } catch (error) {
         console.error("Upload failed:", error);

@@ -1,11 +1,9 @@
 "use client";
 
-import { useSessionStore } from "@/store/session";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useSWRMutation from "swr/mutation";
-import { clearSavedState } from "@/utils/utils";
 import { useUpload, UploadFileResult } from "@/hooks/useUpload";
 
 type SampleNetworkFileCardProps = {
@@ -19,28 +17,10 @@ function SampleNetworkFileCard({
 }: SampleNetworkFileCardProps) {
   const router = useRouter();
   const { upload } = useUpload();
-  const { setActiveSession, setSessionID } = useSessionStore();
 
   // Set up useSWRMutation similar to Home component
   const { trigger, isMutating } = useSWRMutation("/api/upload", upload, {
-    onSuccess: async (responseData: UploadFileResult) => {
-      clearSavedState();
-      await Swal.fire({
-        title: "File Uploaded Successfully",
-        icon: "success",
-        timer: 1000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-orange-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-        },
-      });
-      const sessionID = responseData.content.session_id;
-      console.log("Session ID:", sessionID);
-      setSessionID(sessionID);
-      setActiveSession(true);
+    onSuccess: async (_responseData: UploadFileResult) => {
       router.push("/dashboard");
     },
     onError: (error: Error) => {

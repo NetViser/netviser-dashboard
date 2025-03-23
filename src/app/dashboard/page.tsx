@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { useSessionStore } from "@/store/session";
 import SummaryCard from "@/components/dashboard/SummaryCard";
-import { FcAbout } from "react-icons/fc";
 import { useMemo } from "react";
 import BarChart from "@/components/chart/BarChart";
 import PieChart from "@/components/chart/PieChart";
@@ -16,16 +15,11 @@ import DashBoardTour from "../tour/dashboard_tour";
 import { FaTable } from "react-icons/fa";
 import { SiDowndetector } from "react-icons/si";
 import { TbCategoryFilled } from "react-icons/tb";
+import PageTitleFooter from "@/components/header/page-title-footer";
 
 export default function DashboardPage() {
-  const extractFileName = (name: string) => {
-    console.log(name);
-    const [, , ...words] = name.split("/");
-    return words.join("/");
-  };
-
   const router = useRouter();
-  const { setActiveSession, sessionID } = useSessionStore();
+  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
 
   const { data, isLoading } = useSWR(
     `${sessionID}/api/dashboard`,
@@ -147,13 +141,7 @@ export default function DashboardPage() {
           </h1>
           <DashBoardTour />
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-medium text-gray-500">Analyzing:</span>
-          <span className="px-4 py-2 text-gray-700 bg-white rounded-lg shadow-sm ring-1 ring-gray-200/50">
-            {data ? extractFileName(data?.file_name) : "Unknown"}
-          </span>
-        </div>
-        <div className="w-full mt-6 border-b-2 border-gray-200" />
+        <PageTitleFooter fileName={networkFileName} />
       </div>
 
       <div className="flex flex-col gap-y-6 mb-4">

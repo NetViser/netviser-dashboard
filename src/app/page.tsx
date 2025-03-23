@@ -5,14 +5,12 @@ import { TbUpload } from "react-icons/tb";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { useSessionStore } from "@/store/session";
 import { useUpload, UploadFileResult } from "@/hooks/useUpload";
 import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { clearSavedState } from "@/utils/utils";
 import dynamic from "next/dynamic";
 import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
 import { UploadDialog } from "@/components/modal/upload-dialog";
@@ -27,7 +25,6 @@ const UPLOAD_URL = "/api/upload";
 
 export default function Home() {
   const router = useRouter();
-  const { setActiveSession, setSessionID } = useSessionStore();
   const [isMutating, setIsMutating] = useState(false);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
@@ -40,14 +37,8 @@ export default function Home() {
     setUploadedBytesProgress,
   } = useGCSUploadProgressStore();
 
-  const handleUploadSuccess = async (responseData: UploadFileResult) => {
-    clearSavedState();
+  const handleUploadSuccess = async (_responseData: UploadFileResult) => {
     setIsUploadDialogOpen(false);
-
-    const sessionID = responseData.content.session_id;
-    console.log("Session ID:", sessionID);
-    setSessionID(sessionID);
-    setActiveSession(true);
     router.push("/dashboard");
   };
 
