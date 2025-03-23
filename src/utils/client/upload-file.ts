@@ -1,5 +1,6 @@
 import { customFetch } from "@/utils/client/fetchClient";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 export interface UploadSampleResponse {
   completed: boolean;
@@ -84,6 +85,25 @@ export async function uploadFile(
         "Missing presigned_url or raw_file_path for regular upload"
       );
     }
+
+    await axios.put(
+      url=presigned_url,
+      uploadItem instanceof File ? uploadItem : new Blob([]),
+      {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total!
+          );
+          console.log(`Upload to GCS Progress: ${progress}%`);
+        },
+        headers: {
+          "Content-Type":
+            uploadItem instanceof File
+              ? uploadItem.type || "application/octet-stream"
+              : "application/octet-stream",
+        },
+      }
+    );
 
     await customFetch(presigned_url, {
       method: "PUT",

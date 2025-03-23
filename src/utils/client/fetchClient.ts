@@ -5,6 +5,10 @@ if (env === "production") {
   baseURL = "https://api.netviser.tech"
 }
 
+export function getBaseURL() {
+  return baseURL
+}
+
 /**
  * A custom fetch client that:
  * - Prepends a base URL for relative requests.

@@ -3,12 +3,10 @@
 import { useState } from "react";
 import { TbUpload } from "react-icons/tb";
 import { useDropzone } from "react-dropzone";
-import useSWRMutation from "swr/mutation";
 import useSWR from "swr";
-import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/store/session";
-import { uploadFile, UploadFileResult } from "@/utils/client/upload-file";
+import { useUpload, UploadFileResult } from "@/hooks/useUpload";
 import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -17,10 +15,13 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { clearSavedState } from "@/utils/utils";
 import dynamic from "next/dynamic";
+import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
+import { UploadDialog } from "@/components/modal/upload-dialog";
+import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
+import InstructionsSection from "@/components/home/instructions-section";
 
-// Dynamically import DragDropBoxTour with SSR disabled
 const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
-  ssr: false, // Disable server-side rendering
+  ssr: false,
 });
 
 const UPLOAD_URL = "/api/upload";
@@ -29,108 +30,58 @@ export default function Home() {
   const router = useRouter();
   const { setActiveSession, setSessionID } = useSessionStore();
   const [isMutating, setIsMutating] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { upload, isLoading } = useUpload();
+  const { uploadProgress } = useGCSUploadProgressStore();
 
-  const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
-    onSuccess: async (responseData: UploadFileResult) => {
-      clearSavedState();
-      await Swal.fire({
-        title: "File Uploaded Successfully",
-        icon: "success",
-        timer: 1000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-orange-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-        },
-      });
+  const handleUploadSuccess = async (responseData: UploadFileResult) => {
+    clearSavedState();
+    setIsUploadDialogOpen(false);
 
-      const sessionID = responseData.content.session_id;
-      console.log("Session ID:", sessionID);
-      setSessionID(sessionID);
-      setActiveSession(true);
-      router.push("/dashboard");
-    },
-    onError: (error: Error) => {
-      setIsMutating(false);
-      Swal.close();
-      Swal.fire({
-        title: "Error",
-        text: error.message,
-        icon: "error",
-        confirmButtonText: "Close",
-        confirmButtonColor: "#f44336",
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-red-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-          confirmButton: "rounded-lg px-6 py-2",
-        },
-      });
-      console.error("Upload failed:", error);
-    },
-  });
+    const sessionID = responseData.content.session_id;
+    console.log("Session ID:", sessionID);
+    setSessionID(sessionID);
+    setActiveSession(true);
+    router.push("/dashboard");
+  };
+
+  const handleUploadError = (error: Error) => {
+    setIsMutating(false);
+    setIsUploadDialogOpen(false);
+    setErrorMessage(error.message);
+    setIsErrorDialogOpen(true);
+    console.error("Upload failed:", error);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
         setIsMutating(true);
-        Swal.fire({
-          title:
-            '<span class="bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-bold text-2xl">Analyzing Your File</span>',
-          html: `
-            <div class="flex flex-col items-center space-y-4">
-              <div class="relative w-16 h-16">
-                <img src="/loader-circle.svg" alt="NetViser Logo" class="w-16 h-16 animate-spin" />
-                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/30 to-orange-700/30 blur-md animate-pulse"></div>
-              </div>
-              <p class="text-stone-700 font-semibold text-lg animate-pulse">Processing...</p>
-              <div class="w-3/4 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-orange-400 to-orange-600 animate-progress"></div>
-              </div>
-            </div>
-          `,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-          background: "rgba(255, 255, 255, 0.95)",
-          backdrop: "rgba(0, 0, 0, 0.6)",
-          customClass: {
-            popup: "rounded-xl shadow-2xl border border-orange-200/50",
-          },
-        });
+        setIsUploadDialogOpen(true);
 
-        trigger(file).finally(() => {
-          setIsMutating(false);
-          Swal.close();
-        });
+        upload(UPLOAD_URL, { arg: file })
+          .then(handleUploadSuccess)
+          .catch(handleUploadError)
+          .finally(() => {
+            setIsMutating(false);
+          });
       }
     },
     onDropRejected: (fileRejections) => {
       const rejection = fileRejections[0];
       if (rejection.errors.some((error) => error.code === "file-too-large")) {
-        Swal.fire({
-          title: "File Too Large",
-          text: "The file exceeds the maximum size limit of 1GB.",
-          icon: "error",
-          confirmButtonText: "Close",
-          confirmButtonColor: "#f44336",
-          background: "#fff",
-          customClass: {
-            popup: "rounded-xl shadow-2xl border border-red-200/50",
-            title: "text-stone-900 font-bold text-2xl",
-            confirmButton: "rounded-lg px-6 py-2",
-          },
-        });
+        setErrorMessage("The file exceeds the maximum size limit of 1GB.");
+        setIsErrorDialogOpen(true);
       }
     },
     multiple: false,
     accept: {
-      "text/csv": [".csv"] 
+      "text/csv": [".csv"],
     },
     maxSize: 1073741824, // 1GB in bytes
-
   });
 
   // Fetch sample network files with SWR
@@ -139,23 +90,9 @@ export default function Home() {
     fetchAllSampleNetworkFiles,
     {
       shouldRetryOnError: false,
-      onError: async (error: Error) => {
-        await Swal.fire({
-          icon: "error",
-          title: "Failed to Load Samples",
-          text: "Unable to fetch sample network files.",
-          confirmButtonText: "OK",
-          timer: 1500,
-          timerProgressBar: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          background: "#fff",
-          customClass: {
-            popup: "rounded-xl shadow-2xl border border-red-200/50",
-            title: "text-stone-900 font-bold text-2xl",
-            confirmButton: "rounded-lg px-6 py-2 bg-red-500 text-white",
-          },
-        });
+      onError: (error: Error) => {
+        setErrorMessage("Unable to fetch sample network files.");
+        setIsErrorDialogOpen(true);
         console.error("Failed to fetch sample network files:", error);
       },
     }
@@ -187,6 +124,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 text-stone-900">
+      <UploadDialog
+        isOpen={isUploadDialogOpen}
+        uploadProgress={uploadProgress}
+      />
+      <UploadErrorDialog
+        isOpen={isErrorDialogOpen}
+        errorMessage={errorMessage}
+        onClose={() => setIsErrorDialogOpen(false)}
+      />
+
       {/* Header Section */}
       <motion.div
         className="px-6 py-16 relative overflow-hidden"
@@ -215,7 +162,6 @@ export default function Home() {
             }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           />
-          {/* Noise Texture Overlay */}
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPjxmaWx0ZXIgaWQ9Im4iPjxmZUZsb29kIGZsb29kLWNvbG9yPSJyZ2IoMCwwLDApIiBmbG9vZC1vcGFjaXR5PSIuMSI+PC9mZUZsb29kPjxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgb3BlcmF0b3I9ImluIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSI1IiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiIGZpbHRlcj0idXJsKCNuKSI+PC9yZWN0Pjwvc3ZnPg==')] opacity-10" />
         </div>
 
@@ -236,10 +182,9 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-stone-700 mt-3 tracking-wide">
                 Network Traffic Visualization Platform
               </h2>
-
               <DragDropBoxTour />
             </motion.div>
-          
+
             {/* Drag & Drop Box */}
             <motion.div
               {...(getRootProps() as any)}
@@ -277,25 +222,24 @@ export default function Home() {
                 </div>
                 <motion.label
                   className={`inline-flex items-center px-8 py-3 rounded-lg font-medium cursor-pointer bg-gradient-to-r ${
-                    isMutating
+                    isMutating || isLoading
                       ? "from-orange-400 to-orange-300 cursor-not-allowed"
                       : "from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
                   } text-white shadow-md transition-all`}
                   variants={buttonVariants}
-                  whileHover={!isMutating ? "hover" : undefined}
-                  whileTap={!isMutating ? "tap" : undefined}
+                  whileHover={!(isMutating || isLoading) ? "hover" : undefined}
+                  whileTap={!(isMutating || isLoading) ? "tap" : undefined}
                 >
                   <TbUpload className="w-6 h-6 mr-2" />
-                  {isMutating ? "Uploading..." : "Browse Files"}
+                  {isMutating || isLoading ? "Uploading..." : "Browse Files"}
                 </motion.label>
               </div>
             </motion.div>
 
             {/* Supported Formats */}
             <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight">
-              Supported formats:{" "}
-              <span className="text-orange-600">CSV</span> | Max size:{" "}
-              <span className="text-orange-600">1GB</span>
+              Supported formats: <span className="text-orange-600">CSV</span> |
+              Max size: <span className="text-orange-600">1GB</span>
             </p>
 
             {/* Sample Network Files */}
@@ -350,76 +294,7 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* Instructions Section */}
-      <motion.div
-        className="bg-gradient-to-t from-gray-100 to-gray-50 px-6 py-20 relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-      >
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-12 items-start">
-          <div>
-            <h3 className="text-3xl font-bold text-stone-900 mb-6 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
-              Getting Started with NetViser
-            </h3>
-            <p className="text-stone-700 mb-8 text-lg leading-relaxed">
-              Follow these steps to detect and visualize your network traffic
-              with the power of explainable AI
-            </p>
-            {[
-              "Upload network capture files or synthetic attack datasets",
-              "Explore automatic attack classification results",
-              "Interact with temporal traffic visualizations",
-              "Investigate feature contributions using XAI tools",
-            ].map((step, index) => (
-              <motion.div
-                key={index}
-                className="mb-8 group"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="flex items-baseline space-x-4 mb-3">
-                  <motion.span
-                    className="text-xl font-bold text-orange-500 flex-shrink-0"
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                  >
-                    {index + 1}
-                  </motion.span>
-                  <p className="text-stone-700 text-lg group-hover:text-orange-600 transition-colors">
-                    {step}
-                  </p>
-                </div>
-                <motion.hr
-                  className="border-orange-300/50"
-                  initial={{ width: "0%" }}
-                  whileInView={{ width: "100%" }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  viewport={{ once: true }}
-                />
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            className="flex items-center justify-center mt-6 md:mt-0"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Image
-              src="network.svg"
-              alt="NetViser dashboard preview"
-              width={400}
-              height={300}
-              className="max-w-full h-auto rounded-xl border border-orange-200/50 shadow-lg hover:shadow-xl transition-shadow"
-            />
-          </motion.div>
-        </div>
-      </motion.div>
+      <InstructionsSection />
     </div>
   );
 }
