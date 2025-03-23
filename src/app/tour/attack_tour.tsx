@@ -101,7 +101,7 @@ const AttackTour = () => {
             text: "Next",
             action () {
               const selector = document.getElementById('timeseries')
-              selector.click()
+              selector!.click()
               return this.next()
             },
           },

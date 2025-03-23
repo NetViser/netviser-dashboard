@@ -20,7 +20,6 @@ import XAITour from "@/app/tour/xai_tour";
 import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
 
 import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
-import { fetchDashboard } from "@/utils/client/fetchDashboard";
 import PageTitleFooter from "@/components/header/page-title-footer";
 
 export default function Page() {

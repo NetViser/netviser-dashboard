@@ -134,7 +134,7 @@ export default function DashboardPage() {
   return (
     <div className="h-full px-8 py-6 bg-gray-50">
       {/* Header Section */}
-      <div className="flex flex-col items-start w-full mb-8">
+      <div className="flex flex-col items-start w-full">
         <div className="flex items-center justify-between w-full mb-4">
           <h1 className="text-3xl font-bold text-gray-900">
             Network Analytics Dashboard
