@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect } from "react";
+import { useLoadingStore } from "@/store/loadingStore";
+import React, { useEffect, useRef } from "react";
 import Shepherd from 'shepherd.js';
 import 'shepherd.js/dist/css/shepherd.css';
 
@@ -19,6 +20,14 @@ interface AttackTourProps {
 }
 
 const AttackTour = ({ tourType }:AttackTourProps) => {
+  const { isLoading } = useLoadingStore();
+  const isLoadingRef = useRef(isLoading); // Use a ref to track isLoading
+
+  // Update the ref whenever isLoading changes
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+    console.log("isLoading updated:", isLoading);
+  }, [isLoading]);
     
     const tour = new Shepherd.Tour({
           defaultStepOptions: {
@@ -69,7 +78,10 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 text: "These charts show attack-based characteristic visualization.",
                 attachTo: { element: "#attack-visualizations", on: "left" },
                 arrow: true,
-                buttons: [{ text: "Next", action: tour.next }],
+                buttons: [{ text: "Next", action() {
+                  document.getElementById('timeseries')?.click();
+                  tour.next();
+              }, }],
             });
 
             tour.addStep({
@@ -80,8 +92,11 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 buttons: [{
                     text: "Next",
                     action() {
-                        document.getElementById('timeseries')?.click();
-                        return this.next();
+                      if (isLoadingRef.current) {
+                        console.log("Waiting for loading to complete...");
+                        return; // Do nothing if still loading
+                      }
+                      tour.next(); // Proceed if not loading
                     },
                 }],
             });
@@ -91,7 +106,7 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 text: "This box allows you to select the partition index.",
                 attachTo: { element: "#partition-select", on: "left" },
                 arrow: true,
-                buttons: [{ text: "Next", action: tour.next }],
+                buttons: [{ text: 'Next', action: tour.next }],
             });
 
             tour.addStep({
@@ -99,7 +114,7 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 text: "This box allows you to select the feature to be visualized.",
                 attachTo: { element: "#feature-select", on: "left" },
                 arrow: true,
-                buttons: [{ text: "Next", action: tour.next }],
+                buttons: [{ text: 'Next', action: tour.next }],
             });
 
             tour.addStep({
@@ -107,13 +122,7 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 text: "This chart shows the time series visualization.",
                 attachTo: { element: "#attack-visualizations", on: "left" },
                 arrow: true,
-                buttons: [{
-                    text: "Next",
-                    action() {
-                        document.getElementById('overall')?.click();
-                        return this.next();
-                    },
-                }],
+                buttons: [{ text: 'Next', action: tour.next }],
             });
 
         } else if (tourType === "timeseries") {
@@ -152,7 +161,10 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 text: "This chart shows the distribution of protocols in the network data file.",
                 attachTo: { element: "#overall", on: "left" },
                 arrow: true,
-                buttons: [{ text: "Next", action: tour.next }],
+                buttons: [{ text: "Next", action() {
+                  document.getElementById('overall')?.click();
+                  return this.next();
+              }, }],
             });
 
             tour.addStep({
@@ -163,19 +175,23 @@ const AttackTour = ({ tourType }:AttackTourProps) => {
                 buttons: [{
                     text: "Next",
                     action() {
-                        document.getElementById('timeseries')?.click();
-                        return this.next();
+                      if (isLoadingRef.current) {
+                        console.log("Waiting for loading to complete...");
+                        return; // Do nothing if still loading
+                      }
+                      return this.next(); // Proceed if not loading
                     },
                 }],
             });
         }
 
     return <button
-    onClick={() => tour?.start()}
-    className="px-4 py-2 ml-6 bg-orange-500 text-white rounded-lg shadow hover:bg-orange-600 transition " 
+    onClick={() => tour.start()}
+    disabled={isLoading}
+    className="px-4 py-2 ml-6 bg-orange-500 text-white rounded-lg shadow hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
   >
-    Start Tour
-  </button>;
+    {isLoading ? "Loading..." : "Start Tour"}
+  </button>
 };
 
 export default AttackTour;

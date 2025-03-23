@@ -7,7 +7,7 @@ import { fetchSpecificAttackDetection } from "@/utils/client/fetchAttackDetectio
 import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useSWR from "swr";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useLocalStorage } from "react-use";
 import { AttackRecordsSection } from "./attack-records-section";
@@ -21,6 +21,7 @@ import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
 
 import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
 import PageTitleFooter from "@/components/header/page-title-footer";
+import { useLoadingStore } from "@/store/loadingStore";
 
 export default function Page() {
   const router = useRouter();
@@ -52,6 +53,12 @@ export default function Page() {
       onError: handleSessionExpired,
     }
   );
+
+  const { isLoading, setLoading } = useLoadingStore();
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   // Common error handler for session expiry
   async function handleSessionExpired(error: any) {
@@ -116,7 +123,7 @@ export default function Page() {
             <span className="text-orange-500">{attackType}</span>
           </h1>
           {explainabilityMode === "Visualization" && (
-            <AttackTour tourType={activeVisualizationTab as any} />
+            <AttackTour tourType={activeTab as any} />
           )}
           {explainabilityMode === "XAI" && <XAITour />}
         </div>
