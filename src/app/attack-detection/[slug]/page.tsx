@@ -30,6 +30,7 @@ export default function Page() {
   const slugName = params?.slug || "";
   const attackType = decodeURIComponent(slugName as string);
   const { setActiveSession, sessionID } = useSessionStore();
+  const [activeVisualizationTab, setActiveVisualizationTab] = useState("overall");
 
   // Use a dynamic local storage key for explainability mode based on the attack type.
   const explainabilityKey = `explainability-mode-${attackType}`;
@@ -129,7 +130,9 @@ export default function Page() {
             Attack Detection /{" "}
             <span className="text-orange-500">{attackType}</span>
           </h1>
-          {explainabilityMode === "Visualization" && <AttackTour />}
+          {explainabilityMode === "Visualization" && (
+            <AttackTour tourType={activeVisualizationTab as any} />
+          )}
           {explainabilityMode === "XAI" && <XAITour />}
         </div>
 
