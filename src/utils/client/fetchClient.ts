@@ -1,6 +1,6 @@
 const env = process.env.NEXT_PUBLIC_ENV ?? "local"
 
-let baseURL = "http://localhost:8080"
+let baseURL = "http://localhost:8000"
 if (env === "production") {
   baseURL = "https://api.netviser.tech"
 }

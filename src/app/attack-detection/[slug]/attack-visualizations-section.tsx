@@ -17,6 +17,8 @@ import { DoSSlowlorisVisSection } from "@/components/attack-detection/attack-spe
 import { SSHPatatorVisSection } from "@/components/attack-detection/attack-specific-visualization/ssh-patator-vis-section";
 import { useSessionStore } from "@/store/session";
 import { useRouter } from "next/navigation";
+import { useLoadingStore } from "@/store/loadingStore";
+import { useEffect } from "react";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -29,6 +31,7 @@ export function AttackVisualizationsSection({
   activeTab,
   setActiveTab,
 }: AttackVisualizationsSectionProps) {
+  const { setLoading } = useLoadingStore();
   const router = useRouter();
   const { setActiveSession } = useSessionStore();
   async function handleSessionExpired(error: any) {
@@ -69,6 +72,10 @@ export function AttackVisualizationsSection({
       },
     }
   );
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   if (isLoading) {
     return (

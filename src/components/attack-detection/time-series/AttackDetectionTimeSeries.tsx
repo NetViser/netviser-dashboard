@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { useSessionStore } from "@/store/session";
+import { useLoadingStore } from "@/store/loadingStore";
 
 type AttackDetectionTimeSeriesProps = {
   attackType: string;
@@ -30,6 +31,7 @@ export default function AttackDetectionTimeSeries({
   const [selectedFeatureName, setSelectedFeatureName] = useState<string | null>(
     null
   );
+  const { setLoading } = useLoadingStore();
 
   const { sessionID } = useSessionStore();
   const swrKey = `${sessionID}/api/attack-detection/visualization/attack-time-series?attack_type=${attackType}&partition_index=${selectedPartitionIndex}${
@@ -49,6 +51,10 @@ export default function AttackDetectionTimeSeries({
       shouldRetryOnError: false,
     }
   );
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   useEffect(() => {
     if (data) {
