@@ -16,6 +16,7 @@ import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
 import { UploadDialog } from "@/components/modal/upload-dialog";
 import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
 import InstructionsSection from "@/components/home/instructions-section";
+import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
 
 const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
   ssr: false,
@@ -94,30 +95,6 @@ export default function Home() {
       },
     }
   );
-
-  // Framer Motion variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const headerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, delay: 0.2 },
-    },
-  };
-
-  const buttonVariants = {
-    hover: { scale: 1.05, rotate: 2, transition: { duration: 0.2 } },
-    tap: { scale: 0.95 },
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 text-stone-900">
