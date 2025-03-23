@@ -26,7 +26,7 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
       </div>
       <div className="overflow-x-auto border rounded-xl">
         <table className="min-w-full bg-white divide-y divide-gray-200 shadow-lg rounded-xl">
-          <thead className="bg-orange-600">
+          <thead className="bg-stone-900">
             <tr>
               <th className="px-8 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
                 Attack Type
