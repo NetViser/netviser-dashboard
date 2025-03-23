@@ -1,12 +1,12 @@
 "use client";
 
 import { useSessionStore } from "@/store/session";
-import { uploadFile, UploadFileResult } from "@/utils/client/upload-file";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useSWRMutation from "swr/mutation";
 import { clearSavedState } from "@/utils/utils";
+import { useUpload, UploadFileResult } from "@/hooks/useUpload";
 
 type SampleNetworkFileCardProps = {
   name: string;
@@ -18,10 +18,11 @@ function SampleNetworkFileCard({
   featuredAttacks,
 }: SampleNetworkFileCardProps) {
   const router = useRouter();
+  const { upload } = useUpload();
   const { setActiveSession, setSessionID } = useSessionStore();
 
   // Set up useSWRMutation similar to Home component
-  const { trigger, isMutating } = useSWRMutation("/api/upload", uploadFile, {
+  const { trigger, isMutating } = useSWRMutation("/api/upload", upload, {
     onSuccess: async (responseData: UploadFileResult) => {
       clearSavedState();
       await Swal.fire({

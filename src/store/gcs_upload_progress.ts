@@ -3,11 +3,15 @@
 import { create } from "zustand";
 
 export type GCSUploadProgressState = {
-  uploadProgress: number;
-  setUploadProgress: (uploadProgress: number) => void;
+  uploadedBytesProgress: number;
+  setUploadedBytesProgress: (uploadedBytesProgress: number) => void;
+  totalBytes: number;
+  setTotalBytes: (totalBytes: number) => void;
 };
 
 export const useGCSUploadProgressStore = create<GCSUploadProgressState>((set) => ({
-  uploadProgress: 0,
-  setUploadProgress: (uploadProgress: number) => set({ uploadProgress }),
+  uploadedBytesProgress: 0,
+  setUploadedBytesProgress: (uploadedBytesProgress) => set({ uploadedBytesProgress }),
+  totalBytes: 0,
+  setTotalBytes: (totalBytes) => set({ totalBytes }),
 }));

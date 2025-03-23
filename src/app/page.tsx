@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/store/session";
 import { useUpload, UploadFileResult } from "@/hooks/useUpload";
 import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
@@ -34,7 +33,12 @@ export default function Home() {
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { upload, isLoading } = useUpload();
-  const { uploadProgress } = useGCSUploadProgressStore();
+  const {
+    uploadedBytesProgress,
+    totalBytes,
+    setTotalBytes,
+    setUploadedBytesProgress,
+  } = useGCSUploadProgressStore();
 
   const handleUploadSuccess = async (responseData: UploadFileResult) => {
     clearSavedState();
@@ -57,6 +61,8 @@ export default function Home() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles: File[]) => {
+      setUploadedBytesProgress(0);
+      setTotalBytes(0);
       const file = acceptedFiles[0];
       if (file) {
         setIsMutating(true);
@@ -126,7 +132,8 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 text-stone-900">
       <UploadDialog
         isOpen={isUploadDialogOpen}
-        uploadProgress={uploadProgress}
+        uploadedBytesProgress={uploadedBytesProgress}
+        totalBytes={totalBytes}
       />
       <UploadErrorDialog
         isOpen={isErrorDialogOpen}

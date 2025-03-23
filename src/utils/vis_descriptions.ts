@@ -1,4 +1,3 @@
-// @/utils/vis_descriptions.ts
 export type FeatureDescription = {
     title: string;
     description: string;

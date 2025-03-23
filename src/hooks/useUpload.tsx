@@ -41,14 +41,14 @@ export function useUpload() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<UploadFileResult | null>(null);
-  const { setUploadProgress } = useGCSUploadProgressStore();
+  const { setUploadedBytesProgress, totalBytes, setTotalBytes } =
+    useGCSUploadProgressStore();
 
   const upload = useCallback(
     async (url: string, { arg: uploadItem }: UploadFileParams) => {
       setIsLoading(true);
       setError(null);
       setResult(null);
-      setUploadProgress(0); // Reset progress
 
       try {
         const formData = new FormData();
@@ -106,11 +106,13 @@ export function useUpload() {
           {
             onUploadProgress: (progressEvent) => {
               if (progressEvent.total) {
-                const progress = Math.round(
-                  (progressEvent.loaded * 100) / progressEvent.total
+                console.log(
+                  `Upload to GCS Progress: ${Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                  )}%`
                 );
-                console.log(`Upload to GCS Progress: ${progress}%`);
-                setUploadProgress(progress); // Update Zustand store
+                setUploadedBytesProgress(progressEvent.loaded);
+                setTotalBytes(progressEvent.total);
               }
             },
             headers: {
@@ -163,7 +165,7 @@ export function useUpload() {
         setIsLoading(false);
       }
     },
-    [setUploadProgress]
+    [setUploadedBytesProgress, setTotalBytes]
   );
 
   return { upload, isLoading, error, result };
