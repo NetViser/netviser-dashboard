@@ -37,6 +37,8 @@ export default function Page() {
     explainabilityKey,
     "Visualization"
   );
+  const localStorageKey = `attack-visualizations-active-tab-${attackType}`;
+  const [activeTab, setActiveTab] = useLocalStorage(localStorageKey, "overall");
 
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
@@ -51,18 +53,6 @@ export default function Page() {
       onError: handleSessionExpired,
     }
   );
-
-  // Attack Visualizations
-  const { data: attackVisualizations, isLoading: isLoadingVisualizations } =
-    useSWR(
-      `${sessionID}/attack_visuals?type=${attackType}`,
-      () => fetchSpecificAttackDetection(attackType),
-      {
-        shouldRetryOnError: false,
-        keepPreviousData: true,
-        onError: handleSessionExpired,
-      }
-    );
 
   // Common error handler for session expiry
   async function handleSessionExpired(error: any) {
@@ -99,7 +89,7 @@ export default function Page() {
     setShowXaiModal(true);
   };
 
-  if (isLoadingAttackRecords || isLoadingVisualizations) {
+  if (isLoadingAttackRecords) {
     return (
       <div className="h-screen bg-transparent flex flex-col items-center justify-center">
         <Spinner />
@@ -173,7 +163,8 @@ export default function Page() {
       {explainabilityMode === "Visualization" && (
         <AttackVisualizationsSection
           attackType={attackType}
-          attackVisualizations={attackVisualizations}
+          activeTab={activeTab as 'overall' | 'timeseries'}
+          setActiveTab={setActiveTab}
         />
       )}
 
