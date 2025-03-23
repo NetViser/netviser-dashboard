@@ -14,7 +14,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css"; // Import skeleton CSS
+import "react-loading-skeleton/dist/skeleton.css";
 import { clearSavedState } from "@/utils/utils";
 import dynamic from "next/dynamic";
 
@@ -30,47 +30,47 @@ export default function Home() {
   const { setActiveSession, setSessionID } = useSessionStore();
   const [isMutating, setIsMutating] = useState(false);
 
-const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
-  onSuccess: async (responseData: UploadFileResult) => {
-    clearSavedState();
-    await Swal.fire({
-      title: "File Uploaded Successfully",
-      icon: "success",
-      timer: 1000,
-      showConfirmButton: false,
-      timerProgressBar: true,
-      background: "#fff",
-      customClass: {
-        popup: "rounded-xl shadow-2xl border border-orange-200/50",
-        title: "text-stone-900 font-bold text-2xl",
-      },
-    });
+  const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
+    onSuccess: async (responseData: UploadFileResult) => {
+      clearSavedState();
+      await Swal.fire({
+        title: "File Uploaded Successfully",
+        icon: "success",
+        timer: 1000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+        background: "#fff",
+        customClass: {
+          popup: "rounded-xl shadow-2xl border border-orange-200/50",
+          title: "text-stone-900 font-bold text-2xl",
+        },
+      });
 
-    const sessionID = responseData.content.session_id;
-    console.log("Session ID:", sessionID);
-    setSessionID(sessionID);
-    setActiveSession(true);
-    router.push("/dashboard");
-  },
-  onError: (error: Error) => {
-    setIsMutating(false);
-    Swal.close();
-    Swal.fire({
-      title: "Error",
-      text: error.message,
-      icon: "error",
-      confirmButtonText: "Close",
-      confirmButtonColor: "#f44336",
-      background: "#fff",
-      customClass: {
-        popup: "rounded-xl shadow-2xl border border-red-200/50",
-        title: "text-stone-900 font-bold text-2xl",
-        confirmButton: "rounded-lg px-6 py-2",
-      },
-    });
-    console.error("Upload failed:", error);
-  },
-});
+      const sessionID = responseData.content.session_id;
+      console.log("Session ID:", sessionID);
+      setSessionID(sessionID);
+      setActiveSession(true);
+      router.push("/dashboard");
+    },
+    onError: (error: Error) => {
+      setIsMutating(false);
+      Swal.close();
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#f44336",
+        background: "#fff",
+        customClass: {
+          popup: "rounded-xl shadow-2xl border border-red-200/50",
+          title: "text-stone-900 font-bold text-2xl",
+          confirmButton: "rounded-lg px-6 py-2",
+        },
+      });
+      console.error("Upload failed:", error);
+    },
+  });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles: File[]) => {
@@ -107,7 +107,30 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
         });
       }
     },
+    onDropRejected: (fileRejections) => {
+      const rejection = fileRejections[0];
+      if (rejection.errors.some((error) => error.code === "file-too-large")) {
+        Swal.fire({
+          title: "File Too Large",
+          text: "The file exceeds the maximum size limit of 1GB.",
+          icon: "error",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#f44336",
+          background: "#fff",
+          customClass: {
+            popup: "rounded-xl shadow-2xl border border-red-200/50",
+            title: "text-stone-900 font-bold text-2xl",
+            confirmButton: "rounded-lg px-6 py-2",
+          },
+        });
+      }
+    },
     multiple: false,
+    accept: {
+      "text/csv": [".csv"] 
+    },
+    maxSize: 1073741824, // 1GB in bytes
+
   });
 
   // Fetch sample network files with SWR
@@ -248,7 +271,7 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
                   <p className="text-stone-800 font-medium text-lg">
                     {isDragActive
                       ? "Drop network data file..."
-                      : "Drag PCAP/CSV file here"}
+                      : "Drag CSV file here"}
                   </p>
                   <p className="text-gray-500 text-sm">or</p>
                 </div>
@@ -271,8 +294,8 @@ const { trigger } = useSWRMutation(UPLOAD_URL, uploadFile, {
             {/* Supported Formats */}
             <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight">
               Supported formats:{" "}
-              <span className="text-orange-600">PCAP, CSV, NETFLOW</span> | Max
-              size: 2GB
+              <span className="text-orange-600">CSV</span> | Max size:{" "}
+              <span className="text-orange-600">1GB</span>
             </p>
 
             {/* Sample Network Files */}
