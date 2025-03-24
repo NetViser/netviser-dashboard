@@ -12,7 +12,6 @@ export type SessionState = {
   setNetworkFileName: (networkFileName: string) => void;
 };
 
-
 export const useSessionStore = create<SessionState>()(
   persist(
     (set) => ({
@@ -25,7 +24,7 @@ export const useSessionStore = create<SessionState>()(
     }),
     {
       name: "session-storage", // The name of the storage key
-      storage: createJSONStorage(() => sessionStorage), // The storage to use
+      storage: createJSONStorage(() => localStorage), // Now using localStorage instead of sessionStorage
       merge: (persistedState, currentState) => {
         return { ...currentState, ...(persistedState as SessionState) };
       },
