@@ -11,6 +11,8 @@ import { XAIBeeswarmSummaryModal } from "@/components/attack-detection/xai/xai-b
 import Skeleton from "react-loading-skeleton";
 import { useSessionStore } from "@/store/session";
 import { useLoadingStore } from "@/store/loadingStore";
+import { VisDescriptionAccordion } from "@/components/attack-detection/attack-specific-visualization/accordion/VisDescriptionAccordion";
+import { XAI_VIS_DESCRIPTIONS } from "@/utils/xai_vis_descriptions";
 
 type AttackXAISectionProps = {
   attackType: string;
@@ -19,7 +21,8 @@ type AttackXAISectionProps = {
 export function AttackXAISection({ attackType }: AttackXAISectionProps) {
   const [showBarChartModal, setShowBarChartModal] = React.useState(false);
   const { sessionID } = useSessionStore();
-  const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] = React.useState(false);
+  const [showBeeSwarmChartModal, setShowBeeSwarmChartModal] =
+    React.useState(false);
   const { setLoading } = useLoadingStore();
 
   // Use SWR to fetch the XAI summary data.
@@ -123,24 +126,36 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
       {/* First Row */}
       <div className="flex flex-col md:flex-row gap-4">
         {/* Left: Bar Summary Chart */}
-        <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
+        <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col md:w-1/2">
           <SummaryBarChart
             attackType={attackType}
             data={data.bar_summary}
             onHelpClick={() => setShowBarChartModal(true)}
           />
+          <div className="p-4 border-t border-gray-200">
+            <VisDescriptionAccordion
+              title={XAI_VIS_DESCRIPTIONS.feature_importance.title}
+              description={XAI_VIS_DESCRIPTIONS.feature_importance.description}
+            />
+          </div>
         </div>
         {/* Right: Beeswarm Summary Chart */}
-        <div className="md:w-1/2 border-2 rounded-lg border-stone-500/50 pr-4">
+        <div className="bg-white rounded-lg border-2 shadow-sm flex flex-col md:w-1/2">
           <SummaryBeeSwarmChart
             attackType={attackType}
             withDataZoom={false}
             onHelpClick={() => setShowBeeSwarmChartModal(true)}
             data={data.beeswarm_summary}
           />
+          <div className="p-4 border-t border-gray-200">
+            <VisDescriptionAccordion
+              title={XAI_VIS_DESCRIPTIONS.bee_swarm.title}
+              description={XAI_VIS_DESCRIPTIONS.bee_swarm.description}
+            />
+          </div>
         </div>
       </div>
-      {/* Modal: Full width chart with help section */}
+      {/* Modals */}
       {showBarChartModal && (
         <XAIBarSummaryModal
           open={showBarChartModal}
