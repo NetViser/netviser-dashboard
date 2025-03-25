@@ -14,8 +14,16 @@ export function VisDescriptionAccordion({
 }: VisDescriptionAccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const customIdMap: Record<string, string> = {
+    "What is SHAP Feature Importance Plot?": "description-bar",
+    "What is SHAP Beeswarm Plot?": "description-beeswarm",
+  };
+
+  // Assign ID based on mapping, or use title with underscores
+  const elementId = customIdMap[title];
+
   return (
-    <div className="bg-orange-100/50 rounded-md border border-orange-300">
+    <div className="bg-orange-100/50 rounded-md border border-orange-300" id={`${elementId}`}>
       <button
         className="w-full flex justify-between items-center p-3 text-md font-semibold text-black focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}

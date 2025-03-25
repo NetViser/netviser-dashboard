@@ -94,9 +94,9 @@ const XAITour = () => {
   });
 
   tour.addStep({
-    id: "bar-description",
+    id: "description-What is SHAP Feature Importance Plot?",
     text: "This helps to explain to simplier term to the feature importance plot.",
-    attachTo: { element: "#bar-description", on: "left" },
+    attachTo: { element: "#description-bar", on: "left" },
     arrow: true,
     buttons: [
       {
@@ -110,72 +110,54 @@ const XAITour = () => {
   });
 
   tour.addStep({
-    id: "bar-summary-expand",
-    text: "expand",
-    attachTo: { element: "#bar-summary-expand", on: "left" },
+    id: "explanation-step",
+    text: "Still confused? Click 'Ask Gemini?' to get a custom explanation powered by AI.",
+    when: {
+      show: () => {
+        return new Promise((resolve) => {
+          const checkElement = () => {
+            const el =
+              document.getElementById("explanation-button-gemini-bar") ||
+              document.getElementById("explanation-bar");
+            if (el) resolve(el); // Pass the found element
+            else setTimeout(checkElement, 100); // Keep checking every 100ms
+          };
+          checkElement();
+        });
+      },
+    },
+    attachTo: {
+      element: () => {
+        const explanationElement =
+          document.getElementById("explanation-button-gemini-bar") ||
+          document.getElementById("explanation-bar");
+        return explanationElement ? `#${explanationElement.id}` : null; // Attach dynamically
+      },
+      on: "left",
+    },
     arrow: true,
     buttons: [
       {
         text: "Next",
         action() {
-          document.getElementById("bar-summary-expand")?.click();
+          const explanationElement =
+            document.getElementById("explanation-button-gemini-bar") ||
+            document.getElementById("explanation-bar");
+          if (explanationElement && explanationElement.id === "explanation-button-gemini-bar") {
+            explanationElement.click();
+          }
           tour.next();
-        }
+        },
       },
     ],
   });
-
-  tour.addStep({
-    id: "bar-summary-focus",
-    text: "",
-    attachTo: { element: "#bar-summary-focus", on: "left" },
-    arrow: true,
-    buttons: [
-      {
-        text: "Next",
-        action: tour.next,
-      },
-    ],
-  });
-
-  tour.addStep({
-    id: "explanation-button",
-    text: "",
-    attachTo: { element: "#explanation-button-gemini", on: "left" },
-    arrow: true,
-    buttons: [
-      {
-        text: "Next",
-        action() {
-          document.getElementById("explanation-button-gemini")?.click();
-          tour.next();
-        }
-      },
-    ],
-  });
-
-  tour.addStep({
-    id: "close-button",
-    text: "",
-    attachTo: { element: "#close-button", on: "left" },
-    arrow: true,
-    buttons: [
-      {
-        text: "Next",
-        action() {
-          document.getElementById("close-button")?.click();
-          tour.next();
-        }
-      },
-    ],
-  });
-
-  //////
+  
+  
 
   tour.addStep({
     id: "beeswarm-summary-chart",
     text: "Visualization of the feature importance by SHAP beeswarm plot.",
-    attachTo: { element: "#beeswarm-summary", on: "left" },
+    attachTo: { element: "#beeswarm-summary-chart", on: "left" },
     arrow: true,
     buttons: [
       {
@@ -189,9 +171,9 @@ const XAITour = () => {
   });
 
   tour.addStep({
-    id: "beeswarm-description",
+    id: "description-What is SHAP Beeswarm Plot?",
     text: "This helps to explain to simplier term to the SHAP beeswarm plot.",
-    attachTo: { element: "#beeswarm-description", on: "left" },
+    attachTo: { element: "#description-beeswarm", on: "left" },
     arrow: true,
     buttons: [
       {
@@ -203,6 +185,50 @@ const XAITour = () => {
       },
     ],
   });
+
+  tour.addStep({
+    id: "explanation-step",
+    text: "Still confused? Click 'Ask Gemini?' to get a custom explanation powered by AI.",
+    when: {
+      show: () => {
+        return new Promise((resolve) => {
+          const checkElement = () => {
+            const el =
+              document.getElementById("explanation-button-gemini-beeswarm") ||
+              document.getElementById("explanation-beeswarm");
+            if (el) resolve(el); // Pass the found element
+            else setTimeout(checkElement, 100); // Keep checking every 100ms
+          };
+          checkElement();
+        });
+      },
+    },
+    attachTo: {
+      element: () => {
+        const explanationElement =
+          document.getElementById("explanation-button-gemini-beeswarm") ||
+          document.getElementById("explanation-beeswarm");
+        return explanationElement ? `#${explanationElement.id}` : null; // Attach dynamically
+      },
+      on: "left",
+    },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          const explanationElement =
+            document.getElementById("explanation-button-gemini-beeswarm") ||
+            document.getElementById("explanation-beeswarm");
+          if (explanationElement && explanationElement.id === "explanation-button-gemini-beeswarm") {
+            explanationElement.click();
+          }
+          tour.next();
+        },
+      },
+    ],
+  });
+  
 
   return (
     <button
