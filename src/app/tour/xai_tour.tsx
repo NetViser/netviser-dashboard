@@ -31,6 +31,14 @@ const XAITour = () => {
   const { isLoading } = useLoadingStore();
 
   tour.addStep({
+    id: 'attack-description',
+    text: 'This section provides a description of the attack type.',
+    attachTo: { element: '#attack-description', on: "bottom" },
+    arrow: true,
+    buttons: [{ text: 'Next', action: tour.next }],
+  });
+
+  tour.addStep({
     id: "attack-records",
     text: "This part shows each attack point in the data.",
     attachTo: { element: "#attack-records", on: "bottom" },
@@ -65,6 +73,133 @@ const XAITour = () => {
       {
         text: "Next",
         action: tour.next,
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "bar-summary-chart",
+    text: "Visualization of the feature importance by mean of the attack.",
+    attachTo: { element: "#bar-summary-chart", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("vis-description-What is SHAP Feature Importance Plot?")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "bar-description",
+    text: "This helps to explain to simplier term to the feature importance plot.",
+    attachTo: { element: "#bar-description", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("vis-description-What is SHAP Feature Importance Plot?")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "bar-summary-expand",
+    text: "expand",
+    attachTo: { element: "#bar-summary-expand", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("bar-summary-expand")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "bar-summary-focus",
+    text: "",
+    attachTo: { element: "#bar-summary-focus", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action: tour.next,
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "explanation-button",
+    text: "",
+    attachTo: { element: "#explanation-button-gemini", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("explanation-button-gemini")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "close-button",
+    text: "",
+    attachTo: { element: "#close-button", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("close-button")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  //////
+
+  tour.addStep({
+    id: "beeswarm-summary-chart",
+    text: "Visualization of the feature importance by SHAP beeswarm plot.",
+    attachTo: { element: "#beeswarm-summary", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("vis-description-What is SHAP Beeswarm Plot?")?.click();
+          tour.next();
+        }
+      },
+    ],
+  });
+
+  tour.addStep({
+    id: "beeswarm-description",
+    text: "This helps to explain to simplier term to the SHAP beeswarm plot.",
+    attachTo: { element: "#beeswarm-description", on: "left" },
+    arrow: true,
+    buttons: [
+      {
+        text: "Next",
+        action() {
+          document.getElementById("vis-description-What is SHAP Beeswarm Plot?")?.click();
+          tour.next();
+        }
       },
     ],
   });

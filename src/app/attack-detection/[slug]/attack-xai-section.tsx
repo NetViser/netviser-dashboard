@@ -132,7 +132,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
             data={data.bar_summary}
             onHelpClick={() => setShowBarChartModal(true)}
           />
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200" id="bar-description">
             <VisDescriptionAccordion
               title={XAI_VIS_DESCRIPTIONS.feature_importance.title}
               description={XAI_VIS_DESCRIPTIONS.feature_importance.description}
@@ -147,7 +147,7 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
             onHelpClick={() => setShowBeeSwarmChartModal(true)}
             data={data.beeswarm_summary}
           />
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200" id="beeswarm-description">
             <VisDescriptionAccordion
               title={XAI_VIS_DESCRIPTIONS.bee_swarm.title}
               description={XAI_VIS_DESCRIPTIONS.bee_swarm.description}
@@ -156,14 +156,12 @@ export function AttackXAISection({ attackType }: AttackXAISectionProps) {
         </div>
       </div>
       {/* Modals */}
-      {showBarChartModal && (
-        <XAIBarSummaryModal
-          open={showBarChartModal}
-          onOpenChange={setShowBarChartModal}
-          attackType={attackType}
-          data={data.bar_summary}
-        />
-      )}
+      <XAIBarSummaryModal
+        open={showBarChartModal}
+        onOpenChange={setShowBarChartModal}
+        attackType={attackType}
+        data={data.bar_summary}
+      />
       {showBeeSwarmChartModal && (
         <XAIBeeswarmSummaryModal
           open={showBeeSwarmChartModal}

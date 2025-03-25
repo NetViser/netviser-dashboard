@@ -19,6 +19,7 @@ export function VisDescriptionAccordion({
       <button
         className="w-full flex justify-between items-center p-3 text-md font-semibold text-black focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
+        id={`vis-description-${title}`}
       >
         <span>{title}</span>
         {isOpen ? (

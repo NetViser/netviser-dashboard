@@ -3,6 +3,7 @@ import React from "react";
 import ReactECharts from "echarts-for-react";
 import { BarSummaryItem } from "@/utils/client/fetchAttackSummaryXAI";
 import { FaExpandAlt } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 type SummaryBarChartProps = {
   minimal?: boolean;
@@ -111,16 +112,21 @@ export default function SummaryBarChart({
   }
 
   return (
-    <div className="p-8 py-4 overflow-auto">
+    <div className="p-8 py-4 overflow-auto" id="bar-summary-chart">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
-          {`Feature Important By Mean |SHAP| Value (${attackType})`}
+          {`Feature Importance By Mean |SHAP| Value (${attackType})`}
         </h3>
         {onHelpClick && (
-          <FaExpandAlt
-            className="w-6 h-6 text-gray-600 cursor-pointer transition transform hover:scale-110 hover:text-orange-500"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onHelpClick}
-          />
+            className="text-gray-600 hover:text-orange-500 transition-colors"
+            id="bar-summary-expand"
+          >
+            <FaExpandAlt className="w-6" />
+          </Button>
         )}
       </div>
       <ReactECharts option={option} style={{ height: 400 }} />
