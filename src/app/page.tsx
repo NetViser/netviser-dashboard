@@ -19,7 +19,7 @@ import InstructionsSection from "@/components/home/instructions-section";
 import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
 import DisclaimerSection from "@/components/home/DisclaimerSection";
 
-const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
+const UploadPageTour = dynamic(() => import("./tour/upload_tour"), {
   ssr: false,
 });
 
@@ -154,13 +154,13 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h1 className="text-5xl font-extrabold text-stone-900 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-extrabold text-stone-900 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent" id="app-title">
                 NetViser
               </h1>
               <h2 className="text-xl font-semibold text-stone-700 mt-3 tracking-wide">
                 Network Traffic Visualization Platform
               </h2>
-              <DragDropBoxTour />
+              <UploadPageTour />
             </motion.div>
 
             {/* Drag & Drop Box */}
@@ -215,7 +215,7 @@ export default function Home() {
             </motion.div>
 
             {/* Supported Formats */}
-            <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight">
+            <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight" id="supported-formats">
               Supported formats: <span className="text-orange-600">CSV</span> |
               Max size: <span className="text-orange-600">1GB</span>
             </p>

@@ -10,6 +10,7 @@ import AttacksTable from "@/components/attack-detection/attacks-table/attacks-ta
 import { useMemo } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import PageTitleFooter from "@/components/header/page-title-footer";
+import AttackDetectionTour from "../tour/attack_detection_tour";
 
 export default function AttackDetectionPage() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function AttackDetectionPage() {
     if (!data) return [];
     return Object.keys(data.detected_attacks_distribution).map((key) => ({
       attackType: key,
-      numberOfAttacks: data.detected_attacks_distribution[key]
+      numberOfAttacks: data.detected_attacks_distribution[key],
     }));
   }, [data]);
 
@@ -63,19 +64,24 @@ export default function AttackDetectionPage() {
             onClick={() => router.back()}
             size={30}
           />
-          <h1 className="text-3xl font-bold text-gray-900">Attack Detection</h1>
+          <h1 id="attack-detection-title" className="text-3xl font-bold text-gray-900">
+            Attack Detection
+          </h1>
         </div>
+        <AttackDetectionTour />
       </div>
       <PageTitleFooter fileName={networkFileName} />
 
       <div className="flex flex-col gap-y-6">
         {/* Attacks Table */}
-        <AttacksTable
-          data={tableData}
-          onAnalyze={(attackType: string) => {
-            router.push(`/attack-detection/${attackType}`);
-          }}
-        />
+        <div id="attacks-table">
+          <AttacksTable
+            data={tableData}
+            onAnalyze={(attackType: string) => {
+              router.push(`/attack-detection/${attackType}`);
+            }}
+          />
+        </div>
       </div>
     </div>
   );

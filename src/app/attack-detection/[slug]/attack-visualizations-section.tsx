@@ -163,6 +163,7 @@ export function AttackVisualizationsSection({
       <Tabs
         activeTab={activeTab}
         setActiveTab={setActiveTab as (tab: string) => void}
+        id="attack-visualizations-tabs-buttons"
       >
         <Tab tab="overall" label="Overall">
           {renderSpecificAttackVisualization()}

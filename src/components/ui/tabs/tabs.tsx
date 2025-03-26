@@ -13,12 +13,13 @@ export const Tab: React.FC<TabProps> = ({ tab, label, children }) => {
 };
 
 interface TabsProps {
+  id?: string;
   activeTab: string;
   setActiveTab: (tab: string) => void;
   children: ReactNode;
 }
 
-export const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab, children }) => {
+export const Tabs: React.FC<TabsProps> = ({ id, activeTab, setActiveTab, children }) => {
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -26,7 +27,7 @@ export const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab, children })
   return (
     <div>
       {/* Tab Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4" id={id}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             const { tab, label } = (child as React.ReactElement<TabProps>).props;

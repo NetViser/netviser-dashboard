@@ -118,7 +118,7 @@ export default function Page() {
             onClick={() => router.back()}
             size={30}
           />
-          <h1 className="text-2xl font-bold">
+          <h1 id="specific-attack-detection-title" className="text-2xl font-bold">
             Attack Detection /{" "}
             <span className="text-orange-500">{attackType}</span>
           </h1>
