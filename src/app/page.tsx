@@ -83,7 +83,7 @@ export default function Home() {
   });
 
   // Fetch sample network files with SWR
-  const { data: sampleFiles, isLoading: isLoadingSamples } = useSWR(
+  const { data, isLoading: isLoadingSamples } = useSWR(
     "sample-network-files",
     fetchAllSampleNetworkFiles,
     {
@@ -95,6 +95,8 @@ export default function Home() {
       },
     }
   );
+
+  const sampleFiles = data?.sample_files;
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 text-stone-900">
