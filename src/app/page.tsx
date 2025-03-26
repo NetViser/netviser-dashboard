@@ -17,6 +17,7 @@ import { UploadDialog } from "@/components/modal/upload-dialog";
 import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
 import InstructionsSection from "@/components/home/instructions-section";
 import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
+import DisclaimerSection from "@/components/home/DisclaimerSection";
 
 const DragDropBoxTour = dynamic(() => import("./tour/upload_tour"), {
   ssr: false,
@@ -218,6 +219,9 @@ export default function Home() {
               Supported formats: <span className="text-orange-600">CSV</span> |
               Max size: <span className="text-orange-600">1GB</span>
             </p>
+
+            {/* Disclaimer Section */}
+            <DisclaimerSection />
 
             {/* Sample Network Files */}
             <motion.div
