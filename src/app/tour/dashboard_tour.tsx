@@ -30,7 +30,7 @@ const DashBoardTour = () => {
   tour.addStep({
     id: "welcome",
     text: "Hey there! Welcome to the NetViser Dashboard! This page gives you a quick and easy overview of the network file you uploaded. You’ll see charts and numbers that show what’s going on in your data. Let’s check it out!",
-    attachTo: { element: "h1", on: "bottom" }, // Attach to "Network Analytics Dashboard" title
+    attachTo: { element: "#dashboard-title", on: "bottom" },
     arrow: true,
     buttons: [
       {
