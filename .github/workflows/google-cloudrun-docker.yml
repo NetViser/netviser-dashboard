@@ -8,7 +8,7 @@ on:
 env:
   GC_PROJECT_ID: 'netviser-454113'
   REGION: 'asia-southeast1'
-  GAR_NAME: 'netviser-frontend-gar'
+  GAR_NAME: 'netviser-dashboard-gar'
   GAR_LOCATION: 'asia-southeast1'
   SERVICE: 'netviser-dashboard'
 
