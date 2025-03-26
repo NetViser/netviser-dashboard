@@ -19,13 +19,19 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
   return (
     <div className="py-8 px-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl shadow-xl">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Detected Attack Types</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Detected Attack Types
+        </h2>
         <p className="mt-2 text-sm text-gray-600">
-          Browse the detected attack types and their frequencies to understand potential threats.
+          Browse the detected attack types and their frequencies to understand
+          potential threats.
         </p>
       </div>
       <div className="overflow-x-auto border rounded-xl">
-        <table className="min-w-full bg-white divide-y divide-gray-200 shadow-lg rounded-xl">
+        <table
+          id="attacks-table-content"
+          className="min-w-full bg-white divide-y divide-gray-200 shadow-lg rounded-xl"
+        >
           <thead className="bg-stone-900">
             <tr>
               <th className="px-8 py-4 text-left text-sm font-semibold text-white uppercase tracking-wider">
@@ -45,14 +51,11 @@ const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
               return (
                 <tr
                   key={index}
-                  className={clsx(
-                    "transition duration-300 ease-in-out",
-                    {
-                      "bg-yellow-100": rowData.isSelected,
-                      "hover:bg-gray-50": !rowData.isSelected,
-                      "hover:bg-yellow-50": rowData.isSelected,
-                    }
-                  )}
+                  className={clsx("transition duration-300 ease-in-out", {
+                    "bg-yellow-100": rowData.isSelected,
+                    "hover:bg-gray-50": !rowData.isSelected,
+                    "hover:bg-yellow-50": rowData.isSelected,
+                  })}
                 >
                   <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                     {rowData.attackType}
