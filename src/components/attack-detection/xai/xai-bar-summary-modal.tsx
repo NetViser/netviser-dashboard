@@ -65,7 +65,7 @@ export function XAIBarSummaryModal({
             {`Feature Importance By Mean |SHAP| Value (${attackType})`}
           </DialogTitle>
         </DialogHeader>
-        <div className="w-full -mt-6">
+        <div className="w-full -mt-6" id="bar-summary-focus">
           <SummaryBarChart attackType={attackType} data={data} minimal />
         </div>
         <div className="w-full p-4 mt-4 border-t border-stone-300 -mt-4">
@@ -77,6 +77,7 @@ export function XAIBarSummaryModal({
               onClick={() => setExplanationRequested(true)}
               className="bg-stone-800 hover:bg-stone-700 text-stone-200 font-semibold flex items-center transition-colors duration-200 ease-in-out border-2 border-stone-500 w-40"
               disabled={explanationLoading || !data}
+              id="explanation-button-gemini"
             >
               Ask Gemini?
               <img
@@ -87,7 +88,7 @@ export function XAIBarSummaryModal({
             </Button>
           )}
           {explanationRequested && (
-            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+            <div className="bg-gray-100 p-4 rounded-lg shadow-md" id="explanation">
               <div className="relative">
                 <img
                   src="/gemini-icon.svg"

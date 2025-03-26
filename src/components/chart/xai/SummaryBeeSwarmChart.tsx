@@ -3,6 +3,7 @@ import React from "react";
 import ReactECharts from "echarts-for-react";
 import { BeeswarmSummaryItem } from "@/utils/client/fetchAttackSummaryXAI";
 import { FaExpandAlt } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 type SummaryBeeSwarmChartProps = {
   withDataZoom?: boolean;
@@ -210,26 +211,37 @@ export default function SummaryBeeSwarmChart({
   // Render based on the minimal prop.
   if (minimal) {
     return (
-      <div className="w-full h-full p-8 overflow-auto">
-        <ReactECharts option={option} style={{ height: "400px", width: "100%" }} />
+      <div className="w-full h-full p-8 overflow-auto" id="beeswarm-summary-focus">
+        <ReactECharts
+          option={option}
+          style={{ height: "400px", width: "100%" }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="p-8 py-4">
+    <div className="p-8 py-4" id="beeswarm-summary-chart">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
           {`SHAP Beeswarm Plot (${attackType})`}
         </h3>
         {onHelpClick && (
-          <FaExpandAlt
-            className="w-6 h-6 text-gray-600 cursor-pointer transition transform hover:scale-110 hover:text-orange-500"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onHelpClick}
-          />
+            className="text-gray-600 hover:text-orange-500 transition-colors"
+            id="beeswarm-summary-expand"
+          >
+            <FaExpandAlt className="w-6" />
+          </Button>
         )}
       </div>
-      <ReactECharts option={option} style={{ height: withDataZoom ? 320 : 400, width: "100%" }} />
+      <ReactECharts
+        option={option}
+        style={{ height: withDataZoom ? 320 : 400, width: "100%" }}
+      />
     </div>
   );
 }

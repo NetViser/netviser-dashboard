@@ -81,6 +81,7 @@ export function XAIBeeswarmSummaryModal({
               onClick={() => setExplanationRequested(true)}
               className="bg-stone-800 hover:bg-stone-700 text-stone-200 font-semibold flex items-center transition-colors duration-200 ease-in-out border-2 border-stone-500 w-40"
               disabled={explanationLoading || !data}
+              id="explanation-button-beeswarm"
             >
               Ask Gemini?
               <img
@@ -92,7 +93,7 @@ export function XAIBeeswarmSummaryModal({
           )}
 
           {explanationRequested && (
-            <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+            <div className="bg-gray-100 p-4 rounded-lg shadow-md" id="explanation-beeswarm">
               <div className="relative">
                 <img
                   src="/gemini-icon.svg"

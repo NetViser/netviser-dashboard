@@ -1,7 +1,9 @@
 "use client";
 
+import React, { useEffect } from "react";
 import useSWR from "swr";
-import Spinner from "@/components/loader/spinner";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Swal from "sweetalert2";
 import {
   fetchSpecificAttackDetection,
@@ -18,7 +20,6 @@ import { SSHPatatorVisSection } from "@/components/attack-detection/attack-speci
 import { useSessionStore } from "@/store/session";
 import { useRouter } from "next/navigation";
 import { useLoadingStore } from "@/store/loadingStore";
-import { useEffect } from "react";
 
 type AttackVisualizationsSectionProps = {
   attackType: string;
@@ -34,6 +35,7 @@ export function AttackVisualizationsSection({
   const { setLoading } = useLoadingStore();
   const router = useRouter();
   const { setActiveSession } = useSessionStore();
+
   async function handleSessionExpired(error: any) {
     console.error("Session Expired or fetch error:", error);
     await Swal.fire({
@@ -75,12 +77,49 @@ export function AttackVisualizationsSection({
 
   useEffect(() => {
     setLoading(isLoading);
-  }, [isLoading]);
+  }, [isLoading, setLoading]);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center p-6">
-        <Spinner />
+      <div
+        className="w-full rounded-lg shadow-sm bg-white p-6 mt-6"
+        id="attack-visualizations"
+      >
+        <Skeleton
+          height={28}
+          width="30%"
+          style={{ marginBottom: "1rem", borderRadius: "8px" }}
+        />
+        <div className="flex gap-4 mb-4">
+          <Skeleton
+            height={40}
+            width={100}
+            style={{ borderRadius: "8px" }}
+          />
+          <Skeleton
+            height={40}
+            width={100}
+            style={{ borderRadius: "8px" }}
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          {/* Skeleton for content area */}
+          <Skeleton
+            height={200}
+            style={{ borderRadius: "8px" }}
+            containerClassName="mb-4"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton
+              height={150}
+              style={{ borderRadius: "8px" }}
+            />
+            <Skeleton
+              height={150}
+              style={{ borderRadius: "8px" }}
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -112,7 +151,6 @@ export function AttackVisualizationsSection({
     if (attackType === "DoS Slowloris") {
       return <DoSSlowlorisVisSection data={data} />;
     }
-    // Fallback if no matching visualization is found
     return null;
   };
 
@@ -122,7 +160,6 @@ export function AttackVisualizationsSection({
       id="attack-visualizations"
     >
       <h2 className="text-xl font-bold mb-4">Attack Specific Visualizations</h2>
-
       <Tabs
         activeTab={activeTab}
         setActiveTab={setActiveTab as (tab: string) => void}
