@@ -31,8 +31,8 @@ export default function RootLayout({
         {/* Navigation Header */}
         <NavHeader />
 
-        {/* Main Content */}
-        <main className="flex flex-col min-h-screen">{children}</main>
+        {/* Main Content with margin-top to avoid overlap */}
+        <main className="flex flex-col min-h-screen mt-16">{children}</main>
       </body>
     </html>
   );

@@ -60,13 +60,10 @@ export default function Home() {
       if (file) {
         setIsMutating(true);
         setIsUploadDialogOpen(true);
-
         upload(UPLOAD_URL, { arg: file })
           .then(handleUploadSuccess)
           .catch(handleUploadError)
-          .finally(() => {
-            setIsMutating(false);
-          });
+          .finally(() => setIsMutating(false));
       }
     },
     onDropRejected: (fileRejections) => {
@@ -77,13 +74,10 @@ export default function Home() {
       }
     },
     multiple: false,
-    accept: {
-      "text/csv": [".csv"],
-    },
+    accept: { "text/csv": [".csv"] },
     maxSize: 1073741824, // 1GB in bytes
   });
 
-  // Fetch sample network files with SWR
   const { data, isLoading: isLoadingSamples } = useSWR(
     "sample-network-files",
     fetchAllSampleNetworkFiles,
@@ -100,52 +94,58 @@ export default function Home() {
   const sampleFiles = data?.sample_files;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 text-stone-900">
-      <UploadDialog
-        isOpen={isUploadDialogOpen}
-        uploadedBytesProgress={uploadedBytesProgress}
-        totalBytes={totalBytes}
-      />
-      <UploadErrorDialog
-        isOpen={isErrorDialogOpen}
-        errorMessage={errorMessage}
-        onClose={() => setIsErrorDialogOpen(false)}
-      />
+    <div className="min-h-screen flex flex-col bg-white text-stone-900 relative overflow-hidden">
+      {/* Crazy Black Stone Orange Animated Background */}
+      <div className="absolute inset-0 z-0">
+        {/* Base Layer: Black Stone Texture */}
+        <div className="absolute inset-0 bg-black bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxwYXRoIGQ9Ik0wIDBMMTAwIDEwME01MCAwTDUwIDEwME0wIDUwTDEwMCA1ME0wIDEwMEwxMDAgMCIgc3Ryb2tlPSIjNDQ0NDQ0IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMjAgMjBMODAgODBNMzAgNzBMNzAgMzAiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==')] opacity-90"></div>
+
+        {/* Animated Blur Layer: Orange Cracks */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-orange-600/30 via-stone-800/50 to-orange-500/30 filter blur-xl opacity-70"
+          animate={{
+            scale: [1, 1.03, 1],
+            rotate: [0, 1, -1, 0],
+            x: [-15, 15, -15],
+            y: [-10, 10, -10],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Glowing Orange Fractures */}
+        <motion.div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,_rgba(249,115,22,0.4)_0%,_rgba(249,115,22,0)_50%)] filter blur-md opacity-60"
+          animate={{
+            scale: [1.05, 1, 1.05],
+            x: [20, -20, 20],
+            y: [15, -15, 15],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,_rgba(234,88,12,0.35)_0%,_rgba(234,88,12,0)_60%)] filter blur-lg opacity-50"
+          animate={{
+            scale: [1, 1.05, 1],
+            x: [-25, 25, -25],
+            y: [-20, 20, -20],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Stone Noise Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPjxyZWN0IHdpZHRoPSI1IiBoZWlnaHQ9IjUiIGZpbGw9InJnYigwLDAsMCkiIGZpbGwtb3BhY2l0eT0iMC4xNSIvPjwvc3ZnPg==')] opacity-40 animate-pulse"></div>
+      </div>
 
       {/* Header Section */}
       <motion.div
-        className="px-6 py-16 relative overflow-hidden"
+        className="px-6 py-16 relative z-10"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        {/* Advanced Animated Background */}
-        <div className="absolute inset-0 animate-gradient-bg">
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-orange-700 opacity-80" />
+        <div className="max-w-4xl w-full mx-auto">
           <motion.div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,_rgba(234,88,12,0.6)_0%,_rgba(234,88,12,0)_70%)]"
-            animate={{
-              scale: [1, 1.1, 1],
-              x: [-20, 20, -20],
-              y: [-10, 10, -10],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,_rgba(251,146,60,0.5)_0%,_rgba(251,146,60,0)_60%)]"
-            animate={{
-              scale: [1.1, 1, 1.1],
-              x: [20, -20, 20],
-              y: [10, -10, 10],
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPjxmaWx0ZXIgaWQ9Im4iPjxmZUZsb29kIGZsb29kLWNvbG9yPSJyZ2IoMCwwLDApIiBmbG9vZC1vcGFjaXR5PSIuMSI+PC9mZUZsb29kPjxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgb3BlcmF0b3I9ImluIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSI1IiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiIGZpbHRlcj0idXJsKCNuKSI+PC9yZWN0Pjwvc3ZnPg==')] opacity-10" />
-        </div>
-
-        <div className="max-w-4xl w-full mx-auto relative z-10">
-          <motion.div
-            className="bg-white/95 backdrop-blur-md rounded-xl border border-orange-200/50 shadow-2xl p-8 md:p-12"
+            className="bg-white/95 backdrop-blur-md rounded-xl border border-stone-200/50 shadow-xl p-8 md:p-12"
             variants={headerVariants}
           >
             <motion.div
@@ -154,7 +154,10 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h1 className="text-5xl font-extrabold text-stone-900 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent" id="app-title">
+              <h1
+                className="text-5xl font-extrabold text-stone-900 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent"
+                id="app-title"
+              >
                 NetViser
               </h1>
               <h2 className="text-xl font-semibold text-stone-700 mt-3 tracking-wide">
@@ -166,7 +169,7 @@ export default function Home() {
             {/* Drag & Drop Box */}
             <motion.div
               {...(getRootProps() as any)}
-              className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50 to-gray-200 p-8 shadow-inner transition-all duration-300 ease-in-out ${
+              className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-inner transition-all duration-300 ease-in-out ${
                 isDragActive
                   ? "border-orange-500 bg-orange-50/50"
                   : "border-gray-300 hover:border-orange-400"
@@ -215,7 +218,10 @@ export default function Home() {
             </motion.div>
 
             {/* Supported Formats */}
-            <p className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight" id="supported-formats">
+            <p
+              className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight"
+              id="supported-formats"
+            >
               Supported formats: <span className="text-orange-600">CSV</span> |
               Max size: <span className="text-orange-600">1GB</span>
             </p>

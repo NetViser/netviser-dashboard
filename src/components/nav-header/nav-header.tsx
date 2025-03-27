@@ -15,14 +15,13 @@ export function NavHeader() {
   const pathname = usePathname();
   const { isActiveSession } = useSessionStore();
 
-  // Only show "Upload" when data is inserted (i.e. session is active)
-  // and when the current path is not "/"
+  // Conditional "Upload" link
   const extraLink =
     isActiveSession && pathname !== "/" && (
       <li key="Upload">
         <Link
           href="/"
-          className="px-4 py-2 rounded text-gray-300 hover:bg-orange-400 transition-colors"
+          className="px-4 py-2 text-gray-300 hover:text-white hover:bg-orange-500/80 rounded-md transition-all duration-300"
         >
           Upload
         </Link>
@@ -33,12 +32,12 @@ export function NavHeader() {
     <li key={link.label}>
       <Link
         href={link.link}
-        className={`px-4 py-2 rounded ${
+        className={`px-4 py-2 rounded-md ${
           pathname.includes(link.link)
-            ? "bg-orange-500 text-white"
+            ? "text-white bg-orange-500/80"
             : "text-gray-300"
-        } hover:bg-orange-400 transition-colors ${
-          isActiveSession ? "cursor-pointer" : "cursor-not-allowed"
+        } hover:text-white hover:bg-orange-500/80 transition-all duration-300 ${
+          isActiveSession ? "cursor-pointer" : "cursor-not-allowed opacity-50"
         }`}
         style={{ pointerEvents: isActiveSession ? "auto" : "none" }}
       >
@@ -47,7 +46,6 @@ export function NavHeader() {
     </li>
   ));
 
-  // Combine the normal links with the extra link (if any)
   const allItems = (
     <>
       {items}
@@ -56,23 +54,27 @@ export function NavHeader() {
   );
 
   return (
-    <header className="bg-stone-900 text-gray-100 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 flex items-center justify-between h-16">
+    <header className="bg-black/90 backdrop-blur-md text-gray-100 shadow-lg fixed top-0 w-full z-50">
+      <div className="container mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo Section */}
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/netviser.svg" alt="NetViser Logo" className="w-10 h-10" />
-          <h1 className="text-2xl">NetViser</h1>
+        <Link href="/" className="flex items-center gap-3">
+          <img
+            src="/netviser.svg"
+            alt="NetViser Logo"
+            className="w-8 h-8 transition-transform duration-300 hover:scale-110"
+          />
+          <h1 className="text-xl font-light tracking-wide">NetViser</h1>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden sm:block">
-          <ul className="flex items-center space-x-4">{allItems}</ul>
+          <ul className="flex items-center space-x-6">{allItems}</ul>
         </nav>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="sm:hidden p-2 rounded-md hover:bg-gray-700 focus:outline-none"
+          className="sm:hidden p-2 rounded-full hover:bg-gray-700/50 focus:outline-none transition-colors duration-300"
         >
           <span className="sr-only">Open menu</span>
           {menuOpen ? (
@@ -111,8 +113,8 @@ export function NavHeader() {
 
       {/* Mobile Navigation */}
       {menuOpen && (
-        <nav className="sm:hidden bg-stone-800">
-          <ul className="flex flex-col space-y-2 p-4">{allItems}</ul>
+        <nav className="sm:hidden bg-gray-900/95 backdrop-blur-md border-t border-gray-800">
+          <ul className="flex flex-col space-y-4 p-6">{allItems}</ul>
         </nav>
       )}
     </header>
