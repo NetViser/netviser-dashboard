@@ -1,42 +1,20 @@
 "use client";
 
 import Spinner from "@/components/loader/spinner";
-import { fetchDashboard } from "@/utils/client/fetchDashboard";
-import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import useSWR from "swr";
 import { useSessionStore } from "@/store/session";
 import AttacksTable from "@/components/attack-detection/attacks-table/attacks-table";
 import { useMemo } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import PageTitleFooter from "@/components/header/page-title-footer";
 import AttackDetectionTour from "../tour/attack_detection_tour";
+import { useDashboardData } from "@/hooks/api/useDashboardData";
 
 export default function AttackDetectionPage() {
   const router = useRouter();
-  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
+  const { networkFileName } = useSessionStore();
 
-  const { data, isLoading } = useSWR(
-    `${sessionID}/api/dashboard`,
-    fetchDashboard,
-    {
-      shouldRetryOnError: false,
-      onError: async (error) => {
-        await Swal.fire({
-          icon: "error",
-          title: "Session Expired",
-          confirmButtonText: "OK",
-          timer: 1000,
-          timerProgressBar: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-        });
-        console.error("Failed to get file name:", error);
-        setActiveSession(false);
-        router.push("/");
-      },
-    }
-  );
+  const { data, isLoading } = useDashboardData();
 
   const tableData = useMemo(() => {
     if (!data) return [];

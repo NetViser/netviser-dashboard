@@ -1,42 +1,20 @@
 "use client";
 
 import React from "react";
-import useSWR from "swr";
-import { fetchAttackSummaryXAI } from "@/utils/client/fetchAttackSummaryXAI";
-import Swal from "sweetalert2";
-import { useSessionStore } from "@/store/session";
 import { useLoadingStore } from "@/store/loadingStore";
 import { BarSummarySection } from "@/components/attack-detection/xai/BarSummarySection";
 import { BeeswarmSummarySection } from "@/components/attack-detection/xai/BeeswarmSummarySection";
+import { useAttackXAISummary } from "@/hooks/api/useAttackXAISummary";
 
 type AttackXAISectionProps = {
   attackType: string;
 };
 
 export function AttackXAISection({ attackType }: AttackXAISectionProps) {
-  const { sessionID } = useSessionStore();
   const { setLoading } = useLoadingStore();
 
-  // Use SWR to fetch the XAI summary data
-  const { data, error, isLoading } = useSWR(
-    `${sessionID}/attack_summary_xai?attack_type=${attackType}`,
-    () => fetchAttackSummaryXAI({ attack_type: attackType }),
-    {
-      shouldRetryOnError: false,
-      keepPreviousData: true,
-      onError: () => {
-        Swal.fire({
-          icon: "error",
-          title: "Have Problem Fetching XAI Summary",
-          confirmButtonText: "OK",
-          timer: 1000,
-          timerProgressBar: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-        });
-      },
-    }
-  );
+  // fetch the XAI summary data
+  const { data, error, isLoading } = useAttackXAISummary(attackType);
 
   // Update global loading state once data or error is available
   React.useEffect(() => {

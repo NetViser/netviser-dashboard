@@ -109,7 +109,6 @@ export function useUpload() {
           );
         }
 
-        // Upload to GCS with progress tracking
         await axios.put(
           presigned_url,
           uploadItem instanceof File ? uploadItem : new Blob([]),
@@ -133,9 +132,6 @@ export function useUpload() {
             },
           }
         );
-
-        // Note: Removed redundant customFetch call since axios handles the upload
-        // If needed for validation, you can re-add it here
 
         const completeFormData = new FormData();
         completeFormData.append("raw_file_path", bucket_key);
@@ -182,7 +178,13 @@ export function useUpload() {
         setIsLoading(false);
       }
     },
-    [setUploadedBytesProgress, setTotalBytes]
+    [
+      setUploadedBytesProgress,
+      setTotalBytes,
+      setActiveSession,
+      setSessionID,
+      setNetworkFileName,
+    ]
   );
 
   return { upload, isLoading, error, result };

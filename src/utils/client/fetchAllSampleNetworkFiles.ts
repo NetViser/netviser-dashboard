@@ -19,6 +19,7 @@ export async function fetchAllSampleNetworkFiles(): Promise<
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'omit'
     });
     return data;
   } catch (error) {

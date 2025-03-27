@@ -10,6 +10,7 @@ export type SessionState = {
   setActiveSession: (isActiveSession: boolean) => void;
   networkFileName: string;
   setNetworkFileName: (networkFileName: string) => void;
+  reset: () => void; // <-- Add reset method type
 };
 
 export const useSessionStore = create<SessionState>()(
@@ -21,13 +22,19 @@ export const useSessionStore = create<SessionState>()(
       setActiveSession: (isActiveSession: boolean) => set({ isActiveSession }),
       networkFileName: "",
       setNetworkFileName: (networkFileName: string) => set({ networkFileName }),
+      reset: () =>
+        set({
+          sessionID: "",
+          isActiveSession: false,
+          networkFileName: "",
+        }),
     }),
     {
-      name: "session-storage", // The name of the storage key
-      storage: createJSONStorage(() => localStorage), // Now using localStorage instead of sessionStorage
+      name: "session-storage",
+      storage: createJSONStorage(() => localStorage),
       merge: (persistedState, currentState) => {
         return { ...currentState, ...(persistedState as SessionState) };
       },
     }
-  ),
+  )
 );

@@ -13,8 +13,6 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import dynamic from "next/dynamic";
 import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
-import { UploadDialog } from "@/components/modal/upload-dialog";
-import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
 import InstructionsSection from "@/components/home/instructions-section";
 import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
 import DisclaimerSection from "@/components/home/DisclaimerSection";

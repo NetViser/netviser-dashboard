@@ -2,11 +2,7 @@
 
 import Spinner from "@/components/loader/spinner";
 import { useSessionStore } from "@/store/session";
-import { fetchAttackDetectionRecord } from "@/utils/client/fetchAttackDetectionRecord";
-import { fetchSpecificAttackDetection } from "@/utils/client/fetchAttackDetectionOverview";
 import { useParams, useRouter } from "next/navigation";
-import Swal from "sweetalert2";
-import useSWR from "swr";
 import { useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useLocalStorage } from "react-use";
@@ -22,15 +18,16 @@ import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
 import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
 import PageTitleFooter from "@/components/header/page-title-footer";
 import { useLoadingStore } from "@/store/loadingStore";
+import { useAttackDetectionRecords } from "@/hooks/api/useAttackDetectionRecords";
 
 export default function Page() {
   const router = useRouter();
-  const params = useParams(); // Access dynamic route params
+  const params = useParams();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const slugName = params?.slug || "";
   const attackType = decodeURIComponent(slugName as string);
-  const { setActiveSession, sessionID, networkFileName } = useSessionStore();
+  const { networkFileName } = useSessionStore();
   // Use a dynamic local storage key for explainability mode based on the attack type.
   const explainabilityKey = `explainability-mode-${attackType}`;
   const [explainabilityMode, setExplainabilityMode] = useLocalStorage(
@@ -43,38 +40,19 @@ export default function Page() {
   const [showXaiModal, setShowXaiModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
 
-  // Attack Records
-  const { data: attackRecords, isLoading: isLoadingAttackRecords } = useSWR(
-    `${sessionID}/attack_record?type=${attackType}&page=${page}&page_size=${pageSize}`,
-    () => fetchAttackDetectionRecord(attackType, page, pageSize),
-    {
-      shouldRetryOnError: false,
-      keepPreviousData: true,
-      onError: handleSessionExpired,
-    }
-  );
+  // Fetch attack records
+  const { attackRecords, isLoading: isLoadingAttackRecords } =
+    useAttackDetectionRecords({
+      attackType,
+      page,
+      pageSize,
+    });
 
   const { isLoading, setLoading } = useLoadingStore();
 
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
-
-  // Common error handler for session expiry
-  async function handleSessionExpired(error: any) {
-    console.error("Session Expired or fetch error:", error);
-    await Swal.fire({
-      icon: "error",
-      title: "Session Expired",
-      confirmButtonText: "OK",
-      timer: 1000,
-      timerProgressBar: true,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-    });
-    setActiveSession(false);
-    router.push("/");
-  }
 
   // -- Handling UI state / events
   const handlePageChange = (newPage: number) => {
@@ -118,7 +96,10 @@ export default function Page() {
             onClick={() => router.back()}
             size={30}
           />
-          <h1 id="specific-attack-detection-title" className="text-2xl font-bold">
+          <h1
+            id="specific-attack-detection-title"
+            className="text-2xl font-bold"
+          >
             Attack Detection /{" "}
             <span className="text-orange-500">{attackType}</span>
           </h1>
@@ -171,7 +152,7 @@ export default function Page() {
       {explainabilityMode === "Visualization" && (
         <AttackVisualizationsSection
           attackType={attackType}
-          activeTab={activeTab as 'overall' | 'timeseries'}
+          activeTab={activeTab as "overall" | "timeseries"}
           setActiveTab={setActiveTab}
         />
       )}

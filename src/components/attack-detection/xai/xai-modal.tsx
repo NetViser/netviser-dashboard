@@ -1,13 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import useSWR from "swr";
-import {
-  fetchIndividualXAI,
-  fetchIndividualXAIExplanation,
-  FetchIndividualXAIResponse,
-  FetchIndividualXAIExplanationResponse,
-} from "@/utils/client/fetchIndividualXAI";
 import {
   Dialog,
   DialogContent,
@@ -15,10 +8,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import Swal from "sweetalert2";
 import Spinner from "@/components/loader/spinner";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useIndividualXAI } from "@/hooks/api/useIndividualXAI";
+import { useIndividualXAIExplanation } from "@/hooks/api/useIndividualXAIExplanation";
 
 interface XAIModalProps {
   open: boolean;
@@ -35,57 +29,15 @@ export function XAIModal({
 }: XAIModalProps) {
   const [explanationRequested, setExplanationRequested] = useState(false);
 
-  const { data, isLoading } = useSWR<FetchIndividualXAIResponse>(
-    open ? ["fetchIndividualXAI", attackType, selectedRow] : null,
-    () =>
-      fetchIndividualXAI({
-        attack_type: attackType,
-        data_point_id: selectedRow,
-      }),
-    {
-      shouldRetryOnError: false,
-      onError: async (error) => {
-        await Swal.fire({
-          icon: "error",
-          title: "Something went wrong",
-          confirmButtonText: "OK",
-          timer: 1000,
-          timerProgressBar: true,
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-        });
-        console.error("Failed to fetch individual XAI data:", error);
-        onOpenChange(false);
-      },
-    }
+  const { data, isLoading } = useIndividualXAI(
+    open,
+    attackType,
+    selectedRow,
+    () => onOpenChange(false)
   );
 
   const { data: explanationData, isLoading: explanationLoading } =
-    useSWR<FetchIndividualXAIExplanationResponse>(
-      explanationRequested
-        ? ["fetchIndividualXAIExplanation", attackType, selectedRow]
-        : null,
-      () =>
-        fetchIndividualXAIExplanation({
-          attack_type: attackType,
-          data_point_id: selectedRow,
-        }),
-      {
-        shouldRetryOnError: false,
-        onError: async (error) => {
-          await Swal.fire({
-            icon: "error",
-            title: "Failed to fetch explanation",
-            confirmButtonText: "OK",
-            timer: 1000,
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-          });
-          console.error("Failed to fetch individual XAI explanation:", error);
-        },
-      }
-    );
+    useIndividualXAIExplanation(explanationRequested, attackType, selectedRow);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -149,13 +101,13 @@ export function XAIModal({
                         width="100%"
                       />
                     ) : explanationData ? (
-                      <p
-                        className="text-stone-800 text-base animate-in fade-in slide-in-from-bottom-4 duration-500"
-                      >
+                      <p className="text-stone-800 text-base animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {explanationData.explanation}
                       </p>
                     ) : (
-                      <div className="text-red-500">Failed to load explanation.</div>
+                      <div className="text-red-500">
+                        Failed to load explanation.
+                      </div>
                     )}
                   </div>
                 </div>

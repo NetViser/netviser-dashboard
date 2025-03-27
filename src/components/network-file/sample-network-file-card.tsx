@@ -1,10 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import useSWRMutation from "swr/mutation";
-import { useUpload, UploadFileResult } from "@/hooks/useUpload";
+import { useSampleUploadMutation } from "@/hooks/api/useSampleUploadMutation";
 
 type SampleNetworkFileCardProps = {
   name: string;
@@ -15,31 +13,7 @@ function SampleNetworkFileCard({
   name,
   featuredAttacks,
 }: SampleNetworkFileCardProps) {
-  const router = useRouter();
-  const { upload } = useUpload();
-
-  const { trigger, isMutating } = useSWRMutation("/api/upload", upload, {
-    onSuccess: async (_responseData: UploadFileResult) => {
-      router.push("/dashboard");
-    },
-    onError: (error: Error) => {
-      Swal.close();
-      Swal.fire({
-        title: "Error",
-        text: error.message,
-        icon: "error",
-        confirmButtonText: "Close",
-        confirmButtonColor: "#f44336",
-        background: "#fff",
-        customClass: {
-          popup: "rounded-xl shadow-2xl border border-red-200/50",
-          title: "text-stone-900 font-bold text-2xl",
-          confirmButton: "rounded-lg px-6 py-2",
-        },
-      });
-      console.error("Upload failed:", error);
-    },
-  });
+  const { trigger, isMutating } = useSampleUploadMutation();
 
   const handleClick = async () => {
     if (isMutating) return;
@@ -67,9 +41,11 @@ function SampleNetworkFileCard({
         popup: "rounded-xl shadow-2xl border border-orange-200/50",
       },
     });
-    trigger(name).finally(() => {
+    try {
+      await trigger({ arg: name }); // Pass the argument as an object
+    } finally {
       Swal.close();
-    });
+    }
   };
 
   const cardVariants = {
