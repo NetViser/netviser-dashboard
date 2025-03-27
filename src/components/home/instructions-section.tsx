@@ -22,7 +22,7 @@ const containerVariants = {
 const InstructionsSection: React.FC = () => {
   return (
     <motion.div
-      className="bg-gradient-to-t from-gray-100 to-gray-50 px-6 py-20 relative"
+      className="bg-white/95 backdrop-blur-md px-6 py-20 relative"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
@@ -57,7 +57,7 @@ const InstructionsSection: React.FC = () => {
                 </p>
               </div>
               <motion.hr
-                className="border-orange-300/50"
+                className="border-orange-200/70"
                 initial={{ width: "0%" }}
                 whileInView={{ width: "100%" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
@@ -78,7 +78,7 @@ const InstructionsSection: React.FC = () => {
             alt="NetViser dashboard preview"
             width={400}
             height={300}
-            className="max-w-full h-auto rounded-xl border border-orange-200/50 shadow-lg hover:shadow-xl transition-shadow"
+            className="max-w-full h-auto rounded-xl border border-orange-200/40 bg-white/80 backdrop-blur-md shadow-md hover:shadow-lg transition-shadow"
           />
         </motion.div>
       </div>

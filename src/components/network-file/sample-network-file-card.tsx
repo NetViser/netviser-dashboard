@@ -18,7 +18,6 @@ function SampleNetworkFileCard({
   const router = useRouter();
   const { upload } = useUpload();
 
-  // Set up useSWRMutation similar to Home component
   const { trigger, isMutating } = useSWRMutation("/api/upload", upload, {
     onSuccess: async (_responseData: UploadFileResult) => {
       router.push("/dashboard");
@@ -43,9 +42,8 @@ function SampleNetworkFileCard({
   });
 
   const handleClick = async () => {
-    if (isMutating) return; // Prevent duplicate submissions
+    if (isMutating) return;
     console.log(`Fetching sample network file: ${name}`);
-    // Display loading alert before triggering the mutation
     Swal.fire({
       title:
         '<span class="bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent font-bold text-2xl">Analyzing Your File</span>',
@@ -69,19 +67,17 @@ function SampleNetworkFileCard({
         popup: "rounded-xl shadow-2xl border border-orange-200/50",
       },
     });
-    // Trigger the mutation by passing the file name directly
     trigger(name).finally(() => {
       Swal.close();
     });
   };
 
-  // Animation variants for the card and its elements
   const cardVariants = {
-    initial: { scale: 1, y: 0, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" },
+    initial: { scale: 1, y: 0, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)" },
     hover: {
       scale: 1.03,
       y: -5,
-      boxShadow: "0 10px 15px -3px rgba(234, 88, 12, 0.3)",
+      boxShadow: "0 10px 15px -3px rgba(234, 88, 12, 0.2)",
       transition: { duration: 0.2, ease: "easeOut" },
     },
     tap: {
@@ -108,18 +104,18 @@ function SampleNetworkFileCard({
       whileHover="hover"
       whileTap="tap"
       onClick={handleClick}
-      className="relative bg-gray-50 rounded-xl border border-gray-200 p-4 overflow-hidden cursor-pointer group"
+      className="relative bg-gray-50/85 backdrop-blur-md rounded-xl border border-orange-200/40 p-4 overflow-hidden cursor-pointer group"
     >
       {/* Loading overlay during the mutation */}
       {isMutating && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-20">
+        <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-20">
           <img src="/loader-circle.svg" alt="Loading" className="w-10 h-10 animate-spin" />
         </div>
       )}
 
       {/* Gradient overlay on hover */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-orange-200/0 via-orange-200/20 to-orange-200/0 opacity-0 group-hover:opacity-100"
+        className="absolute inset-0 bg-gradient-to-r from-orange-100/0 via-orange-100/30 to-orange-100/0 opacity-0 group-hover:opacity-100"
         initial={{ opacity: 0 }}
         whileHover={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -135,7 +131,7 @@ function SampleNetworkFileCard({
               <motion.span
                 key={index}
                 variants={tagVariants}
-                className="text-xs font-medium text-orange-700 bg-orange-100/80 px-2 py-0.5 rounded-full border border-orange-200/50 backdrop-blur-sm"
+                className="text-xs font-medium text-orange-600 bg-orange-50/80 px-2 py-0.5 rounded-full border border-orange-200/60 backdrop-blur-sm"
                 whileHover="hover"
               >
                 {attack}

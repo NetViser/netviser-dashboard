@@ -92,7 +92,6 @@ export default function Home() {
   );
 
   const sampleFiles = data?.sample_files;
-
   return (
     <div className="min-h-screen flex flex-col bg-white text-stone-900 relative overflow-hidden">
       {/* Crazy Black Stone Orange Animated Background */}
@@ -145,7 +144,7 @@ export default function Home() {
       >
         <div className="max-w-4xl w-full mx-auto">
           <motion.div
-            className="bg-white/95 backdrop-blur-md rounded-xl border border-stone-200/50 shadow-xl p-8 md:p-12"
+            className="bg-white/80 backdrop-blur-lg rounded-xl border border-orange-200/30 shadow-lg p-8 md:p-12"
             variants={headerVariants}
           >
             <motion.div
@@ -169,15 +168,15 @@ export default function Home() {
             {/* Drag & Drop Box */}
             <motion.div
               {...(getRootProps() as any)}
-              className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-inner transition-all duration-300 ease-in-out ${
+              className={`group border-[0.25rem] border-dashed rounded-xl bg-gradient-to-br from-gray-50/90 to-gray-100/90 p-8 shadow-inner transition-all duration-300 ease-in-out ${
                 isDragActive
-                  ? "border-orange-500 bg-orange-50/50"
+                  ? "border-orange-500 bg-orange-50/70"
                   : "border-gray-300 hover:border-orange-400"
               } cursor-pointer`}
               id="drag-drop-box"
               whileHover={{
                 scale: 1.02,
-                boxShadow: "0 8px 24px rgba(234, 88, 12, 0.2)",
+                boxShadow: "0 8px 24px rgba(234, 88, 12, 0.15)",
               }}
               whileTap={{ scale: 0.98 }}
             >
@@ -247,7 +246,7 @@ export default function Home() {
                     .map((_, index) => (
                       <div
                         key={index}
-                        className="bg-gray-50 rounded-xl border border-gray-200 p-4"
+                        className="bg-gray-50/90 rounded-xl border border-gray-200/70 p-4"
                       >
                         <Skeleton height={24} width="80%" className="mb-3" />
                         <div className="flex flex-wrap gap-2">
