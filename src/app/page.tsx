@@ -16,6 +16,7 @@ import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
 import InstructionsSection from "@/components/home/instructions-section";
 import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
 import DisclaimerSection from "@/components/home/DisclaimerSection";
+import InputFileConstraints from "@/components/home/InputFileConstraints";
 
 const UploadPageTour = dynamic(() => import("./tour/upload_tour"), {
   ssr: false,
@@ -214,14 +215,23 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Supported Formats */}
-            <p
-              className="text-sm text-gray-600 text-center mt-6 font-medium tracking-tight"
-              id="supported-formats"
-            >
-              Supported formats: <span className="text-orange-600">CSV</span> |
-              Max size: <span className="text-orange-600">1GB</span>
-            </p>
+            {/* Supported Formats and Constraints Button */}
+            <div className="text-center mt-6 space-y-4">
+              <p
+                className="text-sm text-gray-600 font-medium tracking-tight"
+                id="supported-formats"
+              >
+                Supported formats: <span className="text-orange-600">CSV</span> |
+                Max size: <span className="text-orange-600">1GB</span>
+              </p>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <InputFileConstraints />
+              </motion.div>
+            </div>
 
             {/* Disclaimer Section */}
             <DisclaimerSection />
