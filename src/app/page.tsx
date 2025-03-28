@@ -14,9 +14,15 @@ import "react-loading-skeleton/dist/skeleton.css";
 import dynamic from "next/dynamic";
 import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
 import InstructionsSection from "@/components/home/instructions-section";
-import { containerVariants, headerVariants, buttonVariants } from "@/utils/framer-motion";
+import {
+  containerVariants,
+  headerVariants,
+  buttonVariants,
+} from "@/utils/framer-motion";
 import DisclaimerSection from "@/components/home/DisclaimerSection";
 import InputFileConstraints from "@/components/home/InputFileConstraints";
+import { UploadDialog } from "@/components/modal/upload-dialog";
+import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
 
 const UploadPageTour = dynamic(() => import("./tour/upload_tour"), {
   ssr: false,
@@ -93,6 +99,16 @@ export default function Home() {
   const sampleFiles = data?.sample_files;
   return (
     <div className="min-h-screen flex flex-col bg-white text-stone-900 relative overflow-hidden">
+      <UploadDialog
+        isOpen={isUploadDialogOpen}
+        uploadedBytesProgress={uploadedBytesProgress}
+        totalBytes={totalBytes}
+      />
+      <UploadErrorDialog
+        isOpen={isErrorDialogOpen}
+        errorMessage={errorMessage}
+        onClose={() => setIsErrorDialogOpen(false)}
+      />
       {/* Crazy Black Stone Orange Animated Background */}
       <div className="absolute inset-0 z-0">
         {/* Base Layer: Black Stone Texture */}
@@ -221,8 +237,8 @@ export default function Home() {
                 className="text-sm text-gray-600 font-medium tracking-tight"
                 id="supported-formats"
               >
-                Supported formats: <span className="text-orange-600">CSV</span> |
-                Max size: <span className="text-orange-600">1GB</span>
+                Supported formats: <span className="text-orange-600">CSV</span>{" "}
+                | Max size: <span className="text-orange-600">1GB</span>
               </p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
