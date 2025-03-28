@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 type UploadDialogProps = {
   isOpen: boolean;
@@ -22,75 +23,93 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Ensure totalBytes is greater than 0 to avoid division by zero
     const safePercent = totalBytes > 0
       ? Math.min((uploadedBytesProgress * 100) / totalBytes, 100)
       : 0;
     setProgress(safePercent);
   }, [uploadedBytesProgress, totalBytes]);
 
-  // Convert bytes to MB with 2 decimal places
   const uploadedMB = (uploadedBytesProgress / (1024 * 1024)).toFixed(2);
   const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
   return (
     <Dialog open={isOpen}>
       <NoCloseIconDialogContent
-        className="sm:max-w-xl w-[90vw] bg-white dark:bg-stone-900 rounded-3xl p-6 sm:p-8 
-          shadow-2xl border border-orange-500/20 transition-transform duration-300 ease-in-out 
-          transform hover:scale-[1.02]"
+        className="sm:max-w-xl w-[90vw] bg-white/90 backdrop-blur-2xl rounded-2xl p-8
+          border border-orange-300/20 shadow-2xl shadow-orange-500/10"
       >
-        <DialogHeader className="mb-8">
-          <DialogTitle
-            className="text-2xl sm:text-3xl font-extrabold tracking-tight 
-              bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 
-              bg-clip-text text-transparent drop-shadow-md"
-          >
-            Uploading Your File
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col items-center gap-8">
-          {progress === 100 ? (
-            <div className="flex flex-col items-center gap-6 animate-fade-in duration-500">
-              <p className="text-base sm:text-lg font-medium text-orange-600 
-                text-center max-w-[85%] leading-relaxed tracking-tight">
-                Performing Network Attack Detection on the uploaded file
-              </p>
-              <div className="relative w-16 h-16">
-                <img
-                  src="/loader-circle.svg"
-                  alt="Loading"
-                  className="w-full h-full animate-spin"
-                  style={{ animationDuration: "1s" }}
-                />
-                <div className="absolute inset-0 bg-orange-500/20 rounded-full 
-                  animate-pulse blur-md scale-105" />
-              </div>
-            </div>
-          ) : (
-            <div className="w-full space-y-4 animate-slide-in duration-400">
-              <p className="text-base sm:text-lg font-medium text-orange-600 
-                text-center tracking-tight">
-                Progress to upload file to bucket storage
-              </p>
-              <div className="relative w-full h-10 bg-gray-100 rounded-xl overflow-hidden 
-                shadow-inner border border-orange-400/30">
-                <div
-                  className="absolute inset-0 h-full bg-gradient-to-r from-orange-400 
-                    via-orange-500 to-amber-400 rounded-xl transition-all duration-700 ease-out 
-                    shadow-md"
-                  style={{ width: `${progress}%` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/10 
-                  to-transparent rounded-xl pointer-events-none" />
-              </div>
-              <p className="text-sm sm:text-base font-semibold text-stone-800 
-                text-center tracking-tight drop-shadow-sm">
-                {uploadedMB} MB / {totalMB} MB ({Math.round(progress)}%)
-              </p>
-            </div>
-          )}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <DialogHeader className="mb-8">
+            <DialogTitle
+              className="text-3xl font-extrabold tracking-tight 
+                bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 
+                bg-clip-text text-transparent"
+            >
+              Uploading Your File
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center gap-8">
+            {progress === 100 ? (
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                className="flex flex-col items-center gap-6"
+              >
+                <p className="text-lg font-medium text-stone-700 text-center max-w-[85%] leading-relaxed">
+                  Performing Network Attack Detection on the uploaded file
+                </p>
+                <div className="relative w-20 h-20">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-400/20 rounded-full blur-lg animate-pulse" />
+                  <img
+                    src="/loader-circle.svg"
+                    alt="Loading"
+                    className="w-full h-full animate-spin"
+                    style={{ animationDuration: "1s" }}
+                  />
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full space-y-6"
+              >
+                <p className="text-lg font-medium text-stone-700 text-center">
+                  Progress to upload file to bucket storage
+                </p>
+                
+                <div className="relative w-full h-3 bg-stone-100/80 rounded-xl overflow-hidden 
+                  shadow-inner border border-orange-200/20">
+                  <motion.div
+                    className="absolute inset-0 h-full bg-gradient-to-r from-orange-500 
+                      via-orange-400 to-amber-400 rounded-xl"
+                    style={{ width: `${progress}%` }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent" />
+                </div>
+
+                <div className="flex justify-between items-center px-2">
+                  <span className="text-sm font-semibold text-orange-600">
+                    {uploadedMB} MB
+                  </span>
+                  <span className="text-sm font-semibold text-stone-600">
+                    {Math.round(progress)}%
+                  </span>
+                  <span className="text-sm font-semibold text-stone-600">
+                    {totalMB} MB
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
       </NoCloseIconDialogContent>
     </Dialog>
   );
