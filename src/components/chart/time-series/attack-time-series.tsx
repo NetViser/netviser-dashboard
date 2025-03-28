@@ -11,12 +11,8 @@ import {
 
 type AttackTimeSeriesChartProps = {
   attackType: string;
-  data: DataSchema; // main data from your endpoint
-  highlight?: HighlightItem[][]; // optional highlight intervals
-  /**
-   * When set to false, the filter toggles for port-specific events will be hidden.
-   * Defaults to false.
-   */
+  data: DataSchema;
+  highlight?: HighlightItem[][];
   enablePortFilters?: boolean;
 };
 
@@ -64,7 +60,7 @@ export default function AttackTimeSeriesChart({
       highlight
         ?.filter(([start]) => start.name === attackType)
         .map(([start, end]) => [
-          { xAxis: start.xAxis, name: start.name },
+          { xAxis: start.xAxis },
           { xAxis: end.xAxis },
         ]) ?? [];
 
@@ -72,7 +68,7 @@ export default function AttackTimeSeriesChart({
       highlight
         ?.filter(([start]) => start.name === "otherAttack")
         .map(([start, end]) => [
-          { xAxis: start.xAxis, name: start.name },
+          { xAxis: start.xAxis },
           { xAxis: end.xAxis },
         ]) ?? [];
 
@@ -89,8 +85,36 @@ export default function AttackTimeSeriesChart({
         left: "center",
       },
       tooltip: { trigger: "axis" },
+      legend: {
+        data: [
+          {
+            name: "Attack Markers",
+            icon: "circle", // Use a circle icon for scatter points
+          },
+          {
+            name: "Attack Intervals",
+            icon: "rect", // Use a rectangle to represent the area
+            itemStyle: { color: "rgba(255, 173, 177, 0.4)" }, // Light red for Attack Intervals
+          },
+          {
+            name: "Other Attacks",
+            icon: "circle", // Use a circle icon for scatter points
+          },
+          {
+            name: "Other Attack Intervals",
+            icon: "rect", // Use a rectangle to represent the area
+            itemStyle: { color: "rgba(255, 165, 0, 0.3)" }, // Light yellow-orange for Other Attack Intervals
+          },
+        ],
+        top: 30,
+      },
       xAxis: { type: "time", boundaryGap: false },
-      yAxis: { type: "value", name: `${data.feature} (${data.feature_unit})`, nameLocation: "center", nameGap: 100 },
+      yAxis: {
+        type: "value",
+        name: `${data.feature} (${data.feature_unit})`,
+        nameLocation: "center",
+        nameGap: 100,
+      },
       dataZoom: [
         { type: "inside", start: 0, end: 100 },
         { type: "slider", start: 0, end: 100 },
@@ -112,9 +136,14 @@ export default function AttackTimeSeriesChart({
           symbolSize: 8,
           itemStyle: { color: "red" },
           z: 10,
+        },
+        {
+          name: "Attack Intervals",
+          type: "line",
+          data: [],
           markArea: markAreaAttackData.length
             ? {
-                itemStyle: { color: "rgba(255, 173, 177, 0.4)" },
+                itemStyle: { color: "rgba(255, 173, 177, 0.4)" }, // Light red
                 data: markAreaAttackData,
               }
             : undefined,
@@ -127,9 +156,14 @@ export default function AttackTimeSeriesChart({
           symbolSize: 8,
           itemStyle: { color: "orange" },
           z: 10,
+        },
+        {
+          name: "Other Attack Intervals",
+          type: "line",
+          data: [],
           markArea: markAreaOtherData.length
             ? {
-                itemStyle: { color: "rgba(255, 165, 0, 0.3)" },
+                itemStyle: { color: "rgba(255, 165, 0, 0.3)" }, // Light yellow-orange
                 data: markAreaOtherData,
               }
             : undefined,
