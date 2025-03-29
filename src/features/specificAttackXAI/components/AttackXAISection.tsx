@@ -5,7 +5,7 @@ import { useLoadingStore } from "@/store/loadingStore";
 import FeatureImportantSection from "@/features/specificAttackXAI/components/FeatureImportantSection";
 import BeeswarmSummarySection from "@/features/specificAttackXAI/components/BeeswarmSummarySection";
 import { useAttackXAISummary } from "@/hooks/api/useAttackXAISummary";
-import { AttackXAISectionProps } from "../types/index.types";
+import { AttackXAISectionProps } from "../types";
 
 export default function AttackXAISection({ attackType }: AttackXAISectionProps) {
   const { setLoading } = useLoadingStore();

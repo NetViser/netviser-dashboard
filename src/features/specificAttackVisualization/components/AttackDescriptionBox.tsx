@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AttackDescriptionBoxProps } from "../types/index.types";
+import { AttackDescriptionBoxProps } from "../types";
 
 const AttackDescriptionBox: React.FC<AttackDescriptionBoxProps> = ({
   attackType,

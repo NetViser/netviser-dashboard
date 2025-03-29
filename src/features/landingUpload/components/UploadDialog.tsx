@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { UploadDialogProps } from "../types/index.types";
+import { UploadDialogProps } from "../types";
 
 export const UploadDialog: React.FC<UploadDialogProps> = ({
   isOpen,

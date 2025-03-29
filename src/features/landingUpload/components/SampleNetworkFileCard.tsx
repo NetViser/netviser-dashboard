@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { useSampleUploadMutation } from "@/hooks/api/useSampleUploadMutation";
-import { SampleNetworkFileCardProps } from "../types/index.types";
+import { SampleNetworkFileCardProps } from "../types";
 
 function SampleNetworkFileCard({
   name,

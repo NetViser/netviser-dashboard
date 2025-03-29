@@ -13,7 +13,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useIndividualXAI } from "@/hooks/api/useIndividualXAI";
 import { useIndividualXAIExplanation } from "@/hooks/api/useIndividualXAIExplanation";
-import { ForcePlotModalProps } from "../types/index.types";
+import { ForcePlotModalProps } from "../types";
 
 export default function ForcePlotModal({
   open,

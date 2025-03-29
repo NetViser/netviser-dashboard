@@ -9,7 +9,7 @@ import Skeleton from "react-loading-skeleton";
 import DescriptionAccordion from "@/components/accordion/DescriptionAccordion";
 import { XAI_VIS_DESCRIPTIONS } from "@/utils/XAIVisualizationDescriptions";
 import { Button } from "@/components/ui/button";
-import { BeeswarmSummarySectionProps } from "../types/index.types";
+import { BeeswarmSummarySectionProps } from "../types";
 
 export default function BeeswarmSummarySection({
   attackType,

@@ -3,7 +3,7 @@
 import React from "react";
 import { TbZoomCheck } from "react-icons/tb";
 import clsx from "clsx";
-import { AttacksTableProps } from "../types/index.types";
+import { AttacksTableProps } from "../types";
 
 const AttacksTable: React.FC<AttacksTableProps> = ({ data, onAnalyze }) => {
   // Calculate the total number of attacks from the data array.

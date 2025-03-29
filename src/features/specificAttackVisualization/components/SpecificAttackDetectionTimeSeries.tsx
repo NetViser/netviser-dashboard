@@ -18,7 +18,7 @@ import {
 import moment from "moment";
 import { useSessionStore } from "@/store/sessionStore";
 import { useLoadingStore } from "@/store/loadingStore";
-import { AttackDetectionTimeSeriesProps } from "../types/index.types";
+import { AttackDetectionTimeSeriesProps } from "../types";
 
 
 export default function SpecificAttackDetectionTimeSeries({

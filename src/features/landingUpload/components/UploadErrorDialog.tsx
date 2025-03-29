@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { UploadErrorDialogProps } from "../types/index.types";
+import { UploadErrorDialogProps } from "../types";
 
 export function UploadErrorDialog({
   isOpen,

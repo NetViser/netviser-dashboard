@@ -4,7 +4,7 @@ import BarChart from "@/components/chart/BarChart";
 import SankeyChart from "@/components/chart/ftp/sankey";
 import AttackSpecificVisualizationTemplate from "./AttackSpecificVisualizationTemplate";
 import { FeatureDescriptionMap } from "@/utils/specificVisualizationDescriptions";
-import { SpecificAttackVisualizationSectionProps } from "../types/index.types";
+import { SpecificAttackVisualizationSectionProps } from "../types";
 
 export function DoSSlowlorisVisSection({ data }: SpecificAttackVisualizationSectionProps) {
   if (!data) return null;

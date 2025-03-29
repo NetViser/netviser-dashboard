@@ -1,13 +1,5 @@
 import { customFetch } from "@/lib/api/fetchClient";
-
-export interface SampleNetworkFile {
-  name: string;
-  featuredAttacks: string[]
-}
-
-export interface FetchSampleNetworkFileResponse {
-  sample_files: SampleNetworkFile[];
-}
+import { FetchSampleNetworkFileResponse } from "./types";
 
 export async function fetchAllSampleNetworkFiles(): Promise<
   FetchSampleNetworkFileResponse

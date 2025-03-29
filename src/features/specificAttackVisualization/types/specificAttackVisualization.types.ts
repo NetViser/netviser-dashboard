@@ -1,4 +1,4 @@
-import { FetchSpecificAttackResponse } from "@/lib/api/fetchAttackDetectionOverview";
+import { FetchSpecificAttackResponse } from "@/lib/api/types";
 
 export type SpecificAttackVisualizationSectionProps = {
   data: FetchSpecificAttackResponse | undefined;

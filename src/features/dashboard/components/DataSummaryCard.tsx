@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import { DataSummaryCardProps } from "../types/index.types";
+import { DataSummaryCardProps } from "../types";
 
 const DataSummaryCard: React.FC<DataSummaryCardProps> = ({ icon, title, value }) => {
   return (

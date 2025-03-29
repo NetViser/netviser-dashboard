@@ -4,7 +4,7 @@ import BarChart from "@/components/chart/BarChart";
 import FTPSankey from "@/components/chart/ftp/sankey";
 import AttackSpecificVisualizationTemplate from "./AttackSpecificVisualizationTemplate";
 import { FeatureDescriptionMap } from "@/utils/specificVisualizationDescriptions"; // Import the feature map
-import { SpecificAttackVisualizationSectionProps } from "../types/index.types";
+import { SpecificAttackVisualizationSectionProps } from "../types";
 
 export function DosHulkVisSection({ data }: SpecificAttackVisualizationSectionProps) {
   if (!data) return null;

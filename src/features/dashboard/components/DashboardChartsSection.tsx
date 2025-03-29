@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import PieChart from "@/components/chart/PieChart";
 import BarChart from "@/components/chart/BarChart";
 import AreaChart from "@/components/chart/AreaChart";
-import { DashboardChartsSectionProps } from "../types/index.types";
+import { DashboardChartsSectionProps } from "../types";
 
 const DashboardChartsSection: React.FC<DashboardChartsSectionProps> = ({ data }) => {
   const getDstPortPieChartData = useMemo(() => {

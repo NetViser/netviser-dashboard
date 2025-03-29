@@ -1,6 +1,6 @@
 import React from "react";
 import DescriptionAccordion from "@/components/accordion/DescriptionAccordion";
-import { AttackVisTemplateProps } from "../types/index.types";
+import { AttackVisTemplateProps } from "../types";
 
 
 export default function AttackSpecificVisualizationTemplate({

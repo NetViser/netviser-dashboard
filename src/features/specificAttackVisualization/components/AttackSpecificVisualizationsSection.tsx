@@ -7,7 +7,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 import Swal from "sweetalert2";
 import {
   fetchSpecificAttackDetection,
-  FetchSpecificAttackResponse,
 } from "@/lib/api/fetchAttackDetectionOverview";
 import { Tabs, Tab } from "@/components/ui/tabs/tabs";
 import AttackDetectionTimeSeries from "@/features/specificAttackVisualization/components/SpecificAttackDetectionTimeSeries";
@@ -20,7 +19,8 @@ import { SSHPatatorVisSection } from "@/features/specificAttackVisualization/com
 import { useSessionStore } from "@/store/sessionStore";
 import { useRouter } from "next/navigation";
 import { useLoadingStore } from "@/store/loadingStore";
-import { AttackSpecificVisualizationsSectionProps } from "../types/index.types";
+import { AttackSpecificVisualizationsSectionProps } from "../types";
+import { FetchSpecificAttackResponse } from "@/lib/api/types";
 
 export default function AttackSpecificVisualizationsSection({
   attackType,

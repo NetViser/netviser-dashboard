@@ -5,7 +5,7 @@ import DataSummaryCard from "./DataSummaryCard";
 import { FaTable } from "react-icons/fa";
 import { SiDowndetector } from "react-icons/si";
 import { TbCategoryFilled } from "react-icons/tb";
-import { DataSummaryCardListProps } from "../types/index.types";
+import { DataSummaryCardListProps } from "../types";
 
 const DataSummaryCardList: React.FC<DataSummaryCardListProps> = ({ data }) => {
   const summaryCards = useMemo(
