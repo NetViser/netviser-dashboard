@@ -1,22 +1,22 @@
 "use client";
 
 import Spinner from "@/components/loader/spinner";
-import { useSessionStore } from "@/store/session";
+import { useSessionStore } from "@/store/sessionStore";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useLocalStorage } from "react-use";
-import { AttackRecordsSection } from "./attack-records-section";
-import { AttackVisualizationsSection } from "./attack-visualizations-section";
+import { AttackRecordsSection } from "../../../components/table/attackRecordTable/AttackRecordsSection";
+import AttackSpecificVisualizationsSection from "@/features/specificAttackVisualization/components/AttackSpecificVisualizationsSection";
 import { ExplainabilitySelector } from "@/components/ui/select";
-import { XAIModal } from "@/components/attack-detection/xai/xai-modal";
-import { AttackXAISection } from "./attack-xai-section";
-import AttackTour from "@/app/tour/attack_tour";
-import XAITour from "@/app/tour/xai_tour";
+import ForcePlotModal from "@/features/specificAttackXAI/components/ForcePlotModal";
+import AttackXAISection from "@/features/specificAttackXAI/components/AttackXAISection";
+import AttackTour from "@/features/guideTour/components/SpecificAttackVisualizationTour";
+import XAITour from "@/features/guideTour/components/SpecificAttackXAITour";
 import { attackTypeDescription } from "@/utils/attackTypeDescriptions";
 
-import AttackDescriptionBox from "@/components/attack-detection/description/AttackDescriptionBox";
-import PageTitleFooter from "@/components/header/page-title-footer";
+import AttackDescriptionBox from "@/features/specificAttackVisualization/components/AttackDescriptionBox";
+import PageTitleFooter from "@/components/layout/page-title-footer";
 import { useLoadingStore } from "@/store/loadingStore";
 import { useAttackDetectionRecords } from "@/hooks/api/useAttackDetectionRecords";
 
@@ -122,7 +122,10 @@ export default function Page() {
       {/* Attack Description Message Box */}
       {currentAttackDescription && (
         <div className="my-6">
-          <AttackDescriptionBox attack={currentAttackDescription} />
+          <AttackDescriptionBox
+            attackType={currentAttackDescription.attackType}
+            description={currentAttackDescription.description}
+          />
         </div>
       )}
 
@@ -140,7 +143,7 @@ export default function Page() {
 
       {/* XAI Modal (if needed) */}
       {showXaiModal && selectedRow !== null && (
-        <XAIModal
+        <ForcePlotModal
           open={showXaiModal}
           attackType={attackType}
           onOpenChange={setShowXaiModal}
@@ -150,7 +153,7 @@ export default function Page() {
 
       {/* Conditional Attack Visualizations */}
       {explainabilityMode === "Visualization" && (
-        <AttackVisualizationsSection
+        <AttackSpecificVisualizationsSection
           attackType={attackType}
           activeTab={activeTab as "overall" | "timeseries"}
           setActiveTab={setActiveTab}

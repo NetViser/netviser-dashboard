@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   DataSchema,
   HighlightItem,
-} from "@/utils/client/fetchAttackDetectionTimeSeries";
+} from "@/lib/api/fetchAttackDetectionTimeSeries";
 
 type AttackTimeSeriesChartProps = {
   attackType: string;

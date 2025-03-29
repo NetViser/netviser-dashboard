@@ -2,12 +2,12 @@
 
 import Spinner from "@/components/loader/spinner";
 import { useRouter } from "next/navigation";
-import { useSessionStore } from "@/store/session";
-import AttacksTable from "@/components/attack-detection/attacks-table/attacks-table";
+import { useSessionStore } from "@/store/sessionStore";
+import AttacksTable from "@/features/attackDetection/components/DetectedAttackTable";
 import { useMemo } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import PageTitleFooter from "@/components/header/page-title-footer";
-import AttackDetectionTour from "../tour/attack_detection_tour";
+import PageTitleFooter from "@/components/layout/page-title-footer";
+import AttackDetectionTour from "../../features/guideTour/components/AttackDetectionTour";
 import { useDashboardData } from "@/hooks/api/useDashboardData";
 
 export default function AttackDetectionPage() {

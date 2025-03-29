@@ -2,7 +2,7 @@
 
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { useSessionStore } from "@/store/session";
+import { useSessionStore } from "@/store/sessionStore";
 
 /**
  * A reusable hook for handling session expiration errors.

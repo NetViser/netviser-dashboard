@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Head from "next/head";
 import "./globals.css";
-import { NavHeader } from "@/components/nav-header/nav-header";
+import { NavHeader } from "@/components/layout/NavHeader";
 
 // Configure the Poppins font with desired weights and subsets.
 const poppins = Poppins({

@@ -3,7 +3,7 @@
 import useSWRMutation from "swr/mutation";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { useUpload, UploadFileResult, UploadFileParams } from "@/hooks/useUpload";
+import { useUpload, UploadFileResult, UploadFileParams } from "@/hooks/api/useUpload";
 
 export function useSampleUploadMutation() {
   const router = useRouter();

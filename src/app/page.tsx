@@ -5,26 +5,26 @@ import { TbUpload } from "react-icons/tb";
 import { useDropzone } from "react-dropzone";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { useUpload, UploadFileResult } from "@/hooks/useUpload";
-import { fetchAllSampleNetworkFiles } from "@/utils/client/fetchAllSampleNetworkFiles";
+import { useUpload, UploadFileResult } from "@/hooks/api/useUpload";
+import { fetchAllSampleNetworkFiles } from "@/lib/api/fetchAllSampleNetworkFiles";
 import { motion } from "framer-motion";
-import SampleNetworkFileCard from "@/components/network-file/sample-network-file-card";
+import SampleNetworkFileCard from "@/features/landingUpload/components/SampleNetworkFileCard";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import dynamic from "next/dynamic";
-import { useGCSUploadProgressStore } from "@/store/gcs_upload_progress";
-import InstructionsSection from "@/components/home/instructions-section";
+import { useGCSUploadProgressStore } from "@/store/uploadProgressStore";
+import InstructionsSection from "@/features/landingUpload/components/instructions-section";
 import {
   containerVariants,
   headerVariants,
   buttonVariants,
-} from "@/utils/framer-motion";
-import DisclaimerSection from "@/components/home/DisclaimerSection";
-import InputFileConstraints from "@/components/home/InputFileConstraints";
-import { UploadDialog } from "@/components/modal/upload-dialog";
-import { UploadErrorDialog } from "@/components/modal/upload-error-dialog";
+} from "@/utils/framerMotionConfigs";
+import DisclaimerSection from "@/features/landingUpload/components/DisclaimerSection";
+import InputFileConstraints from "@/features/landingUpload/components/InputFileConstraints";
+import { UploadDialog } from "@/features/landingUpload/components/UploadDialog";
+import { UploadErrorDialog } from "@/features/landingUpload/components/UploadErrorDialog";
 
-const UploadPageTour = dynamic(() => import("./tour/upload_tour"), {
+const UploadPageTour = dynamic(() => import("../features/guideTour/components/UploadTour"), {
   ssr: false,
 });
 
@@ -232,10 +232,9 @@ export default function Home() {
             </motion.div>
 
             {/* Supported Formats and Constraints Button */}
-            <div className="text-center mt-6 space-y-4">
+            <div className="text-center mt-6 space-y-4" id="supported-formats">
               <p
                 className="text-sm text-gray-600 font-medium tracking-tight"
-                id="supported-formats"
               >
                 Supported formats: <span className="text-orange-600">CSV</span>{" "}
                 | Max size: <span className="text-orange-600">1GB</span>

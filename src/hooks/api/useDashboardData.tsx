@@ -1,9 +1,9 @@
 "use client";
 
 import useSWR from "swr";
-import { fetchDashboard } from "@/utils/client/fetchDashboard";
+import { fetchDashboard } from "@/lib/api/fetchDashboard";
 import { useHandleSessionExpired } from "../session/useHandleSessionExpired";
-import { useSessionStore } from "@/store/session";
+import { useSessionStore } from "@/store/sessionStore";
 
 export function useDashboardData() {
   const { sessionID } = useSessionStore();

@@ -1,9 +1,9 @@
 'use client';
 
 import useSWR from "swr";
-import { fetchAttackSummaryXAI } from "@/utils/client/fetchAttackSummaryXAI";
+import { fetchAttackSummaryXAI } from "@/lib/api/fetchAttackSummaryXAI";
 import { useHandleSessionExpired } from "../session/useHandleSessionExpired";
-import { useSessionStore } from "@/store/session";
+import { useSessionStore } from "@/store/sessionStore";
 
 export function useAttackXAISummary(attackType: string) {
   const { sessionID } = useSessionStore();

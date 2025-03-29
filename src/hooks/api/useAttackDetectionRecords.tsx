@@ -1,9 +1,9 @@
 "use client";
 
-import { fetchAttackDetectionRecord } from "@/utils/client/fetchAttackDetectionRecord";
+import { fetchAttackDetectionRecord } from "@/lib/api/fetchAttackDetectionRecord";
 import useSWR from "swr";
 import { useHandleSessionExpired } from "@/hooks/session/useHandleSessionExpired";
-import { useSessionStore } from "@/store/session";
+import { useSessionStore } from "@/store/sessionStore";
 
 interface UseAttackDetectionRecordsProps {
   attackType: string;

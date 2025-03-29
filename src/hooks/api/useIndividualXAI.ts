@@ -4,7 +4,7 @@ import useSWR from "swr";
 import {
   fetchIndividualXAI,
   FetchIndividualXAIResponse,
-} from "@/utils/client/fetchIndividualXAI";
+} from "@/lib/api/fetchIndividualXAI";
 import { useHandleSessionExpired } from "../session/useHandleSessionExpired";
 
 export function useIndividualXAI(

@@ -1,103 +1,16 @@
 "use client";
 
 import Spinner from "@/components/loader/spinner";
-import { useSessionStore } from "@/store/session";
-import SummaryCard from "@/components/dashboard/SummaryCard";
-import { useMemo } from "react";
-import BarChart from "@/components/chart/BarChart";
-import PieChart from "@/components/chart/PieChart";
-import AreaChart from "@/components/chart/AreaChart";
-import DashBoardTour from "../tour/dashboard_tour";
-import { FaTable } from "react-icons/fa";
-import { SiDowndetector } from "react-icons/si";
-import { TbCategoryFilled } from "react-icons/tb";
-import PageTitleFooter from "@/components/header/page-title-footer";
+import { useSessionStore } from "@/store/sessionStore";
 import { useDashboardData } from "@/hooks/api/useDashboardData";
+import DataSummaryCardList from "@/features/dashboard/components/DataSummaryCardList";
+import DashboardChartsSection from "@/features/dashboard/components/DashboardChartsSection";
+import DashBoardTour from "@/features/guideTour/components/DashboardTour";
+import PageTitleFooter from "@/components/layout/page-title-footer";
 
 export default function DashboardPage() {
   const { networkFileName } = useSessionStore();
-
   const { data, isLoading } = useDashboardData();
-
-  const summaryCards = useMemo(
-    () => [
-      {
-        title: "Total Rows",
-        value: data?.total_rows ?? "N/A",
-        icon: <FaTable size={32} />,
-      },
-      {
-        title: "Total Detected Attacks",
-        value: data?.total_detected_attacks ?? "N/A",
-        icon: <SiDowndetector size={32} />,
-      },
-      {
-        title: "Detected Attack Types",
-        value:
-          Object.keys(data?.detected_attacks_distribution || {}).length ??
-          "N/A",
-        icon: <TbCategoryFilled size={32} />,
-      },
-    ],
-    [data]
-  );
-
-  const getDstPortPieChartData = useMemo(() => {
-    if (!data) return [];
-
-    const formattedData = Object.entries(
-      data.dst_port_distribution as Record<string, number>
-    ).map(([key, value]) => ({
-      name: key,
-      value,
-    }));
-
-    return formattedData;
-  }, [data]);
-
-  const getAttackClassPieChartData = useMemo(() => {
-    if (!data) return [];
-
-    const formattedData = Object.entries(
-      data.detected_attacks_distribution as Record<string, number>
-    ).map(([key, value]) => ({
-      name: key,
-      value,
-    }));
-
-    return formattedData;
-  }, [data]);
-
-  const getProtocolPieChartData = useMemo(() => {
-    if (!data) return [];
-    // Build an object mapping protocols to their counts
-    const protocol_distribution: Record<string, number> = {};
-    Object.entries(
-      data.protocol_distribution as Record<string, number>
-    ).forEach(([key, value]) => {
-      const protocolMapping: any = {
-        "6": "TCP",
-        "1": "TCP",
-        "17": "UDP",
-        "0": "UDP",
-      };
-
-      const mappedKey = protocolMapping[key] ?? key;
-      if (protocol_distribution[mappedKey]) {
-        protocol_distribution[mappedKey] += value;
-      } else {
-        protocol_distribution[mappedKey] = value;
-      }
-    });
-    // Convert the object to an array of { name, value } objects
-    const formattedData = Object.entries(protocol_distribution).map(
-      ([name, value]) => ({
-        name,
-        value,
-      })
-    );
-    return formattedData;
-  }, [data]);
 
   if (isLoading) {
     return (
@@ -121,85 +34,8 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex flex-col gap-y-6 mb-4">
-        {/* Summary Cards Section */}
-        <div className="flex flex-row items-start gap-x-6" id="summary-cards">
-          {summaryCards.map((card, index) => (
-            <SummaryCard
-              key={index}
-              title={card.title}
-              value={card.value}
-              icon={card.icon}
-            />
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div className="h-[30rem]" id="protocol-distribution">
-            <PieChart
-              title="Protocol Distribution"
-              data={getProtocolPieChartData}
-              showFrequency
-              classLabel="Protocol"
-            />
-          </div>
-          <div
-            className="h-[30rem] bg-white rounded-lg shadow-md"
-            id="src-ip-distribution"
-          >
-            <BarChart
-              title="Source IP Distribution"
-              xLabelNameLocation="middle"
-              xAxisNameGap={60}
-              data={Object.values(
-                data?.src_ip_address_distribution as Record<string, number>
-              )}
-              categories={Object.keys(
-                data?.src_ip_address_distribution as Record<string, number>
-              ).map((key) => String(key))}
-            />
-          </div>
-          <div className="h-[30rem]" id="dst-port-distribution">
-            <PieChart
-              title="Destination Port Distribution"
-              data={getDstPortPieChartData}
-              classLabel="Port"
-            />
-          </div>
-          <div className="h-[30rem]" id="attack-class-distribution">
-            <PieChart
-              title="Attack Class Distribution"
-              data={getAttackClassPieChartData}
-              classLabel="Attack Class"
-              showFrequency
-            />
-          </div>
-        </div>
-
-        <div className="h-[450px]" id="packets-per-second">
-          <AreaChart
-            title="Forward Packets Per Second and Backward Packets Per Second"
-            dates={
-              data?.fwd_packets_per_second.map((item) => item.timestamp) || []
-            }
-            chartOption={{ yAxisLabel: "Packets Per Second" }}
-            datasets={[
-              {
-                name: "Forward Packets Per Second",
-                data:
-                  data?.fwd_packets_per_second.map((item) => item.value) || [],
-                colorStart: "rgb(255, 158, 68)",
-                colorEnd: "rgb(255, 70, 131)",
-              },
-              {
-                name: "Backward Packets Per Second",
-                data:
-                  data?.bwd_packets_per_second.map((item) => item.value) || [],
-                colorStart: "rgb(135, 206, 250)",
-                colorEnd: "rgb(70, 130, 180)",
-              },
-            ]}
-          />
-        </div>
+        <DataSummaryCardList data={data} />
+        <DashboardChartsSection data={data} />
       </div>
     </div>
   );
